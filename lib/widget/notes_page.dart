@@ -16,7 +16,9 @@ class NotesPage extends StatelessWidget {
         if (notesState is NotesLoading) {
           return _buildLoadingIndicator();
         } else if (notesState is NotesLoaded) {
-          return _buildNoteList(context, notesState.notes);
+          return notesState.notes.isEmpty
+              ? _buildEmptyNoteList(context)
+              : _buildNoteList(context, notesState.notes);
         }
       },
     );
@@ -37,4 +39,7 @@ class NotesPage extends StatelessWidget {
 //      MaterialPageRoute(builder: (context) => NoteScreen(note)),
 //    );
   }
+
+  Widget _buildEmptyNoteList(BuildContext context) =>
+      Center(child: Text("You don't have any notes"));
 }
