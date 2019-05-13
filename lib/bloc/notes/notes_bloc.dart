@@ -31,7 +31,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
       yield NotesState(currentState.notes, true);
 
       final notes = await noteRepository.getAllNotes();
-      yield NotesState(notes.map(Note.fromEntity), false);
+      yield NotesState(notes.map(Note.fromEntity).toList(), false);
     }
   }
 

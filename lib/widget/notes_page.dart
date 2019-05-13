@@ -14,7 +14,7 @@ class NotesPage extends StatelessWidget {
       bloc: _notesBloc,
       builder: (BuildContext context, NotesState notesState) {
         if (notesState.isLoading) {
-          return Center(child: Text("Loading"));
+          return _buildLoadingIndicator();
         } else {
           return _buildNoteList(context, notesState.notes);
         }
@@ -22,18 +22,19 @@ class NotesPage extends StatelessWidget {
     );
   }
 
+  Widget _buildLoadingIndicator() => Center(child: CircularProgressIndicator());
+
+  Widget _buildNoteList(BuildContext context, List<Note> notes) =>
+      ListView.builder(
+        itemBuilder: (BuildContext context, int index) => Container(
+            child: NoteItemWidget(notes[index], () => _openNote(notes[index]))),
+        itemCount: notes.length,
+      );
+
   void _openNote(Note note) {
 //    Navigator.push(
 //      context,
 //      MaterialPageRoute(builder: (context) => NoteScreen(note)),
 //    );
-  }
-
-  Widget _buildNoteList(BuildContext context, List<Note> notes) {
-    return ListView.builder(
-      itemBuilder: (BuildContext context, int index) => Container(
-          child: NoteItemWidget(notes[index], () => _openNote(notes[index]))),
-      itemCount: notes.length,
-    );
   }
 }

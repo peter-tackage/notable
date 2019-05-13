@@ -1,27 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notable/bloc/notes/notes.dart';
-import 'package:notable/data/note_provider.dart';
-import 'package:notable/data/note_repository.dart';
 import 'package:notable/model/note.dart';
 import 'package:notable/widget/notes_page.dart';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen({Key key, this.title}) : super(key: key);
+  HomeScreen({Key key, this.title, @required this.onInit}) : super(key: key);
 
   final String title;
+  final void Function() onInit;
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final NotesBloc _notesBloc =
-      NotesBloc(noteRepository: NoteRepository(NoteProvider()));
+  NotesBloc _notesBloc;
 
   void _createNewNote() {
     _notesBloc.dispatch(AddNote(
         Note("This is the title", "A new note", List(), DateTime.now())));
+  }
+
+  @override
+  void initState() {
+    _notesBloc = BlocProvider.of<NotesBloc>(context);
+    widget.onInit();
+    super.initState();
   }
 
   @override
@@ -40,11 +45,5 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Icon(Icons.add),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _notesBloc.dispose();
-    super.dispose();
   }
 }
