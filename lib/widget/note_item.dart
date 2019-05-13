@@ -14,6 +14,7 @@ class NoteItemWidget extends StatelessWidget {
     return Card(
         child: InkWell(
       child: Column(children: <Widget>[
+        Text(note.id),
         Text(note.title),
         Text(note.content),
         Text(note.labels.toString()),

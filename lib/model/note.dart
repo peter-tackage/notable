@@ -22,6 +22,6 @@ class Note {
 
   static Note fromEntity(NoteEntity noteEntity) {
     return Note(noteEntity.title, noteEntity.content, noteEntity.labels,
-        noteEntity.createdDate);
+        noteEntity.createdDate, id: noteEntity.id);
   }
 }
