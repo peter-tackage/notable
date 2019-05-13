@@ -13,9 +13,9 @@ class NotesPage extends StatelessWidget {
     return BlocBuilder<NotesEvent, NotesState>(
       bloc: _notesBloc,
       builder: (BuildContext context, NotesState notesState) {
-        if (notesState.isLoading) {
+        if (notesState is NotesLoading) {
           return _buildLoadingIndicator();
-        } else {
+        } else if (notesState is NotesLoaded) {
           return _buildNoteList(context, notesState.notes);
         }
       },

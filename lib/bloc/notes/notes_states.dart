@@ -3,9 +3,20 @@ import 'package:meta/meta.dart';
 import 'package:notable/model/note.dart';
 
 @immutable
-class NotesState extends Equatable {
-  final List<Note> notes;
-  final bool isLoading;
+abstract class NotesState extends Equatable {
+  NotesState([List props = const []]) : super(props);
+}
 
-  NotesState(this.notes, this.isLoading) : super([notes, isLoading]);
+class NotesLoading extends NotesState {
+  @override
+  String toString() => 'NotesLoading';
+}
+
+class NotesLoaded extends NotesState {
+  final List<Note> notes;
+
+  NotesLoaded(this.notes) : super([notes]);
+
+  @override
+  String toString() => 'NotesLoaded { notes: $notes }';
 }

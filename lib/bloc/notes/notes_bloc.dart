@@ -12,7 +12,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
   NotesBloc({@required this.noteRepository});
 
   @override
-  NotesState get initialState => NotesState(List(), true);
+  NotesState get initialState => NotesLoading();
 
   @override
   Stream<NotesState> mapEventToState(NotesEvent event) async* {
@@ -28,10 +28,10 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
   Stream<NotesState> _mapLoadNotesEventToState(
       NotesState currentState, NotesEvent event) async* {
     if (event is LoadNotes) {
-      yield NotesState(currentState.notes, true);
+      yield NotesLoading();
 
       final notes = await noteRepository.getAllNotes();
-      yield NotesState(notes.map(Note.fromEntity).toList(), false);
+      yield NotesLoaded(notes.map(Note.fromEntity).toList());
     }
   }
 
@@ -41,7 +41,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
       // Add the note and return all the notes
       await noteRepository.addNote(event.note.toEntity());
       List<NoteEntity> notes = await noteRepository.getAllNotes();
-      yield NotesState(notes.map(Note.fromEntity).toList(), false);
+      yield NotesLoaded(notes.map(Note.fromEntity).toList());
     }
   }
 
@@ -52,7 +52,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
       noteRepository.deleteNote(event.id);
 
       final notes = await noteRepository.getAllNotes();
-      yield NotesState(notes.map(Note.fromEntity), false);
+      yield NotesLoaded(notes.map(Note.fromEntity));
     }
   }
 }
