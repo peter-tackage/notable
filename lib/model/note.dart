@@ -9,11 +9,16 @@ class Note {
   final List<String> labels;
   final DateTime createdDate;
 
-  Note(this.task, this.content, this.labels, this.createdDate, {this.id});
+  Note(this.task, this.content, this.labels, {this.createdDate, this.id});
 
   @override
   String toString() {
     return 'Note: $task';
+  }
+
+  Note copyWith(String task, String content) {
+    return Note(task, content, this.labels,
+        createdDate: this.createdDate, id: this.id);
   }
 
   NoteEntity toEntity() {
@@ -22,7 +27,6 @@ class Note {
 
   static Note fromEntity(NoteEntity noteEntity) {
     return Note(noteEntity.task, noteEntity.content, noteEntity.labels,
-        noteEntity.createdDate,
-        id: noteEntity.id);
+        createdDate: noteEntity.createdDate, id: noteEntity.id);
   }
 }

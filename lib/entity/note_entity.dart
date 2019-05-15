@@ -4,18 +4,11 @@ class NoteEntity {
   final String task;
   final String content;
   final List<String> labels;
-  final DateTime createdDate;
+  DateTime createdDate;
 
-  NoteEntity(
-    this.id,
-    this.task,
-    this.content,
-    this.labels,
-    this.createdDate,
-  );
+  NoteEntity(this.id, this.task, this.content, this.labels, this.createdDate);
 
-  NoteEntity copyWith(String id) {
-    return NoteEntity(
-        id, this.task, this.content, this.labels, this.createdDate);
+  NoteEntity copyWith(String id, DateTime createdDate) {
+    return NoteEntity(id, this.task, this.content, this.labels, createdDate);
   }
 }

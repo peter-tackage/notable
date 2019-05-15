@@ -2,47 +2,41 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:notable/model/note.dart';
 
-// TODO Can probably be stateless
-class NoteAddEditPage extends StatefulWidget {
+class NoteAddEditPage extends StatelessWidget {
   final Note _note;
+  final FormFieldSetter<String> onSaveTitleCallback;
+  final FormFieldSetter<String> onSaveContentCallback;
 
-  NoteAddEditPage(this._note);
+  NoteAddEditPage(this._note,
+      {@required this.onSaveTitleCallback,
+      @required this.onSaveContentCallback});
 
-  @override
-  State<StatefulWidget> createState() => _AddEditScreenState();
-}
-
-class _AddEditScreenState extends State<NoteAddEditPage> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: Column(children: <Widget>[
+    return Column(children: <Widget>[
       Padding(
-          padding: EdgeInsets.only(bottom: 8),
+          padding: EdgeInsets.only(bottom: 4),
           child: TextFormField(
+              onSaved: onSaveTitleCallback,
+              initialValue: _note?.task ?? '',
               decoration: InputDecoration(
                   border: InputBorder.none, hintText: 'Task...'),
+              maxLines: 1,
               autofocus: true)),
       Expanded(
           child: Padding(
               padding: EdgeInsets.only(bottom: 8),
               child: TextFormField(
+                  onSaved: onSaveContentCallback,
+                  initialValue: _note?.content ?? '',
                   decoration: InputDecoration(
                       border: InputBorder.none, hintText: 'Enter your note...'),
                   maxLines: null,
                   keyboardType: TextInputType.multiline))),
-      Padding(padding: EdgeInsets.only(bottom: 8), child: Divider()),
-      Padding(
-        padding: const EdgeInsets.only(bottom: 8),
-        child: Text(
-          widget._note == null
-              ? "Unsaved"
-              : 'Last edited ${widget._note.createdDate}',
-          textAlign: TextAlign.end,
-        ),
-      )
-    ]));
+      Divider(),
+      Row(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+        Text(_note == null ? "Unsaved" : 'Last edited ${_note.createdDate}')
+      ]),
+    ]);
   }
-
-// TODO Onchange we callback with the change
 }

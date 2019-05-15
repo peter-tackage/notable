@@ -18,7 +18,8 @@ class NoteProvider {
     assert(note.id == null); // shouldn't already have an id
 
     String id = Uuid().v1().toString();
-    return _noteStore.putIfAbsent(id, () => note.copyWith(id));
+    DateTime createdDate = DateTime.now();
+    return _noteStore.putIfAbsent(id, () => note.copyWith(id, createdDate));
   }
 
   Future<NoteEntity> updateNote(NoteEntity note) async {
