@@ -57,7 +57,7 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
   }
 
   _saveNote(BuildContext context) {
-    print("Here! ${_task} ${_content}");
+
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
     }
@@ -69,5 +69,6 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
       Note updated = _savedNote.copyWith(_task, _content);
       _notesBloc.dispatch(UpdateNote(updated));
     }
+    Navigator.pop(context);
   }
 }
