@@ -13,13 +13,17 @@ class NoteItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
         child: InkWell(
-      child: Column(children: <Widget>[
-        Text(note.id),
-        Text(note.task),
-        Text(note.content),
-        Text(note.labels.toString()),
-        Text(note.createdDate.toIso8601String())
-      ]),
+      child: Padding(
+          padding: EdgeInsets.all(8),
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                note.task.isNotEmpty ? Text(note.task) : SizedBox.shrink(),
+                note.task.isNotEmpty && note.content.isNotEmpty
+                    ? Divider()
+                    : SizedBox.shrink(),
+                note.content.isNotEmpty ? Text(note.content) : SizedBox.shrink()
+              ])),
       onTap: onTap,
     ));
   }
