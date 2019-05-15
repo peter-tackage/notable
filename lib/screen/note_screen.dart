@@ -46,8 +46,8 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
                   return Form(
                       key: _formKey,
                       child: NoteAddEditPage(note,
-                          onSaveTitleCallback: (value) => _task = value,
-                          onSaveContentCallback: (value) => _content = value));
+                          onSaveTitleCallback: _updateTitle,
+                          onSaveContentCallback: _updateContent));
                 })),
         floatingActionButton: FloatingActionButton(
           onPressed: () => _saveNote(context),
@@ -56,8 +56,11 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
         ));
   }
 
-  _saveNote(BuildContext context) {
+  void _updateContent(value) => _content = value;
 
+  void _updateTitle(value) => _task = value;
+
+  _saveNote(BuildContext context) {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
     }

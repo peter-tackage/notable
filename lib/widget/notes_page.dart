@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notable/bloc/notes/notes.dart';
 import 'package:notable/model/note.dart';
+import 'package:notable/screen/note_screen.dart';
 import 'package:notable/widget/note_item.dart';
 
 class NotesPage extends StatelessWidget {
@@ -29,15 +30,16 @@ class NotesPage extends StatelessWidget {
   Widget _buildNoteList(BuildContext context, List<Note> notes) =>
       ListView.builder(
         itemBuilder: (BuildContext context, int index) => Container(
-            child: NoteItemWidget(notes[index], () => _openNote(notes[index]))),
+            child: NoteItemWidget(
+                notes[index], () => _openNote(context, notes[index]))),
         itemCount: notes.length,
       );
 
-  void _openNote(Note note) {
-//    Navigator.push(
-//      context,
-//      MaterialPageRoute(builder: (context) => NoteScreen(note)),
-//    );
+  void _openNote(BuildContext context, Note note) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AddEditNoteScreen(id: note.id)),
+    );
   }
 
   Widget _buildEmptyNoteList(BuildContext context) =>
