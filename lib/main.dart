@@ -13,7 +13,8 @@ void main() {
 }
 
 class NotableApp extends StatelessWidget {
-  final _notesBloc = NotesBloc(noteRepository: NoteRepository(NoteProvider()));
+  final NotesBloc _notesBloc =
+      NotesBloc(noteRepository: NoteRepository(NoteProvider()));
 
   @override
   Widget build(BuildContext context) {

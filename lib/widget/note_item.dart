@@ -15,7 +15,7 @@ class NoteItemWidget extends StatelessWidget {
         child: InkWell(
       child: Column(children: <Widget>[
         Text(note.id),
-        Text(note.title),
+        Text(note.task),
         Text(note.content),
         Text(note.labels.toString()),
         Text(note.createdDate.toIso8601String())

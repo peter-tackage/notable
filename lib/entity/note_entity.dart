@@ -1,14 +1,14 @@
 // TODO Make this a proper entity class
 class NoteEntity {
   final String id;
-  final String title;
+  final String task;
   final String content;
   final List<String> labels;
   final DateTime createdDate;
 
   NoteEntity(
     this.id,
-    this.title,
+    this.task,
     this.content,
     this.labels,
     this.createdDate,
@@ -16,6 +16,6 @@ class NoteEntity {
 
   NoteEntity copyWith(String id) {
     return NoteEntity(
-        id, this.title, this.content, this.labels, this.createdDate);
+        id, this.task, this.content, this.labels, this.createdDate);
   }
 }
