@@ -1,4 +1,4 @@
-import 'package:notable/entity/base_entity.dart';
+import 'package:notable/data/base_entity.dart';
 
 abstract class BaseNoteEntity extends BaseEntity {
   final String title;

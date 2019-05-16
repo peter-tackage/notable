@@ -1,4 +1,5 @@
 // TODO Make this a proper entity class
+
 import 'package:notable/entity/base_note_entity.dart';
 
 class ChecklistEntity extends BaseNoteEntity {

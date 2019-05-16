@@ -1,5 +1,5 @@
+import 'package:notable/data/base_entity.dart';
 import 'package:notable/data/provider.dart';
-import 'package:notable/entity/base_entity.dart';
 
 // Higher level modelling, may combine multiple data Providers
 class Repository<T extends BaseEntity> {

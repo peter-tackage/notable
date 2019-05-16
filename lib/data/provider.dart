@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:notable/entity/base_entity.dart';
+import 'package:notable/data/base_entity.dart';
 
 class Provider<T extends BaseEntity> {
   final Map<String, T> _store = Map();

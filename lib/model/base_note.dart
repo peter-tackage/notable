@@ -1,5 +1,5 @@
 import 'package:meta/meta.dart';
-import 'package:notable/entity/base_note_entity.dart';
+import 'package:notable/entity/entity.dart';
 
 @immutable
 abstract class BaseNote {
