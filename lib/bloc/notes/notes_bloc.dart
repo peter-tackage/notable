@@ -64,7 +64,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
       noteRepository.deleteNote(event.id);
 
       final notes = await noteRepository.getAllNotes();
-      yield NotesLoaded(notes.map(Note.fromEntity));
+      yield NotesLoaded(notes.map(Note.fromEntity).toList());
     }
   }
 }

@@ -35,7 +35,7 @@ class NoteAddEditPage extends StatelessWidget {
                   keyboardType: TextInputType.multiline))),
       Divider(),
       Row(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
-        Text(_note == null ? "Unsaved" : 'Last edited ${_note.createdDate}')
+        Text(_note == null ? "Unsaved" : 'Created: ${_note.createdDate}')
       ]),
     ]);
   }

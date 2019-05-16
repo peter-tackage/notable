@@ -18,7 +18,7 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
 
   NotesBloc _notesBloc;
 
-  Note _savedNote;
+  Note _existingNote;
   String _task;
   String _content;
 
@@ -31,9 +31,17 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Note"),
-        ),
+        appBar: AppBar(title: Text("Note"), actions: <Widget>[
+          PopupMenuButton(
+              onCanceled: () => print("Cancelled"),
+              onSelected: _handleMenuItemSelection,
+              itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: "delete",
+                      child: Text("Delete"),
+                    )
+                  ])
+        ]),
         body: Padding(
             padding: EdgeInsets.all(16),
             child: BlocBuilder(
@@ -42,7 +50,7 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
                   final note = (state as NotesLoaded).notes.firstWhere(
                       (note) => note.id == widget.id,
                       orElse: () => null);
-                  this._savedNote = note;
+                  _existingNote = note;
                   return Form(
                       key: _formKey,
                       child: NoteAddEditPage(note,
@@ -50,7 +58,7 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
                           onSaveContentCallback: _updateContent));
                 })),
         floatingActionButton: FloatingActionButton(
-          onPressed: () => _saveNote(context),
+          onPressed: _saveNote,
           tooltip: 'Save note',
           child: Icon(Icons.check),
         ));
@@ -60,18 +68,32 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
 
   void _updateTitle(value) => _task = value;
 
-  _saveNote(BuildContext context) {
+  _saveNote() {
+    print("Saving");
+
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
     }
 
-    if (_savedNote == null) {
-      Note created = Note(_task, _content, new List());
-      _notesBloc.dispatch(AddNote(created));
+    // Create or update
+    if (_existingNote == null) {
+      _notesBloc.dispatch(AddNote(Note(_task, _content, new List())));
     } else {
-      Note updated = _savedNote.copyWith(_task, _content);
-      _notesBloc.dispatch(UpdateNote(updated));
+      _notesBloc.dispatch(UpdateNote(_existingNote.copyWith(_task, _content)));
     }
+
+    Navigator.pop(context);
+  }
+
+  void _handleMenuItemSelection(value) {
+    if (value == "delete") {
+      _deleteNote(value);
+    }
+  }
+
+  void _deleteNote(value) {
+    print("Deleting: $value $_existingNote");
+    _notesBloc.dispatch(DeleteNote(_existingNote.id));
     Navigator.pop(context);
   }
 }
