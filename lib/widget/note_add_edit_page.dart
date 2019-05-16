@@ -18,7 +18,7 @@ class NoteAddEditPage extends StatelessWidget {
           padding: EdgeInsets.only(bottom: 4),
           child: TextFormField(
               onSaved: onSaveTitleCallback,
-              initialValue: _note?.task ?? '',
+              initialValue: _note?.title ?? '',
               decoration: InputDecoration(
                   border: InputBorder.none, hintText: 'Task...'),
               maxLines: 1,
@@ -28,14 +28,14 @@ class NoteAddEditPage extends StatelessWidget {
               padding: EdgeInsets.only(bottom: 8),
               child: TextFormField(
                   onSaved: onSaveContentCallback,
-                  initialValue: _note?.content ?? '',
+                  initialValue: _note?.text ?? '',
                   decoration: InputDecoration(
                       border: InputBorder.none, hintText: 'Enter your note...'),
                   maxLines: null,
                   keyboardType: TextInputType.multiline))),
       Divider(),
       Row(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
-        Text(_note == null ? "Unsaved" : 'Created: ${_note.createdDate}')
+        Text(_note == null ? "Unsaved" : 'Created: ${_note.updatedDate}')
       ]),
     ]);
   }

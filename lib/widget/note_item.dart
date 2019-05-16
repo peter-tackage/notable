@@ -18,11 +18,11 @@ class NoteItemWidget extends StatelessWidget {
           child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                note.task.isNotEmpty ? Text(note.task) : SizedBox.shrink(),
-                note.task.isNotEmpty && note.content.isNotEmpty
+                note.title.isNotEmpty ? Text(note.title) : SizedBox.shrink(),
+                note.title.isNotEmpty && note.text.isNotEmpty
                     ? Divider()
                     : SizedBox.shrink(),
-                note.content.isNotEmpty ? Text(note.content) : SizedBox.shrink()
+                note.text.isNotEmpty ? Text(note.text) : SizedBox.shrink()
               ])),
       onTap: onTap,
     ));

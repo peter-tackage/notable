@@ -1,14 +1,8 @@
-// TODO Make this a proper entity class
-class NoteEntity {
-  final String id;
-  final String task;
-  final String content;
-  final List<String> labels;
-  DateTime createdDate;
+import 'package:notable/entity/base_note_entity.dart';
 
-  NoteEntity(this.id, this.task, this.content, this.labels, this.createdDate);
+class NoteEntity extends BaseNoteEntity {
+  final String text;
 
-  NoteEntity copyWith(String id, DateTime createdDate) {
-    return NoteEntity(id, this.task, this.content, this.labels, createdDate);
-  }
+  NoteEntity(labels, title, this.text, {id, updatedDate})
+      : super(title, labels, id: id, updatedDate: updatedDate);
 }

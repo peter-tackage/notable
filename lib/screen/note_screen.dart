@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notable/bloc/notes/notes.dart';
+import 'package:notable/model/base_note.dart';
 import 'package:notable/model/note.dart';
 import 'package:notable/widget/note_add_edit_page.dart';
 
@@ -19,8 +20,8 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
   NotesBloc _notesBloc;
 
   Note _existingNote;
-  String _task;
-  String _content;
+  String _title;
+  String _text;
 
   @override
   void initState() {
@@ -64,9 +65,9 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
         ));
   }
 
-  void _updateContent(value) => _content = value;
+  void _updateContent(value) => _text = value;
 
-  void _updateTitle(value) => _task = value;
+  void _updateTitle(value) => _title = value;
 
   _saveNote() {
     print("Saving");
@@ -77,9 +78,9 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
 
     // Create or update
     if (_existingNote == null) {
-      _notesBloc.dispatch(AddNote(Note(_task, _content, new List())));
+      _notesBloc.dispatch(AddNote(Note(_title, new List<Label>(), _text)));
     } else {
-      _notesBloc.dispatch(UpdateNote(_existingNote.copyWith(_task, _content)));
+      _notesBloc.dispatch(UpdateNote(_existingNote.copyWith(_title, _text)));
     }
 
     Navigator.pop(context);

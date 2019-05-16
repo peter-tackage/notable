@@ -2,12 +2,12 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:notable/bloc/notes/notes_events.dart';
 import 'package:notable/bloc/notes/notes_states.dart';
-import 'package:notable/data/note_repository.dart';
+import 'package:notable/data/repository.dart';
 import 'package:notable/entity/note_entity.dart';
 import 'package:notable/model/note.dart';
 
 class NotesBloc extends Bloc<NotesEvent, NotesState> {
-  final NoteRepository noteRepository;
+  final Repository<NoteEntity> noteRepository;
 
   NotesBloc({@required this.noteRepository});
 
@@ -32,7 +32,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
     if (event is LoadNotes) {
       yield NotesLoading();
 
-      final notes = await noteRepository.getAllNotes();
+      final notes = await noteRepository.getAll();
       yield NotesLoaded(notes.map(Note.fromEntity).toList());
     }
   }
@@ -40,9 +40,9 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
   Stream<NotesState> _mapAddNoteEventToState(
       NotesState currentState, NotesEvent event) async* {
     if (event is AddNote) {
-      // Add the note and return all the notes
-      await noteRepository.addNote(event.note.toEntity());
-      List<NoteEntity> notes = await noteRepository.getAllNotes();
+      // Save the note and return all the notes
+      await noteRepository.save(event.note.toEntity());
+      List<NoteEntity> notes = await noteRepository.getAll();
       yield NotesLoaded(notes.map(Note.fromEntity).toList());
     }
   }
@@ -50,9 +50,9 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
   Stream<NotesState> _mapUpdateNoteEventToState(
       NotesState currentState, NotesEvent event) async* {
     if (event is UpdateNote) {
-      // Add the note and return all the notes
-      await noteRepository.updateNote(event.note.toEntity());
-      List<NoteEntity> notes = await noteRepository.getAllNotes();
+      // Save the note and return all the notes
+      await noteRepository.save(event.note.toEntity());
+      List<NoteEntity> notes = await noteRepository.getAll();
       yield NotesLoaded(notes.map(Note.fromEntity).toList());
     }
   }
@@ -61,9 +61,9 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
       NotesState currentState, NotesEvent event) async* {
     if (event is DeleteNote) {
       // Delete the note and return all the notes
-      noteRepository.deleteNote(event.id);
+      noteRepository.delete(event.id);
 
-      final notes = await noteRepository.getAllNotes();
+      final notes = await noteRepository.getAll();
       yield NotesLoaded(notes.map(Note.fromEntity).toList());
     }
   }

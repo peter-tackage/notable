@@ -1,32 +1,29 @@
 import 'package:meta/meta.dart';
 import 'package:notable/entity/note_entity.dart';
+import 'package:notable/model/base_note.dart';
 
 @immutable
-class Note {
-  final String id;
-  final String task;
-  final String content;
-  final List<String> labels;
-  final DateTime createdDate;
+class Note extends BaseNote {
+  final String text;
 
-  Note(this.task, this.content, this.labels, {this.createdDate, this.id});
+  Note(title, labels, this.text, {id, createdDate})
+      : super(title, labels, id: id, updatedDate: createdDate);
 
   @override
   String toString() {
-    return 'Note: $task';
+    return 'Note: $title';
   }
 
-  Note copyWith(String task, String content) {
-    return Note(task, content, this.labels,
-        createdDate: this.createdDate, id: this.id);
+  Note copyWith(String title, String text) {
+    return Note(title, this.labels, text,
+        id: this.id, createdDate: this.updatedDate);
   }
 
-  NoteEntity toEntity() {
-    return NoteEntity(id, task, content, labels, createdDate);
-  }
+  NoteEntity toEntity() =>
+      NoteEntity(labels.map((l) => l.toEntity()).toList(), title, text,
+          id: this.id, updatedDate: this.updatedDate);
 
-  static Note fromEntity(NoteEntity noteEntity) {
-    return Note(noteEntity.task, noteEntity.content, noteEntity.labels,
-        createdDate: noteEntity.createdDate, id: noteEntity.id);
-  }
+  static Note fromEntity(NoteEntity noteEntity) => Note(noteEntity.title,
+      noteEntity.labels.map(Label.fromEntity).toList(), noteEntity.text,
+      id: noteEntity.id, createdDate: noteEntity.updatedDate);
 }
