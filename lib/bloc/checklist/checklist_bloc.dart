@@ -20,7 +20,7 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
     checklistsSubscription = notesBloc.state.listen((state) {
       print("Subscribed to NoteBloc state: $state");
       if (state is NotesLoaded) {
-        dispatch(UpdateChecklist(state.notes.firstWhere(
+        dispatch(LoadChecklist(state.notes.firstWhere(
                 (note) => note.id == this.id,
                 orElse: () => Checklist(
                     '', List<Label>(), [ChecklistItem('', false)].toList()))
@@ -38,28 +38,36 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
 
     if (event is LoadChecklist) {
       yield* _mapLoadChecklistEventToState(currentState, event);
-    } else if (event is UpdateChecklist) {
-      yield* _mapUpdateChecklistEventToState(currentState, event);
+    } else if (event is SaveChecklist) {
+      yield* _mapSaveChecklistEventToState(currentState, event);
     } else if (event is DeleteChecklist) {
       yield* _mapDeleteChecklistEventToState(currentState, event);
     } else if (event is AddChecklistItem) {
       yield* _mapAddChecklistItemEventToState(currentState, event);
     } else if (event is AddEmptyChecklistItem) {
       yield* _mapAddEmptyChecklistItemEventToState(currentState, event);
+    } else if (event is UpdateChecklistTitle) {
+      yield* _mapUpdateChecklistTitleEventToState(currentState, event);
     }
   }
 
   Stream<ChecklistState> _mapLoadChecklistEventToState(
       ChecklistState currentState, ChecklistEvent event) async* {
     if (event is LoadChecklist) {
-      notesBloc.dispatch(LoadNotes());
+      yield ChecklistLoaded(event.checklist);
     }
   }
 
-  Stream<ChecklistState> _mapUpdateChecklistEventToState(
+  Stream<ChecklistState> _mapSaveChecklistEventToState(
       ChecklistState currentState, ChecklistEvent event) async* {
-    if (event is UpdateChecklist) {
-      yield ChecklistLoaded(event.checklist);
+    if (event is SaveChecklist) {
+      if (currentState is ChecklistLoaded) {
+        if (id == null) {
+          notesBloc.dispatch(AddNote(currentState.checklist));
+        } else {
+          notesBloc.dispatch(UpdateNote(currentState.checklist));
+        }
+      }
     }
   }
 
@@ -112,6 +120,16 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
         List<ChecklistItem> items = currentState.checklist.items;
         items.add(ChecklistItem('', false));
         yield ChecklistLoaded(currentState.checklist.copyWith(items: items));
+      }
+    }
+  }
+
+  Stream<ChecklistState> _mapUpdateChecklistTitleEventToState(
+      ChecklistState currentState, UpdateChecklistTitle event) async* {
+    if (event is UpdateChecklistTitle) {
+      if (currentState is ChecklistLoaded) {
+        yield ChecklistLoaded(
+            currentState.checklist.copyWith(title: event.title));
       }
     }
   }

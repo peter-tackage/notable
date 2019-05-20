@@ -89,19 +89,29 @@ class _AddEditChecklistNoteScreenState
 
   Widget _buildChecklist(BuildContext context, Checklist checklist) =>
       ListView.builder(
-        itemBuilder: (BuildContext context, int index) => Container(
-            child: ChecklistItemWidget(
-                (item) => _addItem(index, item),
-                doNoValidation,
-                checklist.items[index],
-                false,
-                (__) => _moveToNextItem(index))),
-        itemCount: checklist.items.length,
-      );
+          itemBuilder: (BuildContext context, int index) {
+            int lastIndex = checklist.items.length - 1;
+            bool isFocused = index == lastIndex;
 
-  void _moveToNextItem(int index) {
+            print("$index : $isFocused");
+
+            return Container(
+                child: ChecklistItemWidget(
+                    (item) => _addItem(index, item),
+                    doNoValidation,
+                    checklist.items[index],
+                    isFocused,
+                    (__) => _moveToNextItem(index, lastIndex)));
+          },
+          itemCount: checklist.items.length);
+
+  void _moveToNextItem(int index, int lastIndex) {
     print("_moveToNextItem");
-    _checklistBloc.dispatch(AddEmptyChecklistItem());
+    if (index == lastIndex) {
+      _checklistBloc.dispatch(AddEmptyChecklistItem());
+    } else {
+      // TODO Focus next
+    }
   }
 
   //
@@ -110,21 +120,17 @@ class _AddEditChecklistNoteScreenState
 
   _saveNote() {
     print("Saving checklist");
-//    if (_formKey.currentState.validate()) {
-//      // Let the form perform its own validation
-//      _formKey.currentState.save();
-//    }
-//
-//    print("Saving checklist: ${_checklist.items[0]}");
-//
-//    // Create or update
-//    if (widget.id == null) {
-//      _checklistBloc.dispatch(Add(
-//          Checklist(_checklist.title, new List<Label>(), _checklist.items)));
-//    } else {
-//      //  _checklistBloc.dispatch(
-//      //     UpdateNote(_checklist.copyWith(_updatedTitle, _updatedText)));
-//    }
+    if (_formKey.currentState.validate()) {
+      // Let the form perform its own validation
+      _formKey.currentState.save();
+    }
+
+    print("Saving checklist: ${widget.id}");
+
+    // Create or update
+    if (widget.id == null) {
+      _checklistBloc.dispatch(SaveChecklist());
+    }
     Navigator.pop(context);
   }
 

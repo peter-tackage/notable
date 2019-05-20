@@ -9,32 +9,20 @@ abstract class ChecklistEvent extends Equatable {
 
 @immutable
 class LoadChecklist extends ChecklistEvent {
-  final String id;
+  final Checklist checklist;
 
-  LoadChecklist(this.id) : super([id]);
+  LoadChecklist(this.checklist) : super([checklist]);
 
   @override
-  String toString() => 'LoadChecklist: $id';
+  String toString() => 'LoadChecklist: $checklist';
 }
 
 @immutable
-class AddChecklist extends ChecklistEvent {
-  final Checklist checklist;
-
-  AddChecklist(this.checklist) : super([checklist]);
+class SaveChecklist extends ChecklistEvent {
+  SaveChecklist() : super([]);
 
   @override
-  String toString() => 'AddChecklist: $checklist';
-}
-
-@immutable
-class UpdateChecklist extends ChecklistEvent {
-  final Checklist checklist;
-
-  UpdateChecklist(this.checklist) : super([checklist]);
-
-  @override
-  String toString() => 'UpdateChecklist: $checklist';
+  String toString() => 'SaveChecklist';
 }
 
 @immutable

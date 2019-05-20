@@ -29,6 +29,7 @@ class NotesPage extends StatelessWidget {
       ListView.builder(
         itemBuilder: (BuildContext context, int index) =>
             Container(child: Text(notes[index].title ?? 'No title')),
+        // TODO Handle hetrogeneous types
         //  child: NoteItemWidget(
         //      notes[index], () => _openNote(context, notes[index]))),
         itemCount: notes.length,
