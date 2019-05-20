@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notable/bloc/notes/notes.dart';
-import 'package:notable/screen/note_screen.dart';
+import 'package:notable/screen/checklist_note_screen.dart';
 import 'package:notable/widget/notes_page.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -17,15 +17,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  NotesBloc _notesBloc;
+  NotesBloc _notesBloc; // TODO this will become the combined notes bloc
 
   void _openNoteEditor(BuildContext context) => Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => BlocProvider<NotesBloc>(
-                bloc: _notesBloc,
-                child: AddEditNoteScreen(id: null),
-              )));
+          builder: (context) => AddEditChecklistNoteScreen(id: null)));
 
   @override
   void initState() {

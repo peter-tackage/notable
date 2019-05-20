@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-import 'package:notable/model/note.dart';
+import 'package:notable/model/base_note.dart';
 
 @immutable
 abstract class NotesEvent extends Equatable {
@@ -12,12 +12,12 @@ class LoadNotes extends NotesEvent {
   LoadNotes() : super();
 
   @override
-  String toString() => 'ScreenStarted';
+  String toString() => 'LoadNotes';
 }
 
 @immutable
 class AddNote extends NotesEvent {
-  final Note note;
+  final BaseNote note;
 
   AddNote(this.note) : super([note]);
 
@@ -27,7 +27,7 @@ class AddNote extends NotesEvent {
 
 @immutable
 class UpdateNote extends NotesEvent {
-  final Note note;
+  final BaseNote note;
 
   UpdateNote(this.note) : super([note]);
 

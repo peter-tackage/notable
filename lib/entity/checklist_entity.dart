@@ -10,8 +10,8 @@ class ChecklistEntity extends BaseNoteEntity {
 }
 
 class ChecklistItemEntity {
-  final String item;
+  final String task;
   final bool isDone;
 
-  ChecklistItemEntity(this.item, this.isDone);
+  ChecklistItemEntity(this.task, this.isDone);
 }

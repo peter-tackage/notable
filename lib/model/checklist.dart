@@ -5,8 +5,13 @@ import 'package:notable/model/base_note.dart';
 class Checklist extends BaseNote {
   final List<ChecklistItem> items;
 
-  Checklist(title, labels, this.items, {id, createdDate})
-      : super(title, labels, id: id, updatedDate: createdDate);
+  Checklist(title, labels, this.items, {id, updatedDate})
+      : super(title, labels, id: id, updatedDate: updatedDate);
+
+  Checklist copyWith({String title, List<ChecklistItem> items}) {
+    return Checklist(title ?? this.title, this.labels, items ?? this.items,
+        id: id, updatedDate: updatedDate);
+  }
 
   @override
   String toString() {
@@ -16,13 +21,17 @@ class Checklist extends BaseNote {
 
 @immutable
 class ChecklistItem {
-  final String text;
+  final String task;
   final bool isDone;
 
-  ChecklistItem(this.text, this.isDone);
+  ChecklistItem(this.task, this.isDone);
 
   @override
   String toString() {
-    return 'ChecklistItem: $text';
+    return 'ChecklistItem: $task';
+  }
+
+  ChecklistItem copyWith({String task, bool isDone}) {
+    return ChecklistItem(task ?? this.task, isDone ?? this.isDone);
   }
 }

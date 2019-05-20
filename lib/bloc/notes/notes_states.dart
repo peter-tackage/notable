@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-import 'package:notable/model/note.dart';
+import 'package:notable/model/base_note.dart';
 
 @immutable
 abstract class NotesState extends Equatable {
@@ -13,7 +13,7 @@ class NotesLoading extends NotesState {
 }
 
 class NotesLoaded extends NotesState {
-  final List<Note> notes;
+  final List<BaseNote> notes;
 
   NotesLoaded(this.notes) : super([notes]);
 

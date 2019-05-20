@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:notable/model/note.dart';
+import 'package:notable/model/text_note.dart';
 
-@immutable
 class NoteItemWidget extends StatelessWidget {
-  final Note note;
+  final TextNote note;
   final Function onTap;
 
   NoteItemWidget(this.note, this.onTap);

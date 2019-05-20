@@ -2,14 +2,17 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:notable/bloc/notes/notes_events.dart';
 import 'package:notable/bloc/notes/notes_states.dart';
+import 'package:notable/data/mapper.dart';
 import 'package:notable/data/repository.dart';
-import 'package:notable/entity/note_entity.dart';
-import 'package:notable/model/note.dart';
+import 'package:notable/entity/base_note_entity.dart';
+import 'package:notable/model/base_note.dart';
 
-class NotesBloc extends Bloc<NotesEvent, NotesState> {
-  final Repository<NoteEntity> noteRepository;
+class NotesBloc<M extends BaseNote, E extends BaseNoteEntity>
+    extends Bloc<NotesEvent, NotesState> {
+  final Repository<BaseNoteEntity> noteRepository;
+  final Mapper<M, E> mapper;
 
-  NotesBloc({@required this.noteRepository});
+  NotesBloc({@required this.noteRepository, @required this.mapper});
 
   @override
   NotesState get initialState => NotesLoading();
@@ -33,7 +36,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
       yield NotesLoading();
 
       final notes = await noteRepository.getAll();
-      yield NotesLoaded(notes.map(Note.fromEntity).toList());
+      yield NotesLoaded(_toModels(notes));
     }
   }
 
@@ -41,9 +44,9 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
       NotesState currentState, NotesEvent event) async* {
     if (event is AddNote) {
       // Save the note and return all the notes
-      await noteRepository.save(event.note.toEntity());
-      List<NoteEntity> notes = await noteRepository.getAll();
-      yield NotesLoaded(notes.map(Note.fromEntity).toList());
+      await noteRepository.save(mapper.toEntity(event.note));
+      final notes = await noteRepository.getAll();
+      yield NotesLoaded(_toModels(notes));
     }
   }
 
@@ -51,9 +54,9 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
       NotesState currentState, NotesEvent event) async* {
     if (event is UpdateNote) {
       // Save the note and return all the notes
-      await noteRepository.save(event.note.toEntity());
-      List<NoteEntity> notes = await noteRepository.getAll();
-      yield NotesLoaded(notes.map(Note.fromEntity).toList());
+      await noteRepository.save(mapper.toEntity(event.note));
+      final notes = await noteRepository.getAll();
+      yield NotesLoaded(_toModels(notes));
     }
   }
 
@@ -64,7 +67,10 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
       noteRepository.delete(event.id);
 
       final notes = await noteRepository.getAll();
-      yield NotesLoaded(notes.map(Note.fromEntity).toList());
+      yield NotesLoaded(_toModels(notes));
     }
   }
+
+  List _toModels(List<BaseNoteEntity> notes) =>
+      notes.map((e) => mapper.toModel(e)).toList();
 }
