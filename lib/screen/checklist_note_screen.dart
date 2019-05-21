@@ -158,7 +158,7 @@ class _AddEditChecklistNoteScreenState
   }
 
   _setItem(int index, ChecklistItem item) {
-    print("_addItem add item: ${item.task} at $index");
+    print("_setItem item: ${item.task} at $index");
     _checklistBloc.dispatch(SetChecklistItem(index, item));
   }
 

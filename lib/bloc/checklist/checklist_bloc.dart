@@ -86,9 +86,9 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
     if (event is SetChecklistItem) {
       // Add the item to existing note
       if (currentState is ChecklistLoaded) {
-        print("Adding item: ${event.item.task}");
+        print("Adding item: ${event.item.task} to position: ${event.index}");
         List<ChecklistItem> items = currentState.checklist.items;
-        items.add(event.item);
+        items[event.index] = event.item;
         yield ChecklistLoaded(currentState.checklist.copyWith(items: items));
       }
     }
@@ -101,7 +101,7 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
     if (event is AddEmptyChecklistItem) {
       // Add the item to existing note
       if (currentState is ChecklistLoaded) {
-        print("Adding empty item");
+        print("Adding empty item at the end");
         List<ChecklistItem> items = currentState.checklist.items;
         items.add(ChecklistItem('', false));
         yield ChecklistLoaded(currentState.checklist.copyWith(items: items));
