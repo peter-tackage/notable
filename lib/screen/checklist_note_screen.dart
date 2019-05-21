@@ -47,9 +47,12 @@ class _AddEditChecklistNoteScreenState
             child: BlocBuilder(
                 bloc: _checklistBloc,
                 builder: (BuildContext context, ChecklistState state) {
-                  print("In WIDGET ChecklistState is $state");
+                  print("BlocBuilder ChecklistState is $state");
 
                   if (state is ChecklistLoaded) {
+                    print(
+                        "BlocBuilder Checklist item: ${state.checklist.title}");
+
                     return Form(
                         key: _formKey,
                         child: Column(children: <Widget>[
@@ -93,21 +96,20 @@ class _AddEditChecklistNoteScreenState
             int lastIndex = checklist.items.length - 1;
             bool isFocused = index == lastIndex;
 
-            print("$index : $isFocused");
-
             return Container(
                 child: ChecklistItemWidget(
-                    (item) => _addItem(index, item),
-                    doNoValidation,
-                    checklist.items[index],
-                    isFocused,
-                    (__) => _moveToNextItem(index, lastIndex)));
+                    onSaved: (item) => _setItem(index, item),
+                    initialValue: checklist.items[index],
+                    isFocused: isFocused,
+                    onSubmit: (__) => _moveToNextItem(index, lastIndex)));
           },
           itemCount: checklist.items.length);
 
   void _moveToNextItem(int index, int lastIndex) {
-    print("_moveToNextItem");
     if (index == lastIndex) {
+      // TODO Need to change the state somehow here, because the
+      // actual structure changes.
+
       _checklistBloc.dispatch(AddEmptyChecklistItem());
     } else {
       // TODO Focus next
@@ -119,18 +121,16 @@ class _AddEditChecklistNoteScreenState
   //
 
   _saveNote() {
-    print("Saving checklist");
+    print("Validating checklist with id: ${widget.id}");
     if (_formKey.currentState.validate()) {
       // Let the form perform its own validation
       _formKey.currentState.save();
     }
 
-    print("Saving checklist: ${widget.id}");
+    // Create or update handled elsewhere.
+    _checklistBloc.dispatch(SaveChecklist());
 
-    // Create or update
-    if (widget.id == null) {
-      _checklistBloc.dispatch(SaveChecklist());
-    }
+    //
     Navigator.pop(context);
   }
 
@@ -147,16 +147,20 @@ class _AddEditChecklistNoteScreenState
   _deleteNote() {
     print("Deleting: $widget.id");
     if (widget.id != null) {
-      _checklistBloc.dispatch(DeleteChecklist());
+      _checklistBloc.dispatch(DeleteChecklist(widget.id));
       Navigator.pop(context);
     }
   }
 
-  _titleChanged(String newValue) =>
-      _checklistBloc.dispatch(UpdateChecklistTitle(newValue));
+  _titleChanged(String newTitle) {
+    print("Setting title to: $newTitle");
+    _checklistBloc.dispatch(UpdateChecklistTitle(newTitle));
+  }
 
-  _addItem(int index, ChecklistItem item) =>
-      _checklistBloc.dispatch(AddChecklistItem(index, item));
+  _setItem(int index, ChecklistItem item) {
+    print("_addItem add item: ${item.task} at $index");
+    _checklistBloc.dispatch(SetChecklistItem(index, item));
+  }
 
   String doNoValidation(ChecklistItem value) {
     return null;

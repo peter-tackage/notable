@@ -14,7 +14,7 @@ class LoadChecklist extends ChecklistEvent {
   LoadChecklist(this.checklist) : super([checklist]);
 
   @override
-  String toString() => 'LoadChecklist: $checklist';
+  String toString() => 'LoadChecklist: {id: ${checklist.id}}';
 }
 
 @immutable
@@ -27,7 +27,9 @@ class SaveChecklist extends ChecklistEvent {
 
 @immutable
 class DeleteChecklist extends ChecklistEvent {
-  DeleteChecklist() : super([]);
+  final String id;
+
+  DeleteChecklist(this.id) : super([id]);
 
   @override
   String toString() => 'DeleteChecklist';
@@ -44,14 +46,14 @@ class UpdateChecklistTitle extends ChecklistEvent {
 }
 
 @immutable
-class AddChecklistItem extends ChecklistEvent {
+class SetChecklistItem extends ChecklistEvent {
   final int index;
   final ChecklistItem item;
 
-  AddChecklistItem(this.index, this.item) : super([index, item]);
+  SetChecklistItem(this.index, this.item) : super([index, item]);
 
   @override
-  String toString() => 'AddChecklistItem: $item';
+  String toString() => 'SetChecklistItem: $item';
 }
 
 @immutable

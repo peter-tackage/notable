@@ -18,7 +18,7 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
 
   ChecklistBloc({@required this.notesBloc, @required this.id}) {
     checklistsSubscription = notesBloc.state.listen((state) {
-      print("Subscribed to NoteBloc state: $state");
+      // FIXME This emits too often
       if (state is NotesLoaded) {
         dispatch(LoadChecklist(state.notes.firstWhere(
                 (note) => note.id == this.id,
@@ -42,7 +42,7 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
       yield* _mapSaveChecklistEventToState(currentState, event);
     } else if (event is DeleteChecklist) {
       yield* _mapDeleteChecklistEventToState(currentState, event);
-    } else if (event is AddChecklistItem) {
+    } else if (event is SetChecklistItem) {
       yield* _mapAddChecklistItemEventToState(currentState, event);
     } else if (event is AddEmptyChecklistItem) {
       yield* _mapAddEmptyChecklistItemEventToState(currentState, event);
@@ -62,6 +62,8 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
       ChecklistState currentState, ChecklistEvent event) async* {
     if (event is SaveChecklist) {
       if (currentState is ChecklistLoaded) {
+        print(
+            "About to save checklist with title: ${currentState.checklist} with ${currentState.checklist.items.length} items");
         if (id == null) {
           notesBloc.dispatch(AddNote(currentState.checklist));
         } else {
@@ -71,26 +73,6 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
     }
   }
 
-//  Stream<NotesState> _mapAddNoteEventToState(
-//      NotesState currentState, NotesEvent event) async* {
-//    if (event is AddNote) {
-//      // Save the note and return all the notes
-//      await noteRepository.save(mapper.toEntity(event.note));
-//      final notes = await noteRepository.getAll();
-//      yield NotesLoaded(_toModels(notes));
-//    }
-//  }
-//
-//  Stream<NotesState> _mapUpdateNoteEventToState(
-//      NotesState currentState, NotesEvent event) async* {
-//    if (event is UpdateNote) {
-//      // Save the note and return all the notes
-//      await noteRepository.save(mapper.toEntity(event.note));
-//      final notes = await noteRepository.getAll();
-//      yield NotesLoaded(_toModels(notes));
-//    }
-//  }
-//
   Stream<ChecklistState> _mapDeleteChecklistEventToState(
       ChecklistState currentState, ChecklistEvent event) async* {
     if (event is DeleteChecklist) {
@@ -101,11 +83,13 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
 
   Stream<ChecklistState> _mapAddChecklistItemEventToState(
       ChecklistState currentState, ChecklistEvent event) async* {
-    if (event is AddChecklistItem) {
+    if (event is SetChecklistItem) {
       // Add the item to existing note
       if (currentState is ChecklistLoaded) {
-        currentState.checklist.items.add(event.item);
-        yield ChecklistLoaded(currentState.checklist);
+        print("Adding item: ${event.item.task}");
+        List<ChecklistItem> items = currentState.checklist.items;
+        items.add(event.item);
+        yield ChecklistLoaded(currentState.checklist.copyWith(items: items));
       }
     }
   }
@@ -117,6 +101,7 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
     if (event is AddEmptyChecklistItem) {
       // Add the item to existing note
       if (currentState is ChecklistLoaded) {
+        print("Adding empty item");
         List<ChecklistItem> items = currentState.checklist.items;
         items.add(ChecklistItem('', false));
         yield ChecklistLoaded(currentState.checklist.copyWith(items: items));

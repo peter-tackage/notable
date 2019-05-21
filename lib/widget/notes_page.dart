@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notable/bloc/notes/notes.dart';
-import 'package:notable/model/base_note.dart';
+import 'package:notable/model/checklist.dart';
 import 'package:notable/model/text_note.dart';
 import 'package:notable/screen/text_note_screen.dart';
 
@@ -25,10 +25,13 @@ class NotesPage extends StatelessWidget {
 
   Widget _buildLoadingIndicator() => Center(child: CircularProgressIndicator());
 
-  Widget _buildNoteList(BuildContext context, List<BaseNote> notes) =>
+  Widget _buildNoteList(BuildContext context, List<Checklist> notes) =>
       ListView.builder(
-        itemBuilder: (BuildContext context, int index) =>
-            Container(child: Text(notes[index].title ?? 'No title')),
+        itemBuilder: (BuildContext context, int index) => Card(
+                child: Column(children: <Widget>[
+              Text(notes[index].title ?? 'No title'),
+              Text(notes[index].items.map((i) => i.task).join(','))
+            ])),
         // TODO Handle hetrogeneous types
         //  child: NoteItemWidget(
         //      notes[index], () => _openNote(context, notes[index]))),
