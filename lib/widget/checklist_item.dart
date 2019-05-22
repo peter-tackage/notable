@@ -37,8 +37,6 @@ class ChecklistItemWidget extends FormField<ChecklistItem> {
             controller: TextEditingController(text: state.value.task),
             onSubmitted: onSubmit,
             autofocus: isFocused,
-            minLines: 1,
-            maxLines: null,
             decoration:
                 InputDecoration(border: InputBorder.none, hintText: 'Task...'),
           )),
