@@ -31,10 +31,11 @@ class ChecklistNoteItem extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(children: <Widget>[
-        item.isDone
-            ? Text(item.task,
-                style: TextStyle(decoration: TextDecoration.lineThrough))
-            : Text(item.task),
+        Expanded(
+            child: item.isDone
+                ? Text(item.task,
+                    style: TextStyle(decoration: TextDecoration.lineThrough))
+                : Text(item.task))
       ]),
     );
   }
