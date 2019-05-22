@@ -67,7 +67,7 @@ class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
                                 padding: EdgeInsets.only(bottom: 8),
                                 child: TextFormField(
                                     onSaved: _textContentChanged,
-                                    initialValue: _note?.text ?? '',
+                                    initialValue: _note?.text,
                                     decoration: InputDecoration(
                                         border: InputBorder.none,
                                         hintText: 'Enter your note...'),

@@ -26,6 +26,12 @@ class ChecklistItem {
 
   ChecklistItem(this.task, this.isDone);
 
+  ChecklistItem.empty()
+      : this.task = '',
+        this.isDone = false;
+
+  isEmpty() => (task == null || task.trim().isEmpty) && isDone == false;
+
   @override
   String toString() {
     return 'ChecklistItem: $task';

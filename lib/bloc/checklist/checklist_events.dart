@@ -27,9 +27,7 @@ class SaveChecklist extends ChecklistEvent {
 
 @immutable
 class DeleteChecklist extends ChecklistEvent {
-  final String id;
-
-  DeleteChecklist(this.id) : super([id]);
+  DeleteChecklist() : super([]);
 
   @override
   String toString() => 'DeleteChecklist';

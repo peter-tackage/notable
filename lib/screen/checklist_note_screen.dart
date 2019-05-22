@@ -32,16 +32,20 @@ class _AddEditChecklistNoteScreenState
     print("Building Checklist");
 
     return Scaffold(
-        appBar: AppBar(title: Text("Checklist"), actions: <Widget>[
-          PopupMenuButton(
-              onSelected: (value) => _handleMenuItemSelection,
-              itemBuilder: (context) => [
-                    PopupMenuItem(
-                      value: "delete",
-                      child: Text("Delete"),
-                    )
-                  ])
-        ]),
+        appBar: AppBar(
+            title: Text("Checklist"),
+            actions: widget.id == null
+                ? null
+                : <Widget>[
+                    PopupMenuButton(
+                        onSelected: (value) => _handleMenuItemSelection,
+                        itemBuilder: (context) => [
+                              PopupMenuItem(
+                                value: "delete",
+                                child: Text("Delete"),
+                              )
+                            ])
+                  ]),
         body: Padding(
             padding: EdgeInsets.only(top: 8, left: 8, right: 8),
             child: BlocBuilder(
@@ -63,7 +67,7 @@ class _AddEditChecklistNoteScreenState
                                   border: InputBorder.none,
                                   hintText: 'Title...'),
                               maxLines: 1,
-                              autofocus: false),
+                              autofocus: true),
                           Expanded(
                               child: _buildChecklist(context, state.checklist)),
                           Divider(),
@@ -94,22 +98,23 @@ class _AddEditChecklistNoteScreenState
       ListView.builder(
           itemBuilder: (BuildContext context, int index) {
             int lastIndex = checklist.items.length - 1;
-            bool isFocused = index == lastIndex;
+            bool isLastItem = index == lastIndex;
+            bool isFocused = isLastItem && checklist.items.length > 1;
 
             return Container(
                 child: ChecklistItemWidget(
                     onSaved: (item) => _setItem(index, item),
                     initialValue: checklist.items[index],
                     isFocused: isFocused,
-                    onSubmit: (__) => _moveToNextItem(index, lastIndex)));
+                    onSubmit: (itemText) =>
+                        _moveToNextItem(itemText, isLastItem)));
           },
           itemCount: checklist.items.length);
 
-  void _moveToNextItem(int index, int lastIndex) {
-    if (index == lastIndex) {
-      // TODO Need to change the state somehow here, because the
-      // actual structure changes.
+  // TODO Also must not allow submit when the item is empty, because even the act of submitting causes the focus to be lost.
 
+  void _moveToNextItem(String itemText, bool isLastItem) {
+    if (isLastItem && itemText.trim().isNotEmpty) {
       _checklistBloc.dispatch(AddEmptyChecklistItem());
     } else {
       // TODO Focus next
@@ -123,14 +128,12 @@ class _AddEditChecklistNoteScreenState
   _saveNote() {
     print("Validating checklist with id: ${widget.id}");
     if (_formKey.currentState.validate()) {
-      // Let the form perform its own validation
       _formKey.currentState.save();
     }
 
     // Create or update handled elsewhere.
     _checklistBloc.dispatch(SaveChecklist());
 
-    //
     Navigator.pop(context);
   }
 
@@ -145,20 +148,17 @@ class _AddEditChecklistNoteScreenState
   }
 
   _deleteNote() {
-    print("Deleting: $widget.id");
     if (widget.id != null) {
-      _checklistBloc.dispatch(DeleteChecklist(widget.id));
+      _checklistBloc.dispatch(DeleteChecklist());
       Navigator.pop(context);
     }
   }
 
   _titleChanged(String newTitle) {
-    print("Setting title to: $newTitle");
     _checklistBloc.dispatch(UpdateChecklistTitle(newTitle));
   }
 
   _setItem(int index, ChecklistItem item) {
-    print("_setItem item: ${item.task} at $index");
     _checklistBloc.dispatch(SetChecklistItem(index, item));
   }
 

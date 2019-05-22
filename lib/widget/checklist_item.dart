@@ -3,7 +3,6 @@ import 'package:flutter/widgets.dart';
 import 'package:notable/model/checklist.dart';
 
 class ChecklistItemWidget extends FormField<ChecklistItem> {
-  // TODO Editing complete or field submitted
   ChecklistItemWidget(
       {FormFieldSetter<ChecklistItem> onSaved,
       ChecklistItem initialValue,
@@ -18,8 +17,6 @@ class ChecklistItemWidget extends FormField<ChecklistItem> {
 
   static Widget _createFormBuilder(FormFieldState<ChecklistItem> state,
       bool isFocused, Function(String task) onSubmit) {
-    print("Drawing item: ${state.value}");
-
     // FIXME Problem with editing existing values, cursor position.
     return Padding(
         padding: EdgeInsets.all(0),
@@ -48,7 +45,6 @@ class ChecklistItemWidget extends FormField<ChecklistItem> {
 
   static void _commitTaskValue(
       FormFieldState<ChecklistItem> state, String task) {
-    print("Commiting item value: $task");
     state.didChange(state.value.copyWith(task: task));
   }
 }
