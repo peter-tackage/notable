@@ -21,26 +21,28 @@ class ChecklistItemWidget extends FormField<ChecklistItem> {
     // FIXME Still want to prevent the cursor from disappearing when submitting last
 
     return Padding(
-        padding: EdgeInsets.all(0),
-        child: Row(children: <Widget>[
-          Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: Checkbox(
-                  value: state.value.isDone,
-                  onChanged: (isDone) => _commitIsDoneChange(state, isDone))),
-          Expanded(
-              child: TextField(
-            //   textInputAction: state.value.isEmpty()
-            //       ? TextInputAction.next
-            //      : TextInputAction.done,
-            onChanged: (text) => _commitTaskValue(state, text),
-            controller: TextEditingController(text: state.value.task),
-            onSubmitted: onSubmit,
-            autofocus: isFocused,
-            decoration:
-                InputDecoration(border: InputBorder.none, hintText: 'Task...'),
-          )),
-        ]));
+            padding: EdgeInsets.all(0),
+            child: Row(children: <Widget>[
+              Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: Checkbox(
+                      value: state.value.isDone,
+                      onChanged: (isDone) =>
+                          _commitIsDoneChange(state, isDone))),
+              Expanded(
+                  child: TextField(
+                //   textInputAction: state.value.isEmpty()
+                //       ? TextInputAction.next
+                //      : TextInputAction.done,
+                onChanged: (text) => _commitTaskValue(state, text),
+                controller: TextEditingController(text: state.value.task),
+                onSubmitted: onSubmit,
+                autofocus: isFocused,
+                maxLines: 1,
+                decoration: InputDecoration(
+                    border: InputBorder.none, hintText: 'Task...'),
+              )),
+            ]));
   }
 
   static void _commitIsDoneChange(
