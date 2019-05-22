@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notable/bloc/notes/notes.dart';
 import 'package:notable/model/checklist.dart';
 import 'package:notable/model/text_note.dart';
+import 'package:notable/screen/checklist_note_screen.dart';
 import 'package:notable/screen/text_note_screen.dart';
 
 import 'checklist_note_item.dart';
@@ -29,19 +30,28 @@ class NotesPage extends StatelessWidget {
 
   Widget _buildNoteList(BuildContext context, List<Checklist> checklists) =>
       ListView.builder(
-        itemBuilder: (BuildContext context, int index) =>
-            ChecklistNoteItem(checklist: checklists[index], onTap: () => {}),
+        itemBuilder: (BuildContext context, int index) => ChecklistNoteItem(
+            checklist: checklists[index],
+            onTap: () => _openChecklist(context, checklists[index])),
         // TODO Handle hetrogeneous types
         //  child: NoteItemWidget(
         //      notes[index], () => _openNote(context, notes[index]))),
         itemCount: checklists.length,
       );
 
-  void _openNote(BuildContext context, TextNote note) {
+  void _openTextNote(BuildContext context, TextNote note) {
     Navigator.push(
       context,
       MaterialPageRoute(
           builder: (context) => AddEditTextNoteScreen(id: note.id)),
+    );
+  }
+
+  void _openChecklist(BuildContext context, Checklist checklist) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => AddEditChecklistNoteScreen(id: checklist.id)),
     );
   }
 

@@ -18,6 +18,8 @@ class ChecklistItemWidget extends FormField<ChecklistItem> {
   static Widget _createFormBuilder(FormFieldState<ChecklistItem> state,
       bool isFocused, Function(String task) onSubmit) {
     // FIXME Problem with editing existing values, cursor position.
+    // FIXME Still want to prevent the cursor from disappearing when submitting last
+
     return Padding(
         padding: EdgeInsets.all(0),
         child: Row(children: <Widget>[
@@ -28,6 +30,9 @@ class ChecklistItemWidget extends FormField<ChecklistItem> {
                   onChanged: (isDone) => _commitIsDoneChange(state, isDone))),
           Expanded(
               child: TextField(
+            //   textInputAction: state.value.isEmpty()
+            //       ? TextInputAction.next
+            //      : TextInputAction.done,
             onChanged: (text) => _commitTaskValue(state, text),
             controller: TextEditingController(text: state.value.task),
             onSubmitted: onSubmit,
