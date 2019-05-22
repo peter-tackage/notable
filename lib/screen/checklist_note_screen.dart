@@ -29,8 +29,6 @@ class _AddEditChecklistNoteScreenState
 
   @override
   Widget build(BuildContext context) {
-    print("Building Checklist");
-
     return Scaffold(
         appBar: AppBar(
             title: Text("Checklist"),
@@ -51,12 +49,7 @@ class _AddEditChecklistNoteScreenState
             child: BlocBuilder(
                 bloc: _checklistBloc,
                 builder: (BuildContext context, ChecklistState state) {
-                  print("BlocBuilder ChecklistState is $state");
-
                   if (state is ChecklistLoaded) {
-                    print(
-                        "BlocBuilder Checklist item: ${state.checklist.title}");
-
                     return Form(
                         key: _formKey,
                         child: Column(children: <Widget>[
@@ -80,7 +73,7 @@ class _AddEditChecklistNoteScreenState
                               ]),
                         ]));
                   } else {
-                    return Text("State is: $state");
+                    return Center(child: CircularProgressIndicator());
                   }
                 })),
         floatingActionButton: FloatingActionButton(
