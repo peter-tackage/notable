@@ -13,7 +13,7 @@ import 'package:notable/widget/note_item.dart';
 
 import 'checklist_note_item.dart';
 
-class NotesPage extends StatelessWidget {
+class AllNotesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<FeedEvent, FeedState>(
@@ -50,21 +50,18 @@ class NotesPage extends StatelessWidget {
     }
   }
 
-  void _openTextNote(BuildContext context, TextNote note) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => AddEditTextNoteScreen(id: note.id)),
-    );
-  }
+  void _openTextNote(BuildContext context, TextNote note) => Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => AddEditTextNoteScreen(id: note.id)),
+      );
 
-  void _openChecklist(BuildContext context, Checklist checklist) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => AddEditChecklistNoteScreen(id: checklist.id)),
-    );
-  }
+  void _openChecklist(BuildContext context, Checklist checklist) =>
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => AddEditChecklistNoteScreen(id: checklist.id)),
+      );
 
   Widget _buildEmptyNoteList(BuildContext context) =>
       Center(child: Text("You don't have any notes"));

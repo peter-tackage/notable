@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notable/bloc/notes/notes.dart';
+import 'package:notable/entity/entity.dart';
 import 'package:notable/model/text_note.dart';
 
 class AddEditTextNoteScreen extends StatefulWidget {
@@ -24,7 +25,7 @@ class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
   @override
   void initState() {
     super.initState();
-    _notesBloc = BlocProvider.of<NotesBloc>(context);
+    _notesBloc = BlocProvider.of<NotesBloc<TextNote, NoteEntity>>(context);
   }
 
   @override
@@ -45,10 +46,6 @@ class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
             child: BlocBuilder(
                 bloc: _notesBloc,
                 builder: (BuildContext context, NotesState state) {
-                  _note = (state as NotesLoaded).notes.firstWhere(
-                      (note) => note.id == widget.id,
-                      orElse: () => null) as TextNote;
-
                   return Form(
                       key: _formKey,
                       child: Column(children: <Widget>[
