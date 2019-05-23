@@ -46,7 +46,7 @@ class NotesPage extends StatelessWidget {
       return ChecklistNoteItem(
           checklist: note, onTap: () => _openChecklist(context, note));
     } else {
-      throw Exception("Unsupported type: $note");
+      throw Exception("Unsupported Note type: $note");
     }
   }
 

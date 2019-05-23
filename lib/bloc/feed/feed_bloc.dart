@@ -52,6 +52,7 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
     if (event is TextNotesLoaded) {
       if (currentState is FeedLoaded) {
         List<BaseNote> updated = List.from(currentState.feed);
+        updated.removeWhere((note) => note is TextNote);
         updated.addAll(event.textNotes);
         yield (FeedLoaded(updated));
       } else {
@@ -65,6 +66,7 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
     if (event is ChecklistsLoaded) {
       if (currentState is FeedLoaded) {
         List<BaseNote> updated = List.from(currentState.feed);
+        updated.removeWhere((note) => note is Checklist);
         updated.addAll(event.checklists);
         yield (FeedLoaded(updated));
       } else {
