@@ -39,7 +39,7 @@ class _AddEditChecklistNoteScreenState
                 ? null
                 : <Widget>[
                     PopupMenuButton(
-                        onSelected: (value) => _handleMenuItemSelection,
+                        onSelected: _handleMenuItemSelection,
                         itemBuilder: (context) => [
                               PopupMenuItem(
                                 value: "delete",
@@ -137,12 +137,15 @@ class _AddEditChecklistNoteScreenState
   //
 
   _handleMenuItemSelection(value) {
+    print("_handleMenuItemSelection");
     if (value == "delete") {
       _deleteNote();
     }
   }
 
   _deleteNote() {
+    print("_deleteNote: ${widget.id}");
+
     if (widget.id != null) {
       _checklistBloc.dispatch(DeleteChecklist());
       Navigator.pop(context);

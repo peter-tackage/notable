@@ -17,10 +17,14 @@ class ChecklistNoteItem extends StatelessWidget {
           child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(checklist.title.isNotEmpty ? checklist.title : 'Untitled'),
+                checklist.title.isNotEmpty
+                    ? Text(checklist.title)
+                    : SizedBox.shrink(),
                 Column(
                     children: checklist.items.map(_createItemWidget).toList()),
-                Divider(),
+                checklist.title.isNotEmpty && checklist.items.isNotEmpty
+                    ? Divider()
+                    : SizedBox.shrink(),
                 Text(checklist.updatedDate.toIso8601String())
               ])),
       onTap: onTap,

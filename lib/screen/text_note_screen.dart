@@ -32,7 +32,7 @@ class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
     return Scaffold(
         appBar: AppBar(title: Text("Note"), actions: <Widget>[
           PopupMenuButton(
-              onSelected: (value) => _handleMenuItemSelection,
+              onSelected: _handleMenuItemSelection,
               itemBuilder: (context) => [
                     PopupMenuItem(
                       value: "delete",

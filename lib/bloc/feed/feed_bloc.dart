@@ -47,31 +47,42 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
     }
   }
 
+  //
+  // FIXME This implementation is a bit bad.
+  // - Too much effort to update (remove + add)
+  // - Don't want to keep them separate, when merge because then Widget needs to
+  // do too much work.
+  //
+
   Stream<FeedState> _mapTextNotesLoadedEventToState(
       FeedState currentState, FeedEvent event) async* {
     if (event is TextNotesLoaded) {
+      List<BaseNote> notes;
+
       if (currentState is FeedLoaded) {
-        List<BaseNote> updated = List.from(currentState.feed);
-        updated.removeWhere((note) => note is TextNote);
-        updated.addAll(event.textNotes);
-        yield (FeedLoaded(updated));
+        notes = List.from(currentState.feed);
+        notes.removeWhere((note) => note is TextNote);
+        notes.addAll(event.textNotes);
       } else {
-        yield (FeedLoaded(event.textNotes));
+        notes = event.textNotes;
       }
+      yield (FeedLoaded(notes));
     }
   }
 
   Stream<FeedState> _mapChecklistsLoadedEventToState(
       FeedState currentState, FeedEvent event) async* {
     if (event is ChecklistsLoaded) {
+      List<BaseNote> notes;
+
       if (currentState is FeedLoaded) {
-        List<BaseNote> updated = List.from(currentState.feed);
-        updated.removeWhere((note) => note is Checklist);
-        updated.addAll(event.checklists);
-        yield (FeedLoaded(updated));
+        notes = List.from(currentState.feed);
+        notes.removeWhere((note) => note is Checklist);
+        notes.addAll(event.checklists);
       } else {
-        yield (FeedLoaded(event.checklists));
+        notes = event.checklists;
       }
+      yield (FeedLoaded(notes));
     }
   }
 
