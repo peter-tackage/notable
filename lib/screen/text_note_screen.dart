@@ -18,8 +18,8 @@ class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
   static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   NotesBloc _notesBloc;
-  TextNote _note;
 
+  TextNote _note;
   String _updatedTitle;
   String _updatedText;
 
@@ -47,39 +47,47 @@ class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
             child: BlocBuilder(
                 bloc: _notesBloc,
                 builder: (BuildContext context, NotesState state) {
-                  return Form(
-                      key: _formKey,
-                      child: Column(children: <Widget>[
-                        Padding(
-                            padding: EdgeInsets.only(bottom: 4),
-                            child: TextFormField(
-                                onSaved: _titleChanged,
-                                initialValue: _note?.title ?? '',
-                                decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: 'Title...'),
-                                maxLines: 1,
-                                autofocus: true)),
-                        Expanded(
-                            child: Padding(
-                                padding: EdgeInsets.only(bottom: 8),
-                                child: TextFormField(
-                                    onSaved: _textContentChanged,
-                                    initialValue: _note?.text,
-                                    decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        hintText: 'Enter your note...'),
-                                    maxLines: null,
-                                    keyboardType: TextInputType.multiline))),
-                        Divider(),
-                        Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Text(_note == null
-                                  ? "Unsaved"
-                                  : 'Edited: ${_note.updatedDate}')
-                            ]),
-                      ]));
+                  if (state is NotesLoaded) {
+                    _note = state.notes.firstWhere(
+                        (note) => note.id == widget.id,
+                        orElse: () => TextNote('', List<Label>(), ''));
+
+                    return Form(
+                        key: _formKey,
+                        child: Column(children: <Widget>[
+                          Padding(
+                              padding: EdgeInsets.only(bottom: 4),
+                              child: TextFormField(
+                                  onSaved: _titleChanged,
+                                  initialValue: _updatedTitle ?? _note.title,
+                                  decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      hintText: 'Title...'),
+                                  maxLines: 1,
+                                  autofocus: true)),
+                          Expanded(
+                              child: Padding(
+                                  padding: EdgeInsets.only(bottom: 8),
+                                  child: TextFormField(
+                                      onSaved: _textContentChanged,
+                                      initialValue: _updatedText ?? _note.text,
+                                      decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                          hintText: 'Enter your note...'),
+                                      maxLines: null,
+                                      keyboardType: TextInputType.multiline))),
+                          Divider(),
+                          Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Text(_note.id == null
+                                    ? "Unsaved"
+                                    : 'Edited: ${_note.updatedDate}')
+                              ]),
+                        ]));
+                  } else {
+                    return Center(child: CircularProgressIndicator());
+                  }
                 })),
         floatingActionButton: FloatingActionButton(
           onPressed: _saveNote,
@@ -102,7 +110,6 @@ class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
 
   _saveNote() {
     if (_formKey.currentState.validate()) {
-      // Let the form perform its own validation
       _formKey.currentState.save();
     }
 
