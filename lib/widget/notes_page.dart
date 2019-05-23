@@ -32,7 +32,7 @@ class NotesPage extends StatelessWidget {
 
   Widget _buildLoadingIndicator() => Center(child: CircularProgressIndicator());
 
-  Widget _buildNoteList(BuildContext context, List<Checklist> checklists) =>
+  Widget _buildNoteList(BuildContext context, List<BaseNote> checklists) =>
       ListView.builder(
         itemBuilder: (BuildContext context, int index) =>
             _buildItem(checklists[index], index, context),
