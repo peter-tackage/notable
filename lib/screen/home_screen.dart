@@ -1,23 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:notable/bloc/feed/feed_bloc.dart';
+import 'package:notable/bloc/feed/feed_events.dart';
 import 'package:notable/bloc/notes/notes.dart';
+import 'package:notable/entity/entity.dart';
+import 'package:notable/model/checklist.dart';
+import 'package:notable/model/text_note.dart';
 import 'package:notable/screen/checklist_note_screen.dart';
 import 'package:notable/widget/notes_page.dart';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen({Key key, this.title, @required this.onInit}) : super(key: key);
+  HomeScreen({Key key, this.title}) : super(key: key);
 
   final String title;
 
   // Function used to initial the data source
-  final void Function() onInit;
+  // final void Function() onInit;
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  NotesBloc _notesBloc; // TODO this will become the combined notes bloc
+  FeedBloc _feedBloc;
 
   void _openNoteEditor(BuildContext context) => Navigator.push(
       context,
@@ -26,9 +31,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    _notesBloc = BlocProvider.of<NotesBloc>(context);
-    widget.onInit();
     super.initState();
+
+    _feedBloc = FeedBloc(
+        textNotesBloc:
+            BlocProvider.of<NotesBloc<TextNote, NoteEntity>>(context),
+        checklistNotesBloc:
+            BlocProvider.of<NotesBloc<Checklist, ChecklistEntity>>(context));
+    _feedBloc.dispatch(LoadFeed());
+    //  widget.onInit();
   }
 
   @override
@@ -39,8 +50,8 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Padding(
           padding: EdgeInsets.all(16),
-          child: BlocProvider<NotesBloc>(
-            bloc: _notesBloc,
+          child: BlocProvider<FeedBloc>(
+            bloc: _feedBloc,
             child: NotesPage(),
           )),
       floatingActionButton: FloatingActionButton(

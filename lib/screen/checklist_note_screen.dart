@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notable/bloc/checklist/checklist.dart';
 import 'package:notable/bloc/notes/notes.dart';
+import 'package:notable/entity/entity.dart';
 import 'package:notable/model/checklist.dart';
 import 'package:notable/widget/checklist_item.dart';
 
@@ -24,7 +25,9 @@ class _AddEditChecklistNoteScreenState
   void initState() {
     super.initState();
     _checklistBloc = ChecklistBloc(
-        notesBloc: BlocProvider.of<NotesBloc>(context), id: widget.id);
+        notesBloc:
+            BlocProvider.of<NotesBloc<Checklist, ChecklistEntity>>(context),
+        id: widget.id);
   }
 
   @override
@@ -119,7 +122,6 @@ class _AddEditChecklistNoteScreenState
   //
 
   _saveNote() {
-    print("Validating checklist with id: ${widget.id}");
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
     }

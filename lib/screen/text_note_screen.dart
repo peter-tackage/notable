@@ -103,7 +103,6 @@ class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
   //
 
   _saveNote() {
-    print("Attemting saving");
     if (_formKey.currentState.validate()) {
       // Let the form perform its own validation
       _formKey.currentState.save();
@@ -131,7 +130,6 @@ class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
   }
 
   void _deleteNote() {
-    print("Deleting: $widget.id");
     if (widget.id != null) {
       _notesBloc.dispatch(DeleteNote(widget.id));
       Navigator.pop(context);

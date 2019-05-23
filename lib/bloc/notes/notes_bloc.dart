@@ -19,6 +19,7 @@ class NotesBloc<M extends BaseNote, E extends BaseNoteEntity>
 
   @override
   Stream<NotesState> mapEventToState(NotesEvent event) async* {
+    print("BaseNoteBloc has event: $event");
     if (event is LoadNotes) {
       yield* _mapLoadNotesEventToState(currentState, event);
     } else if (event is DeleteNote) {

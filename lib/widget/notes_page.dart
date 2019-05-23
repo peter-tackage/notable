@@ -1,26 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:notable/bloc/notes/notes.dart';
+import 'package:notable/bloc/feed/feed_bloc.dart';
+import 'package:notable/bloc/feed/feed_events.dart';
+import 'package:notable/bloc/feed/feed_states.dart';
+import 'package:notable/model/base_note.dart';
 import 'package:notable/model/checklist.dart';
 import 'package:notable/model/text_note.dart';
 import 'package:notable/screen/checklist_note_screen.dart';
 import 'package:notable/screen/text_note_screen.dart';
+import 'package:notable/widget/note_item.dart';
 
 import 'checklist_note_item.dart';
 
 class NotesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<NotesEvent, NotesState>(
-      bloc: BlocProvider.of<NotesBloc>(context),
-      builder: (BuildContext context, NotesState notesState) {
-        if (notesState is NotesLoading) {
+    return BlocBuilder<FeedEvent, FeedState>(
+      bloc: BlocProvider.of<FeedBloc>(context),
+      builder: (BuildContext context, FeedState feedState) {
+        if (feedState is FeedLoading) {
           return _buildLoadingIndicator();
-        } else if (notesState is NotesLoaded) {
-          return notesState.notes.isEmpty
+        } else if (feedState is FeedLoaded) {
+          return feedState.feed.isEmpty
               ? _buildEmptyNoteList(context)
-              : _buildNoteList(context, notesState.notes);
+              : _buildNoteList(context, feedState.feed);
         }
       },
     );
@@ -30,14 +34,21 @@ class NotesPage extends StatelessWidget {
 
   Widget _buildNoteList(BuildContext context, List<Checklist> checklists) =>
       ListView.builder(
-        itemBuilder: (BuildContext context, int index) => ChecklistNoteItem(
-            checklist: checklists[index],
-            onTap: () => _openChecklist(context, checklists[index])),
-        // TODO Handle hetrogeneous types
-        //  child: NoteItemWidget(
-        //      notes[index], () => _openNote(context, notes[index]))),
+        itemBuilder: (BuildContext context, int index) =>
+            _buildItem(checklists[index], index, context),
         itemCount: checklists.length,
       );
+
+  Widget _buildItem(BaseNote note, int index, BuildContext context) {
+    if (note is TextNote) {
+      return NoteItemWidget(note, () => _openTextNote(context, note));
+    } else if (note is Checklist) {
+      return ChecklistNoteItem(
+          checklist: note, onTap: () => _openChecklist(context, note));
+    } else {
+      throw Exception("Unsupported type: $note");
+    }
+  }
 
   void _openTextNote(BuildContext context, TextNote note) {
     Navigator.push(
