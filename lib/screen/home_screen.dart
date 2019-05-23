@@ -4,7 +4,7 @@ import 'package:notable/bloc/feed/feed_bloc.dart';
 import 'package:notable/bloc/feed/feed_events.dart';
 import 'package:notable/screen/checklist_note_screen.dart';
 import 'package:notable/screen/text_note_screen.dart';
-import 'package:notable/widget/notes_page.dart';
+import 'package:notable/widget/all_notes_page.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key, this.title}) : super(key: key);

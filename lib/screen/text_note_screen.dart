@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notable/bloc/notes/notes.dart';
 import 'package:notable/entity/entity.dart';
+import 'package:notable/model/base_note.dart';
 import 'package:notable/model/text_note.dart';
 
 class AddEditTextNoteScreen extends StatefulWidget {
@@ -107,12 +108,13 @@ class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
 
     // Create or update
     if (widget.id == null) {
-      _notesBloc
-          .dispatch(AddNote(TextNote(_updatedTitle, new List(), _updatedText)));
+      _notesBloc.dispatch(
+          AddNote(TextNote(_updatedTitle, List<Label>(), _updatedText)));
     } else {
       _notesBloc
           .dispatch(UpdateNote(_note.copyWith(_updatedTitle, _updatedText)));
     }
+
     Navigator.pop(context);
   }
 
