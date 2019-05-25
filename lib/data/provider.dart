@@ -8,11 +8,10 @@ class Provider<T extends BaseEntity> {
   final Map<String, T> _store = Map();
   final EntityStorage<T> storage;
 
-  Provider({@required this.storage}) {
-    _init();
-  }
+  Provider({@required this.storage});
 
   Future<List<T>> getAll() async {
+    await _readFromStorage();
     return _store.values.toList();
   }
 
@@ -24,8 +23,9 @@ class Provider<T extends BaseEntity> {
     assert(entity.id == null); // shouldn't already have an id
 
     T initializedEntity = entity.onPersist();
-    final result = _store.putIfAbsent(initializedEntity.id, () => initializedEntity);
-    writeToStorage();
+    final result =
+        _store.putIfAbsent(initializedEntity.id, () => initializedEntity);
+    await _writeToStorage();
     return result;
   }
 
@@ -34,27 +34,23 @@ class Provider<T extends BaseEntity> {
 
     // Replace the item entirely
     final result = _store.update(entity.id, (__) => entity.onUpdate());
-    writeToStorage();
+    await _writeToStorage();
     return result;
   }
 
   Future<T> delete(String id) async {
     final result = _store.remove(id);
-    writeToStorage();
+    await _writeToStorage();
     return result;
   }
 
-  void _init() async {
-    await addFromStorage();
-  }
-
-  Future addFromStorage() async {
+  Future _readFromStorage() async {
     List<T> entities = await storage.readAll();
     _store.addAll(
         Map.fromEntries(entities.map((entity) => MapEntry(entity.id, entity))));
   }
 
-  Future writeToStorage() async {
+  Future _writeToStorage() async {
     await storage.writeAll(_store.values.toList());
   }
 }
