@@ -1,4 +1,5 @@
 import 'package:notable/data/base_entity.dart';
+import 'package:notable/entity/label_entity.dart';
 
 abstract class BaseNoteEntity extends BaseEntity {
   final String title;
@@ -6,11 +7,5 @@ abstract class BaseNoteEntity extends BaseEntity {
 
   BaseNoteEntity(this.title, this.labels, {id, updatedDate})
       : super(id: id, updatedDate: updatedDate);
-}
 
-class LabelEntity {
-  final String name;
-  final String color;
-
-  LabelEntity(this.name, this.color);
 }

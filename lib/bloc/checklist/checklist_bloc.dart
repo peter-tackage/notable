@@ -7,8 +7,9 @@ import 'package:notable/bloc/checklist/checklist_states.dart';
 import 'package:notable/bloc/notes/notes.dart';
 import 'package:notable/bloc/notes/notes_states.dart';
 import 'package:notable/entity/entity.dart';
-import 'package:notable/model/base_note.dart';
 import 'package:notable/model/checklist.dart';
+import 'package:notable/model/label.dart';
+
 
 class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
   final NotesBloc<Checklist, ChecklistEntity> notesBloc;

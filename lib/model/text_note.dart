@@ -9,12 +9,9 @@ class TextNote extends BaseNote {
       : super(title, labels, id: id, updatedDate: createdDate);
 
   @override
-  String toString() {
-    return 'Note: $title';
-  }
+  String toString() => 'Note: $title';
 
-  TextNote copyWith(String title, String text) {
-    return TextNote(title, this.labels, text,
-        id: this.id, createdDate: this.updatedDate);
-  }
+  TextNote copyWith(String title, String text) =>
+      TextNote(title, this.labels, text,
+          id: this.id, createdDate: this.updatedDate);
 }

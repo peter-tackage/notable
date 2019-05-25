@@ -19,4 +19,5 @@ abstract class BaseEntity {
     this.updatedDate = DateTime.now();
     return this;
   }
+
 }

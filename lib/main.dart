@@ -6,12 +6,16 @@ import 'package:notable/bloc/feed/feed_bloc.dart';
 import 'package:notable/bloc/notes/notes.dart';
 import 'package:notable/data/provider.dart';
 import 'package:notable/data/repository.dart';
+import 'package:notable/entity/checklist_entity_mapper.dart';
 import 'package:notable/entity/entity.dart';
+import 'package:notable/entity/note_entity_mapper.dart';
 import 'package:notable/model/checklist.dart';
 import 'package:notable/model/checklist_note_mapper.dart';
 import 'package:notable/model/text_note.dart';
 import 'package:notable/model/text_note_mapper.dart';
 import 'package:notable/screen/home_screen.dart';
+import 'package:notable/storage/file_storage.dart';
+import 'package:path_provider/path_provider.dart';
 
 void main() {
   BlocSupervisor().delegate = SimpleBlocDelegate();
@@ -21,13 +25,20 @@ void main() {
 class NotableApp extends StatelessWidget {
   final NotesBloc<TextNote, NoteEntity> _textNoteBloc =
       NotesBloc<TextNote, NoteEntity>(
-          noteRepository: Repository<NoteEntity>(Provider<NoteEntity>()),
+          noteRepository: Repository<NoteEntity>(Provider<NoteEntity>(
+              storage: FileStorage(
+                  tag: "textNotes",
+                  getDirectory: () => getApplicationDocumentsDirectory(),
+                  entityMapper: NoteEntityMapper()))),
           mapper: TextNoteMapper());
 
   final NotesBloc<Checklist, ChecklistEntity> _checklistBloc =
       NotesBloc<Checklist, ChecklistEntity>(
-          noteRepository:
-              Repository<ChecklistEntity>(Provider<ChecklistEntity>()),
+          noteRepository: Repository<ChecklistEntity>(Provider<ChecklistEntity>(
+              storage: FileStorage(
+                  tag: "checklists",
+                  getDirectory: () => getApplicationDocumentsDirectory(),
+                  entityMapper: ChecklistEntityMapper()))),
           mapper: ChecklistMapper());
 
   @override

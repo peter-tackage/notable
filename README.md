@@ -2,6 +2,11 @@
 
 A simple note taking app written using Flutter.
 
+## Generating `json_serialization` files
+
+Run the command: `flutter packages pub run build_runner build'
+`
+
 ## Acknowledgements
 
 Brought to you by the power of the [Chilicorn](http://spiceprogram.org/chilicorn-history/) and the [Futurice Open Source Program](http://spiceprogram.org/).

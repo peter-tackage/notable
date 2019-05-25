@@ -1,5 +1,6 @@
 import 'package:meta/meta.dart';
-import 'package:notable/entity/entity.dart';
+
+import 'label.dart';
 
 @immutable
 abstract class BaseNote {
@@ -11,15 +12,3 @@ abstract class BaseNote {
   BaseNote(this.title, this.labels, {this.id, this.updatedDate});
 }
 
-@immutable
-class Label {
-  final String name;
-  final String color;
-
-  Label(this.name, this.color);
-
-  LabelEntity toEntity() => LabelEntity(name, color);
-
-  static Label fromEntity(LabelEntity entity) =>
-      Label(entity.name, entity.color);
-}
