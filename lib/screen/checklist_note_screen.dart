@@ -104,23 +104,33 @@ class _AddEditChecklistNoteScreenState
   // Checklist builder
   //
 
-  Widget _buildChecklist(BuildContext context, Checklist checklist) =>
-      ListView.builder(
-          itemBuilder: (BuildContext context, int index) {
-            int lastIndex = checklist.items.length - 1;
-            bool isLastItem = index == lastIndex;
-            bool isFocused = isLastItem && checklist.items.length > 1;
+  Widget _buildChecklist(BuildContext context, Checklist checklist) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          ListView.builder(
+              shrinkWrap: true,
+              itemBuilder: (BuildContext context, int index) {
+                int lastIndex = checklist.items.length - 1;
+                bool isLastItem = index == lastIndex;
+                bool isFocused = isLastItem && checklist.items.length > 1;
 
-            return Container(
-                child: EditChecklistItem(
-                    onSaved: (isDone, task) =>
-                        _setItem(index, ChecklistItem(task, isDone)),
-                    initialValue: checklist.items[index],
-                    //  isFocused: isFocused,
-                    onSubmit: (item) =>
-                        _handleSubmitItem(item, index, isLastItem)));
-          },
-          itemCount: checklist.items.length);
+                return Container(
+                    child: EditChecklistItem(
+                        onSaved: (isDone, task) =>
+                            _setItem(index, ChecklistItem(task, isDone)),
+                        initialValue: checklist.items[index],
+                        //  isFocused: isFocused,
+                        onSubmit: (item) =>
+                            _handleSubmitItem(item, index, isLastItem)));
+              },
+              itemCount: checklist.items.length),
+          FlatButton.icon(
+              icon: Icon(Icons.add, color: Colors.grey),
+              label: Text("Add item", style: TextStyle(color: Colors.grey)),
+              onPressed: () =>
+                  _checklistBloc.dispatch(AddEmptyChecklistItem())),
+        ],
+      );
 
   // TODO Also must not allow submit when the item is empty, because even the act of submitting causes the focus to be lost.
 
@@ -177,5 +187,4 @@ class _AddEditChecklistNoteScreenState
   _setItem(int index, ChecklistItem item) {
     _checklistBloc.dispatch(SetChecklistItem(index, item));
   }
-
 }
