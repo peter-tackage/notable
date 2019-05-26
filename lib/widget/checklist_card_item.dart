@@ -20,15 +20,13 @@ class ChecklistNoteItem extends StatelessWidget {
   }
 
   Widget _createItemWidget(ChecklistItem item) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(children: <Widget>[
-        Expanded(
-            child: item.isDone
-                ? Text(item.task,
-                    style: TextStyle(decoration: TextDecoration.lineThrough))
-                : Text(item.task))
-      ]),
-    );
+    return Row(children: <Widget>[
+      Checkbox(value: item.isDone, onChanged: null),
+      Expanded(
+          child: item.isDone
+              ? Text(item.task,
+                  style: TextStyle(decoration: TextDecoration.lineThrough))
+              : Text(item.task))
+    ]);
   }
 }

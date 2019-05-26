@@ -20,11 +20,7 @@ class NoteCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 note.title.isNotEmpty
-                    ? Text(note.title,
-                        style: DefaultTextStyle.of(context)
-                            .style
-                            .apply(fontSizeFactor: 1.5)
-                            .apply(fontWeightDelta: 2))
+                    ? Text(note.title, style: Theme.of(context).textTheme.title)
                     : SizedBox.shrink(),
                 Divider(),
                 child,

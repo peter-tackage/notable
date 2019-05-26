@@ -9,9 +9,9 @@ import 'package:notable/model/checklist.dart';
 import 'package:notable/model/text_note.dart';
 import 'package:notable/screen/checklist_note_screen.dart';
 import 'package:notable/screen/text_note_screen.dart';
-import 'package:notable/widget/note_item.dart';
+import 'package:notable/widget/note_card_item.dart';
 
-import 'checklist_note_item.dart';
+import 'checklist_card_item.dart';
 
 class AllNotesPage extends StatelessWidget {
   @override

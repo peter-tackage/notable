@@ -4,7 +4,7 @@ import 'package:notable/bloc/checklist/checklist.dart';
 import 'package:notable/bloc/notes/notes.dart';
 import 'package:notable/entity/entity.dart';
 import 'package:notable/model/checklist.dart';
-import 'package:notable/widget/checklist_item.dart';
+import 'package:notable/widget/edit_checklist_item.dart';
 
 class AddEditChecklistNoteScreen extends StatefulWidget {
   final String id;
@@ -98,7 +98,7 @@ class _AddEditChecklistNoteScreenState
             bool isFocused = isLastItem && checklist.items.length > 1;
 
             return Container(
-                child: ChecklistItemWidget(
+                child: EditChecklistItem(
                     onSaved: (isDone, task) =>
                         _setItem(index, ChecklistItem(task, isDone)),
                     initialValue: checklist.items[index],

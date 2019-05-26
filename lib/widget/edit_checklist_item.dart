@@ -2,22 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:notable/model/checklist.dart';
 
-class ChecklistItemWidget extends StatefulWidget {
+class EditChecklistItem extends StatefulWidget {
   final ChecklistItem initialValue;
   final Function(bool isDone, String task) onSaved;
   final Function(ChecklistItem item) onSubmit;
 
-  ChecklistItemWidget({this.initialValue, this.onSaved, this.onSubmit});
+  EditChecklistItem({this.initialValue, this.onSaved, this.onSubmit});
 
   @override
   State<StatefulWidget> createState() =>
-      _ChecklistItemWidgetState(initialValue.isDone);
+      _EditChecklistItemState(initialValue.isDone);
 }
 
-class _ChecklistItemWidgetState extends State<ChecklistItemWidget> {
+class _EditChecklistItemState extends State<EditChecklistItem> {
   bool _isDone;
 
-  _ChecklistItemWidgetState(this._isDone);
+  _EditChecklistItemState(this._isDone);
 
   @override
   Widget build(BuildContext context) {
