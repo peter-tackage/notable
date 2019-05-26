@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:intl/intl.dart';
 import 'package:notable/model/base_note.dart';
 
 class NoteCard extends StatelessWidget {
@@ -24,20 +23,6 @@ class NoteCard extends StatelessWidget {
                     : SizedBox.shrink(),
                 Divider(),
                 child,
-                Divider(),
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: Icon(Icons.edit, color: Colors.grey),
-                      ),
-                      Text(
-                        DateFormat("HH:mm dd/MM/yyyy").format(note.updatedDate),
-                        style: TextStyle(color: Colors.grey),
-                      )
-                    ])
               ])),
       onTap: onTap,
     ));

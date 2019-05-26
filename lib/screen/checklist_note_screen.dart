@@ -68,25 +68,24 @@ class _AddEditChecklistNoteScreenState
                               autofocus: true),
                           Expanded(
                               child: _buildChecklist(context, state.checklist)),
-                          Divider(),
-                          Padding(
-                              padding: EdgeInsets.all(4),
+                          Divider(height: 0),
+                          Container(
+                              padding:
+                                  EdgeInsets.only(left: 4, top: 12, bottom: 12),
                               child: Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: <Widget>[
-                                    Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 8.0),
-                                        child: Icon(Icons.edit,
-                                            color: Colors.grey)),
                                     Text(
                                       state.checklist.updatedDate == null
                                           ? "Unsaved"
-                                          : DateFormat("HH:mm dd/MM/yyyy")
-                                              .format(
-                                                  state.checklist.updatedDate),
-                                      style: TextStyle(color: Colors.grey),
+                                          : "Saved " +
+                                              DateFormat("HH:mm dd/MM/yyyy")
+                                                  .format(state
+                                                      .checklist.updatedDate),
+                                      style: TextStyle(
+                                          color: Colors.grey,
+                                          fontStyle: FontStyle.italic),
                                     )
                                   ]))
                         ]));

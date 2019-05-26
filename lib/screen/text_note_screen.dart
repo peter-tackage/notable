@@ -76,24 +76,23 @@ class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
                                           hintText: 'Enter your note...'),
                                       maxLines: null,
                                       keyboardType: TextInputType.multiline))),
-                          Divider(),
-                          Padding(
-                              padding: EdgeInsets.all(4),
+                          Divider(height: 0),
+                          Container(
+                              padding:
+                                  EdgeInsets.only(left: 4, top: 12, bottom: 12),
                               child: Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: <Widget>[
-                                    Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 8.0),
-                                        child: Icon(Icons.edit,
-                                            color: Colors.grey)),
                                     Text(
                                       _note.updatedDate == null
                                           ? "Unsaved"
-                                          : DateFormat("HH:mm dd/MM/yyyy")
-                                              .format(_note.updatedDate),
-                                      style: TextStyle(color: Colors.grey),
+                                          : "Saved " +
+                                              DateFormat("HH:mm dd/MM/yyyy")
+                                                  .format(_note.updatedDate),
+                                      style: TextStyle(
+                                          color: Colors.grey,
+                                          fontStyle: FontStyle.italic),
                                     )
                                   ]))
                         ]));
