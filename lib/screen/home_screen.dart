@@ -39,9 +39,10 @@ class _HomeScreenState extends State<HomeScreen> {
               child: AllNotesPage(),
             )),
             Container(
+              height: 64,
               color: Colors.grey[200],
               child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     IconButton(
                         tooltip: "Create note",
