@@ -40,14 +40,18 @@ class _HomeScreenState extends State<HomeScreen> {
             )),
             Container(
               color: Colors.grey[200],
-              child: ButtonBar(children: <Widget>[
-                IconButton(
-                    onPressed: () => _openTextNoteEditor(context),
-                    icon: Icon(Icons.note_add)),
-                IconButton(
-                    onPressed: () => _openChecklistEditor(context),
-                    icon: Icon(Icons.playlist_add))
-              ]),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    IconButton(
+                        tooltip: "Create note",
+                        onPressed: () => _openTextNoteEditor(context),
+                        icon: Icon(Icons.format_quote)),
+                    IconButton(
+                        tooltip: "Create checklist",
+                        onPressed: () => _openChecklistEditor(context),
+                        icon: Icon(Icons.format_list_bulleted))
+                  ]),
             ),
           ],
         ));

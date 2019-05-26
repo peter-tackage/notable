@@ -31,7 +31,7 @@ class NoteCard extends StatelessWidget {
                     children: <Widget>[
                       Padding(
                         padding: const EdgeInsets.only(right: 8.0),
-                        child: Icon(Icons.create, color: Colors.grey),
+                        child: Icon(Icons.edit, color: Colors.grey),
                       ),
                       Text(
                         DateFormat("HH:mm dd/MM/yyyy").format(note.updatedDate),

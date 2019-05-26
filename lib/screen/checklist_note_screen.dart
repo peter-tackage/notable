@@ -78,7 +78,7 @@ class _AddEditChecklistNoteScreenState
                                     Padding(
                                         padding:
                                             const EdgeInsets.only(right: 8.0),
-                                        child: Icon(Icons.create,
+                                        child: Icon(Icons.edit,
                                             color: Colors.grey)),
                                     Text(
                                       state.checklist.updatedDate == null
