@@ -79,7 +79,7 @@ class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
                           Divider(height: 0),
                           Container(
                               padding:
-                                  EdgeInsets.only(left: 4, top: 12, bottom: 12),
+                                  EdgeInsets.only(left: 4, top: 14, bottom: 14),
                               child: Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.center,
