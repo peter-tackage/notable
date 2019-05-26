@@ -5,6 +5,14 @@ import 'package:meta/meta.dart';
 import 'package:notable/data/base_entity.dart';
 import 'package:notable/storage/entity_mapper.dart';
 
+abstract class EntityStorage<E> {
+  Future<File> writeAll(List<E> entities);
+
+  Future<List<E>> readAll();
+
+  Future<FileSystemEntity> clean();
+}
+
 class FileStorage<E extends BaseEntity> implements EntityStorage<E> {
   final String tag;
   final Future<Directory> Function() getDirectory;
@@ -30,8 +38,8 @@ class FileStorage<E extends BaseEntity> implements EntityStorage<E> {
     if (await file.exists()) {
       final string = await file.readAsString();
       final json = jsonDecode(string);
-      return List.from(json
-          .map((entityJson) => entityMapper.toEntity(entityJson)));
+      return List.from(
+          json.map((entityJson) => entityMapper.toEntity(entityJson)));
     } else {
       return List<E>();
     }
@@ -48,12 +56,4 @@ class FileStorage<E extends BaseEntity> implements EntityStorage<E> {
 
     return file.delete();
   }
-}
-
-abstract class EntityStorage<E> {
-  Future<File> writeAll(List<E> entities);
-
-  Future<List<E>> readAll();
-
-  Future<FileSystemEntity> clean();
 }
