@@ -52,6 +52,7 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
   // - Too much effort to update (remove + add)
   // - Don't want to keep them separate, when merge because then Widget needs to
   // do too much work.
+  // - Perhaps keep it as a map, and merge on accessing?
   //
 
   Stream<FeedState> _mapTextNotesLoadedEventToState(

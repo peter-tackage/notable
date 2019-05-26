@@ -18,7 +18,10 @@ class ChecklistNoteItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 checklist.title.isNotEmpty
-                    ? Text(checklist.title)
+                    ? Text(checklist.title,
+                    style: DefaultTextStyle.of(context)
+                        .style
+                        .apply(fontSizeFactor: 2.0))
                     : SizedBox.shrink(),
                 Column(
                     children: checklist.items.map(_createItemWidget).toList()),
