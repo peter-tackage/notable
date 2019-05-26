@@ -21,7 +21,10 @@ class ChecklistNoteItem extends StatelessWidget {
 
   Widget _createItemWidget(ChecklistItem item) {
     return Row(children: <Widget>[
-      Checkbox(value: item.isDone, onChanged: null),
+      Checkbox(
+          value: item.isDone,
+          activeColor: Colors.green[100],
+          onChanged: _doNothing),
       Expanded(
           child: item.isDone
               ? Text(item.task,
@@ -29,4 +32,6 @@ class ChecklistNoteItem extends StatelessWidget {
               : Text(item.task))
     ]);
   }
+
+  void _doNothing(bool value) {}
 }
