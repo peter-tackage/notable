@@ -22,7 +22,8 @@ class NoteCard extends StatelessWidget {
                     ? Text(note.title, style: Theme.of(context).textTheme.title)
                     : SizedBox.shrink(),
                 Divider(),
-                child,
+                ConstrainedBox(
+                    constraints: BoxConstraints(maxHeight: 250), child: child),
               ])),
       onTap: onTap,
     ));

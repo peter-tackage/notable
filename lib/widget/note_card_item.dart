@@ -4,11 +4,11 @@ import 'package:notable/model/text_note.dart';
 
 import 'note_card.dart';
 
-class NoteItemWidget extends StatelessWidget {
+class NoteCardItem extends StatelessWidget {
   final TextNote note;
   final Function onTap;
 
-  NoteItemWidget(this.note, this.onTap);
+  NoteCardItem(this.note, this.onTap);
 
   @override
   Widget build(BuildContext context) {

@@ -41,9 +41,9 @@ class AllNotesPage extends StatelessWidget {
 
   Widget _buildItem(BaseNote note, int index, BuildContext context) {
     if (note is TextNote) {
-      return NoteItemWidget(note, () => _openTextNote(context, note));
+      return NoteCardItem(note, () => _openTextNote(context, note));
     } else if (note is Checklist) {
-      return ChecklistNoteItem(
+      return ChecklistNoteCardItem(
           checklist: note, onTap: () => _openChecklist(context, note));
     } else {
       throw Exception("Unsupported Note type: $note");

@@ -4,17 +4,19 @@ import 'package:notable/model/checklist.dart';
 
 import 'note_card.dart';
 
-class ChecklistNoteItem extends StatelessWidget {
+class ChecklistNoteCardItem extends StatelessWidget {
   final Checklist checklist;
   final Function onTap;
 
-  ChecklistNoteItem({this.checklist, this.onTap});
+  ChecklistNoteCardItem({this.checklist, this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return NoteCard(
       note: checklist,
-      child: Column(children: checklist.items.map(_createItemWidget).toList()),
+      child: ListView(
+          shrinkWrap: true,
+          children: checklist.items.map(_createItemWidget).toList()),
       onTap: onTap,
     );
   }
@@ -32,5 +34,4 @@ class ChecklistNoteItem extends StatelessWidget {
               : Text(item.task))
     ]);
   }
-
 }
