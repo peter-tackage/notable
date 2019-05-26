@@ -177,4 +177,5 @@ class _AddEditChecklistNoteScreenState
   _setItem(int index, ChecklistItem item) {
     _checklistBloc.dispatch(SetChecklistItem(index, item));
   }
+
 }

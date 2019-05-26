@@ -7,7 +7,10 @@ class EditChecklistItem extends StatefulWidget {
   final Function(bool isDone, String task) onSaved;
   final Function(ChecklistItem item) onSubmit;
 
-  EditChecklistItem({this.initialValue, this.onSaved, this.onSubmit});
+  EditChecklistItem(
+      {@required this.initialValue,
+      @required this.onSaved,
+      @required this.onSubmit});
 
   @override
   State<StatefulWidget> createState() =>
@@ -31,9 +34,9 @@ class _EditChecklistItemState extends State<EditChecklistItem> {
                   onChanged: (isDone) => setState(() => _isDone = isDone))),
           Expanded(
               child: TextFormField(
-            //   textInputAction: state.value.isEmpty()
-            //       ? TextInputAction.next
-            //      : TextInputAction.done,
+//               textInputAction: state.value.isEmpty()
+//                   ? TextInputAction.next
+//                  : TextInputAction.done,
             initialValue: widget.initialValue.task,
             onSaved: (text) => widget.onSaved(_isDone, text),
             onFieldSubmitted: (text) =>
@@ -48,4 +51,3 @@ class _EditChecklistItemState extends State<EditChecklistItem> {
 
 // FIXME Problem with editing existing values, cursor position.
 // FIXME Still want to prevent the cursor from disappearing when submitting last
-// TODO Perhap on submit could "commit" the value in the bloc and then add new row - NOT SAVING TO REPO, but a saving of the form

@@ -48,6 +48,8 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
       yield* _mapAddEmptyChecklistItemEventToState(currentState, event);
     } else if (event is UpdateChecklistTitle) {
       yield* _mapUpdateChecklistTitleEventToState(currentState, event);
+    } else if (event is RemoveChecklistItem) {
+      yield* _mapRemoveChecklistItemEventToState(currentState, event);
     }
   }
 
@@ -94,6 +96,18 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
       if (currentState is ChecklistLoaded) {
         List<ChecklistItem> items = List.from(currentState.checklist.items);
         items[event.index] = event.item;
+        yield ChecklistLoaded(currentState.checklist.copyWith(items: items));
+      }
+    }
+  }
+
+  Stream<ChecklistState> _mapRemoveChecklistItemEventToState(
+      ChecklistState currentState, ChecklistEvent event) async* {
+    if (event is RemoveChecklistItem) {
+      // Add the item to existing note
+      if (currentState is ChecklistLoaded) {
+        List<ChecklistItem> items = List.from(currentState.checklist.items);
+        items.removeAt(event.index);
         yield ChecklistLoaded(currentState.checklist.copyWith(items: items));
       }
     }
