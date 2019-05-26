@@ -28,6 +28,10 @@ class NoteCard extends StatelessWidget {
                 Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: Icon(Icons.create, color: Colors.grey),
+                      ),
                       Text(
                         DateFormat("HH:mm dd/MM/yyyy").format(note.updatedDate),
                         style: TextStyle(color: Colors.grey),
