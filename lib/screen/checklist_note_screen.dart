@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:notable/bloc/checklist/checklist.dart';
 import 'package:notable/bloc/notes/notes.dart';
 import 'package:notable/entity/entity.dart';
@@ -59,6 +60,7 @@ class _AddEditChecklistNoteScreenState
                           TextFormField(
                               onSaved: _titleChanged,
                               initialValue: state.checklist.title,
+                              style: Theme.of(context).textTheme.title,
                               decoration: InputDecoration(
                                   border: InputBorder.none,
                                   hintText: 'Title...'),
@@ -67,13 +69,26 @@ class _AddEditChecklistNoteScreenState
                           Expanded(
                               child: _buildChecklist(context, state.checklist)),
                           Divider(),
-                          Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Text(state.checklist.id == null
-                                    ? "Unsaved"
-                                    : 'Edited: ${state.checklist.updatedDate}')
-                              ]),
+                          Padding(
+                              padding: EdgeInsets.all(4),
+                              child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 8.0),
+                                        child: Icon(Icons.create,
+                                            color: Colors.grey)),
+                                    Text(
+                                      state.checklist.updatedDate == null
+                                          ? "Unsaved"
+                                          : DateFormat("HH:mm dd/MM/yyyy")
+                                              .format(
+                                                  state.checklist.updatedDate),
+                                      style: TextStyle(color: Colors.grey),
+                                    )
+                                  ]))
                         ]));
                   } else {
                     return Center(child: CircularProgressIndicator());

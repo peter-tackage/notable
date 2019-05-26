@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:notable/bloc/notes/notes.dart';
 import 'package:notable/entity/entity.dart';
-import 'package:notable/model/base_note.dart';
 import 'package:notable/model/label.dart';
 import 'package:notable/model/text_note.dart';
 
@@ -56,19 +56,18 @@ class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
                     return Form(
                         key: _formKey,
                         child: Column(children: <Widget>[
-                          Padding(
-                              padding: EdgeInsets.only(bottom: 4),
-                              child: TextFormField(
-                                  onSaved: _titleChanged,
-                                  initialValue: _updatedTitle ?? _note.title,
-                                  decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      hintText: 'Title...'),
-                                  maxLines: 1,
-                                  autofocus: true)),
+                          TextFormField(
+                              onSaved: _titleChanged,
+                              initialValue: _updatedTitle ?? _note.title,
+                              style: Theme.of(context).textTheme.title,
+                              decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: 'Title...'),
+                              maxLines: 1,
+                              autofocus: true),
                           Expanded(
                               child: Padding(
-                                  padding: EdgeInsets.only(bottom: 8),
+                                  padding: EdgeInsets.only(left: 8, right: 8),
                                   child: TextFormField(
                                       onSaved: _textContentChanged,
                                       initialValue: _updatedText ?? _note.text,
@@ -78,13 +77,25 @@ class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
                                       maxLines: null,
                                       keyboardType: TextInputType.multiline))),
                           Divider(),
-                          Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Text(_note.id == null
-                                    ? "Unsaved"
-                                    : 'Edited: ${_note.updatedDate}')
-                              ]),
+                          Padding(
+                              padding: EdgeInsets.all(4),
+                              child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 8.0),
+                                        child: Icon(Icons.create,
+                                            color: Colors.grey)),
+                                    Text(
+                                      _note.updatedDate == null
+                                          ? "Unsaved"
+                                          : DateFormat("HH:mm dd/MM/yyyy")
+                                              .format(_note.updatedDate),
+                                      style: TextStyle(color: Colors.grey),
+                                    )
+                                  ]))
                         ]));
                   } else {
                     return Center(child: CircularProgressIndicator());

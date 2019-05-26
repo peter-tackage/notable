@@ -27,6 +27,7 @@ class NoteCard extends StatelessWidget {
                 Divider(),
                 Row(
                     mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Padding(
                         padding: const EdgeInsets.only(right: 8.0),
