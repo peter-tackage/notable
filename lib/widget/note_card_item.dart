@@ -14,9 +14,12 @@ class NoteItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return NoteCard(
       note: note,
-      child: note.text.isNotEmpty
-          ? Text(note.text, style: TextStyle(fontStyle: FontStyle.italic))
-          : SizedBox.shrink(),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: note.text.isNotEmpty
+            ? Text(note.text, style: TextStyle(fontStyle: FontStyle.italic))
+            : SizedBox.shrink(),
+      ),
       onTap: onTap,
     );
   }
