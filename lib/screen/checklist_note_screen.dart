@@ -99,18 +99,22 @@ class _AddEditChecklistNoteScreenState
 
             return Container(
                 child: ChecklistItemWidget(
-                    onSaved: (item) => _setItem(index, item),
+                    onSaved: (isDone, task) =>
+                        _setItem(index, ChecklistItem(task, isDone)),
                     initialValue: checklist.items[index],
-                    isFocused: isFocused,
-                    onSubmit: (itemText) =>
-                        _moveToNextItem(itemText, isLastItem)));
+                    //  isFocused: isFocused,
+                    onSubmit: (item) =>
+                        _handleSubmitItem(item, index, isLastItem)));
           },
           itemCount: checklist.items.length);
 
   // TODO Also must not allow submit when the item is empty, because even the act of submitting causes the focus to be lost.
 
-  void _moveToNextItem(String itemText, bool isLastItem) {
-    if (isLastItem && itemText.trim().isNotEmpty) {
+  void _handleSubmitItem(ChecklistItem item, int index, bool isLastItem) {
+    // Update the Bloc state with the submitted item
+    _checklistBloc.dispatch(SetChecklistItem(index, item));
+
+    if (isLastItem && item.task.isNotEmpty) {
       _checklistBloc.dispatch(AddEmptyChecklistItem());
     } else {
       // TODO Focus next

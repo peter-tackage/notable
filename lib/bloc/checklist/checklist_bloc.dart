@@ -10,7 +10,6 @@ import 'package:notable/entity/entity.dart';
 import 'package:notable/model/checklist.dart';
 import 'package:notable/model/label.dart';
 
-
 class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
   final NotesBloc<Checklist, ChecklistEntity> notesBloc;
   final String id;
@@ -93,7 +92,7 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
     if (event is SetChecklistItem) {
       // Add the item to existing note
       if (currentState is ChecklistLoaded) {
-        List<ChecklistItem> items = currentState.checklist.items;
+        List<ChecklistItem> items = List.from(currentState.checklist.items);
         items[event.index] = event.item;
         yield ChecklistLoaded(currentState.checklist.copyWith(items: items));
       }
@@ -105,7 +104,7 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
     if (event is AddEmptyChecklistItem) {
       // Add the item to existing note
       if (currentState is ChecklistLoaded) {
-        List<ChecklistItem> items = currentState.checklist.items;
+        List<ChecklistItem> items = List.from(currentState.checklist.items);
         items.add(ChecklistItem.empty());
         yield ChecklistLoaded(currentState.checklist.copyWith(items: items));
       }
