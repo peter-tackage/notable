@@ -55,8 +55,8 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
   // - Perhaps keep it as a map, and merge on accessing?
   //
 
-  Stream<FeedState> _mapTextNotesLoadedEventToState(
-      FeedState currentState, FeedEvent event) async* {
+  Stream<FeedState> _mapTextNotesLoadedEventToState(FeedState currentState,
+      FeedEvent event) async* {
     if (event is TextNotesLoaded) {
       List<BaseNote> notes;
 
@@ -67,12 +67,15 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
       } else {
         notes = event.textNotes;
       }
+
+      notes.sort((a, b) => b.updatedDate.compareTo(a.updatedDate));
+
       yield (FeedLoaded(notes));
     }
   }
 
-  Stream<FeedState> _mapChecklistsLoadedEventToState(
-      FeedState currentState, FeedEvent event) async* {
+  Stream<FeedState> _mapChecklistsLoadedEventToState(FeedState currentState,
+      FeedEvent event) async* {
     if (event is ChecklistsLoaded) {
       List<BaseNote> notes;
 
@@ -83,6 +86,9 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
       } else {
         notes = event.checklists;
       }
+
+      notes.sort((a, b) => b.updatedDate.compareTo(a.updatedDate));
+
       yield (FeedLoaded(notes));
     }
   }
