@@ -15,6 +15,7 @@ class ChecklistNoteCardItem extends StatelessWidget {
     return NoteCard(
       note: checklist,
       child: ListView(
+          physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           children: checklist.items.map(_createItemWidget).toList()),
       onTap: onTap,

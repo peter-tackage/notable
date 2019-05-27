@@ -7,8 +7,8 @@ import 'package:notable/bloc/feed/feed_states.dart';
 import 'package:notable/model/base_note.dart';
 import 'package:notable/model/checklist.dart';
 import 'package:notable/model/text_note.dart';
-import 'package:notable/screen/checklist_note_screen.dart';
-import 'package:notable/screen/text_note_screen.dart';
+import 'package:notable/screen/addedit_checklist_note_screen.dart';
+import 'package:notable/screen/addedit_text_note_screen.dart';
 import 'package:notable/widget/note_card_item.dart';
 
 import 'checklist_card_item.dart';
