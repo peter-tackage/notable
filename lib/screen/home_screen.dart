@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notable/bloc/feed/feed_bloc.dart';
 import 'package:notable/bloc/feed/feed_events.dart';
 import 'package:notable/screen/addedit_checklist_note_screen.dart';
+import 'package:notable/screen/addedit_drawing_note_screen.dart';
 import 'package:notable/screen/addedit_text_note_screen.dart';
 import 'package:notable/widget/all_notes_page.dart';
 
@@ -45,6 +46,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     IconButton(
+                        tooltip: "Create drawing",
+                        onPressed: () => _openDrawingNoteEditor(context),
+                        icon: Icon(Icons.brush)),
+                    IconButton(
                         tooltip: "Create note",
                         onPressed: () => _openTextNoteEditor(context),
                         icon: Icon(Icons.format_quote)),
@@ -65,4 +70,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _openTextNoteEditor(BuildContext context) => Navigator.push(context,
       MaterialPageRoute(builder: (context) => AddEditTextNoteScreen(id: null)));
+
+  void _openDrawingNoteEditor(BuildContext context) => Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => AddEditDrawingNoteScreen(id: null)));
 }
