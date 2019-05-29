@@ -7,10 +7,14 @@ import 'package:notable/bloc/notes/notes.dart';
 import 'package:notable/data/provider.dart';
 import 'package:notable/data/repository.dart';
 import 'package:notable/entity/checklist_entity_mapper.dart';
+import 'package:notable/entity/drawing_entity.dart';
+import 'package:notable/entity/drawing_entity_mapper.dart';
 import 'package:notable/entity/entity.dart';
 import 'package:notable/entity/note_entity_mapper.dart';
 import 'package:notable/model/checklist.dart';
 import 'package:notable/model/checklist_note_mapper.dart';
+import 'package:notable/model/drawing.dart';
+import 'package:notable/model/drawing_note_mapper.dart';
 import 'package:notable/model/text_note.dart';
 import 'package:notable/model/text_note_mapper.dart';
 import 'package:notable/screen/home_screen.dart';
@@ -41,6 +45,15 @@ class NotableApp extends StatelessWidget {
                   entityMapper: ChecklistEntityMapper()))),
           mapper: ChecklistMapper());
 
+  final NotesBloc<Drawing, DrawingEntity> _drawingsBloc =
+      NotesBloc<Drawing, DrawingEntity>(
+          noteRepository: Repository<DrawingEntity>(Provider<DrawingEntity>(
+              storage: FileStorage(
+                  tag: "drawings",
+                  getDirectory: () => getApplicationDocumentsDirectory(),
+                  entityMapper: DrawingEntityMapper()))),
+          mapper: DrawingMapper());
+
   @override
   Widget build(BuildContext context) {
     // FIXME  creation of the FeedBloc here like this could create new unwanted instances.
@@ -51,10 +64,12 @@ class NotableApp extends StatelessWidget {
           BlocProvider<NotesBloc<TextNote, NoteEntity>>(bloc: _textNoteBloc),
           BlocProvider<NotesBloc<Checklist, ChecklistEntity>>(
               bloc: _checklistBloc),
+          BlocProvider<NotesBloc<Drawing, DrawingEntity>>(bloc: _drawingsBloc),
           BlocProvider<FeedBloc>(
               bloc: FeedBloc(
                   textNotesBloc: _textNoteBloc,
-                  checklistNotesBloc: _checklistBloc))
+                  checklistNotesBloc: _checklistBloc,
+                  drawingNotesBloc: _drawingsBloc))
         ],
         child: MaterialApp(
           title: 'Notable',

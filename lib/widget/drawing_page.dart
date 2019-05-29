@@ -1,166 +1,122 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:notable/bloc/drawing/drawing_bloc.dart';
+import 'package:notable/bloc/drawing/drawing_events.dart';
+import 'package:notable/bloc/drawing/drawing_states.dart';
+import 'package:notable/bloc/drawing_config/drawing_config_bloc.dart';
+import 'package:notable/bloc/drawing_config/drawing_config_events.dart';
+import 'package:notable/bloc/drawing_config/drawing_config_states.dart';
+import 'package:notable/model/drawing.dart';
+import 'package:notable/model/drawing_config.dart';
 
 class DrawingPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _DrawingPageState();
 }
 
-abstract class Action {
-  void draw(Canvas canvas);
-}
-
-class TextAction extends Action {
-  final String text;
-  final int sizeFactor;
-  final Color color;
-  final Offset offset;
-
-  TextAction(this.text, this.sizeFactor, this.color, this.offset) : super();
-
-  @override
-  void draw(Canvas canvas) {
-    TextPainter painter = TextPainter(text: TextSpan(text: text));
-    painter.paint(canvas, offset);
-  }
-}
-
-class BrushAction extends Action {
-  final List<Offset> points;
-  final Color color;
-
-  BrushAction(this.points, this.color, instrument) : super();
-
-  @override
-  void draw(Canvas canvas) {
-    Paint paint = Paint();
-    paint.strokeWidth = 5;
-    paint.color = color;
-
-    for (int index = 0; index < points.length - 1; index++) {
-      Offset from = points[index];
-      Offset to = points[index + 1];
-
-      if (from != null && to != null) {
-        canvas.drawLine(from, to, paint);
-      }
-    }
-  }
-}
-
-enum Tool { Brush, Text, Eraser }
-
 class _DrawingPageState extends State<DrawingPage> {
-  List<Action> actions = List();
-  int lastIndex = -1;
+  DrawingBloc _drawingBloc;
+  DrawingConfigBloc _drawingConfigBloc;
 
-  Tool instrument = Tool.Brush;
-  Color color = Colors.blue;
+  @override
+  void initState() {
+    _drawingBloc = BlocProvider.of<DrawingBloc>(context);
+    _drawingConfigBloc = BlocProvider.of<DrawingConfigBloc>(context);
+  }
 
   @override
   Widget build(BuildContext context) {
-    print("BUILD: until $lastIndex");
-    return Column(
-      children: <Widget>[
-        Expanded(
-            child: ConstrainedBox(
-                constraints: const BoxConstraints.expand(),
-                child: GestureDetector(
-                    onHorizontalDragStart: _toolDown,
-                    onHorizontalDragUpdate: _toolMoved,
-                    onHorizontalDragEnd: _toolUp,
-                    child: CustomPaint(
-                      painter: NotePainter(_drawable(actions, lastIndex)),
-                    )))),
-        Container(
-          height: 64,
-          color: Colors.grey[200],
-          child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                IconButton(
-                    tooltip: "Brush",
-                    onPressed: () => {},
-                    icon: Icon(Icons.brush)),
-
-//                IconButton(
-//                    tooltip: "Text",
-//                    onPressed: () => {},
-//                    icon: Icon(Icons.text_fields)),
-                IconButton(
-                    tooltip: "Color",
-                    onPressed: () => {},
-                    icon: Icon(Icons.palette)),
-                IconButton(
-                    tooltip: "Undo",
-                    onPressed: lastIndex < 0 ? null : _undo,
-                    icon: Icon(Icons.undo)),
-                IconButton(
-                    tooltip: "Redo",
-                    onPressed: lastIndex == actions.length - 1 ? null : _redo,
-                    icon: Icon(Icons.redo))
-              ]),
-        ),
-      ],
-    );
+    return BlocBuilder<DrawingConfigEvent, DrawingConfigState>(
+        bloc: _drawingConfigBloc,
+        builder: (BuildContext context, DrawingConfigState configState) =>
+            BlocBuilder<DrawingEvent, DrawingState>(
+                bloc: BlocProvider.of<DrawingBloc>(context),
+                builder: (BuildContext context, DrawingState drawingState) =>
+                    Column(
+                      children: <Widget>[
+                        Expanded(
+                            child: ConstrainedBox(
+                                constraints: const BoxConstraints.expand(),
+                                child: canvasBody(drawingState, configState))),
+                        _buildToolbar(context, drawingState)
+                      ],
+                    )));
   }
 
-  static List<Action> _drawable(List<Action> actions, int lastIndex) {
-    List<Action> todo = actions.sublist(0, lastIndex + 1);
-    return todo;
+  Widget canvasBody(DrawingState drawingState, DrawingConfigState configState) {
+    if (drawingState is DrawingLoading) {
+      return _buildLoadingIndicator();
+    } else if (drawingState is DrawingLoaded &&
+        configState is DrawingConfigLoaded) {
+      return GestureDetector(
+          onHorizontalDragStart: (details) =>
+              _onToolDown(details, configState.drawingConfig),
+          onHorizontalDragUpdate: _onToolMoved,
+          onHorizontalDragEnd: _onToolUp,
+          child: CustomPaint(
+            painter: NotePainter(drawingState.drawing.displayedActions),
+          ));
+    }
   }
 
-  void _toolDown(DragStartDetails details) {
-    print("_penDown: lastIndex: ${lastIndex}, length: ${actions.length}");
-    // Configure new action
-    setState(() {
-      Action action =
-          BrushAction(<Offset>[details.globalPosition], color, instrument);
-
-      //
-      if (lastIndex >= 0 && lastIndex != actions.length - 1) {
-        print("#### DISCARDING ITEMS");
-        actions = actions.sublist(0, lastIndex + 1);
-      }
-      actions.add(action);
-      lastIndex = actions.length - 1;
-
-      print("AFTER: lastIndex: ${lastIndex}, length: ${actions.length}");
-    });
+  // TODO Perform could be better if we didn't update this when only new points
+  // were added. That change doesn't affect this.
+  Widget _buildToolbar(BuildContext context, DrawingState state) {
+    return Container(
+        height: 64,
+        color: Colors.grey[200],
+        child:
+            Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
+          IconButton(
+              tooltip: "Brush", onPressed: () => {}, icon: Icon(Icons.brush)),
+          IconButton(
+              tooltip: "Color", onPressed: () => {}, icon: Icon(Icons.palette)),
+          IconButton(
+              tooltip: "Undo",
+              onPressed: state is DrawingLoaded && state.drawing.canUndo
+                  ? _undo
+                  : null,
+              icon: Icon(Icons.undo)),
+          IconButton(
+              tooltip: "Redo",
+              onPressed: state is DrawingLoaded && state.drawing.canRedo
+                  ? _redo
+                  : null,
+              icon: Icon(Icons.redo)),
+          IconButton(
+              tooltip: "Clear",
+              onPressed: state is DrawingLoaded && state.drawing.canUndo
+                  ? _clear
+                  : null,
+              icon: Icon(Icons.clear_all))
+        ]));
   }
 
-  void _toolMoved(DragUpdateDetails details) {
-    // Add to currentAction
-    setState(() {
-      Action action = actions[lastIndex];
+  _undo() => _drawingBloc.dispatch(Undo());
 
-      if (action is BrushAction) {
-        action.points.add(details.globalPosition);
-      }
-    });
+  _redo() => _drawingBloc.dispatch(Redo());
+
+  _clear() => _drawingBloc.dispatch(ClearDrawing());
+
+  _onToolDown(DragStartDetails details, DrawingConfig config) {
+    print("###################3");
+    _drawingBloc.dispatch(StartDrawing(config, details.globalPosition));
   }
 
-  void _toolUp(DragEndDetails details) {
-    print("_penUp");
+  _onToolMoved(DragUpdateDetails details) {
+    _drawingBloc.dispatch(UpdateDrawing(details.globalPosition));
   }
 
-  void _undo() {
-    setState(() {
-      print("Undoing");
-      lastIndex--;
-    });
+  _onToolUp(DragEndDetails details) {
+    _drawingBloc.dispatch(EndDrawing());
   }
 
-  void _redo() {
-    setState(() {
-      print("Redoing");
-      lastIndex++;
-    });
-  }
+  Widget _buildLoadingIndicator() => Center(child: CircularProgressIndicator());
 }
 
 class NotePainter extends CustomPainter {
-  final List<Action> actions;
+  final List<DrawingAction> actions;
 
   NotePainter(this.actions);
 

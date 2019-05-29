@@ -6,19 +6,26 @@ import 'package:notable/bloc/feed/feed_events.dart';
 import 'package:notable/bloc/feed/feed_states.dart';
 import 'package:notable/bloc/notes/notes.dart';
 import 'package:notable/bloc/notes/notes_states.dart';
+import 'package:notable/entity/drawing_entity.dart';
 import 'package:notable/entity/entity.dart';
 import 'package:notable/model/base_note.dart';
 import 'package:notable/model/checklist.dart';
+import 'package:notable/model/drawing.dart';
 import 'package:notable/model/text_note.dart';
 
 class FeedBloc extends Bloc<FeedEvent, FeedState> {
   final NotesBloc<TextNote, NoteEntity> textNotesBloc;
   final NotesBloc<Checklist, ChecklistEntity> checklistNotesBloc;
+  final NotesBloc<Drawing, DrawingEntity> drawingNotesBloc;
 
   StreamSubscription textNotesSubscription;
   StreamSubscription checklistsSubscription;
+  StreamSubscription drawingsSubscription;
 
-  FeedBloc({@required this.textNotesBloc, @required this.checklistNotesBloc}) {
+  FeedBloc(
+      {@required this.textNotesBloc,
+      @required this.checklistNotesBloc,
+      @required this.drawingNotesBloc}) {
     textNotesSubscription = textNotesBloc.state.listen((state) {
       if (state is NotesLoaded) {
         dispatch(TextNotesLoaded(state.notes));
@@ -27,6 +34,12 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
     checklistsSubscription = checklistNotesBloc.state.listen((state) {
       if (state is NotesLoaded) {
         dispatch(ChecklistsLoaded(state.notes));
+      }
+    });
+    drawingsSubscription = drawingNotesBloc.state.listen((state) {
+      if (state is NotesLoaded) {
+        // FIXME implement
+        //  dispatch((state.notes));
       }
     });
   }
@@ -40,6 +53,7 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
     if (event is LoadFeed) {
       textNotesBloc.dispatch(LoadNotes());
       checklistNotesBloc.dispatch(LoadNotes());
+      drawingNotesBloc.dispatch(LoadNotes());
     } else if (event is TextNotesLoaded) {
       yield* _mapTextNotesLoadedEventToState(currentState, event);
     } else if (event is ChecklistsLoaded) {
@@ -55,8 +69,8 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
   // - Perhaps keep it as a map, and merge on accessing?
   //
 
-  Stream<FeedState> _mapTextNotesLoadedEventToState(FeedState currentState,
-      FeedEvent event) async* {
+  Stream<FeedState> _mapTextNotesLoadedEventToState(
+      FeedState currentState, FeedEvent event) async* {
     if (event is TextNotesLoaded) {
       List<BaseNote> notes;
 
@@ -74,8 +88,8 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
     }
   }
 
-  Stream<FeedState> _mapChecklistsLoadedEventToState(FeedState currentState,
-      FeedEvent event) async* {
+  Stream<FeedState> _mapChecklistsLoadedEventToState(
+      FeedState currentState, FeedEvent event) async* {
     if (event is ChecklistsLoaded) {
       List<BaseNote> notes;
 
