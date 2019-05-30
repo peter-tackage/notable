@@ -13,8 +13,6 @@ class Drawing extends BaseNote {
   final bool canUndo;
   final bool canRedo;
 
-  // TODO Assertions for last index and actions
-
   Drawing(title, labels, this.allActions, this.currentIndex, {id, updatedDate})
       : this.displayedActions = _selectDisplayed(allActions, currentIndex),
         this.canUndo = _canUndo(allActions, currentIndex),
@@ -63,6 +61,10 @@ class BrushAction extends DrawingAction {
   void draw(Canvas canvas) {
     Paint paint = Paint();
     paint.strokeWidth = 5;
+    final style = PaintingStyle.stroke;
+    paint.style = style;
+    paint.strokeCap = StrokeCap.round;
+    paint.strokeJoin = StrokeJoin.round;
     paint.color = color;
     paint.isAntiAlias = true;
 
