@@ -71,10 +71,7 @@ class BrushAction extends DrawingAction {
     for (int index = 0; index < points.length - 1; index++) {
       Offset from = points[index];
       Offset to = points[index + 1];
-
-      if (from != null && to != null) {
-        canvas.drawLine(from, to, paint);
-      }
+      canvas.drawLine(from, to, paint);
     }
   }
 

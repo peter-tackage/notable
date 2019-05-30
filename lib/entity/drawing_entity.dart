@@ -20,10 +20,24 @@ class DrawingEntity extends BaseNoteEntity {
 }
 
 @JsonSerializable()
-class DrawingActionEntity {
-  // TODO Add these here
+class PointEntity {
+  final double x;
+  final double y;
 
-  DrawingActionEntity();
+  PointEntity(this.x, this.y);
+
+  factory PointEntity.fromJson(Map<String, dynamic> json) =>
+      _$PointEntityFromJson(json);
+
+  Map<String, dynamic> toJson() => _$PointEntityToJson(this);
+}
+
+@JsonSerializable()
+class DrawingActionEntity {
+  final List<PointEntity> points;
+  final int color;
+
+  DrawingActionEntity(this.points, this.color);
 
   factory DrawingActionEntity.fromJson(Map<String, dynamic> json) =>
       _$DrawingActionEntityFromJson(json);

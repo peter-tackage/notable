@@ -7,8 +7,9 @@ import 'package:notable/bloc/drawing/drawing_states.dart';
 import 'package:notable/bloc/drawing_config/drawing_config_bloc.dart';
 import 'package:notable/bloc/drawing_config/drawing_config_events.dart';
 import 'package:notable/bloc/drawing_config/drawing_config_states.dart';
-import 'package:notable/model/drawing.dart';
 import 'package:notable/model/drawing_config.dart';
+
+import 'note_painter.dart';
 
 class DrawingPage extends StatefulWidget {
   @override
@@ -21,6 +22,7 @@ class _DrawingPageState extends State<DrawingPage> {
 
   @override
   void initState() {
+    super.initState();
     _drawingBloc = BlocProvider.of<DrawingBloc>(context);
     _drawingConfigBloc = BlocProvider.of<DrawingConfigBloc>(context);
   }
@@ -57,6 +59,8 @@ class _DrawingPageState extends State<DrawingPage> {
           child: CustomPaint(
             painter: NotePainter(drawingState.drawing.displayedActions),
           ));
+    } else {
+      throw Exception("Unsupported State: $drawingState $configState");
     }
   }
 
@@ -99,35 +103,13 @@ class _DrawingPageState extends State<DrawingPage> {
 
   _clear() => _drawingBloc.dispatch(ClearDrawing());
 
-  _onToolDown(DragStartDetails details, DrawingConfig config) {
-    print("###################3");
-    _drawingBloc.dispatch(StartDrawing(config, details.globalPosition));
-  }
+  _onToolDown(DragStartDetails details, DrawingConfig config) =>
+      _drawingBloc.dispatch(StartDrawing(config, details.globalPosition));
 
-  _onToolMoved(DragUpdateDetails details) {
-    _drawingBloc.dispatch(UpdateDrawing(details.globalPosition));
-  }
+  _onToolMoved(DragUpdateDetails details) =>
+      _drawingBloc.dispatch(UpdateDrawing(details.globalPosition));
 
-  _onToolUp(DragEndDetails details) {
-    _drawingBloc.dispatch(EndDrawing());
-  }
+  _onToolUp(DragEndDetails details) => _drawingBloc.dispatch(EndDrawing());
 
   Widget _buildLoadingIndicator() => Center(child: CircularProgressIndicator());
-}
-
-class NotePainter extends CustomPainter {
-  final List<DrawingAction> actions;
-
-  NotePainter(this.actions);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    actions.forEach((action) => action.draw(canvas));
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    // TODO: implement shouldRepaint
-    return true;
-  }
 }

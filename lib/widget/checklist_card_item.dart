@@ -27,7 +27,7 @@ class ChecklistNoteCardItem extends StatelessWidget {
       Checkbox(
           value: item.isDone,
           activeColor: Colors.green[100],
-          onChanged: (__) => onTap()), // don't actual toggle the state.
+          onChanged: (__) => onTap()), // don't actually toggle the state.
       Expanded(
           child: item.isDone
               ? Text(item.task,

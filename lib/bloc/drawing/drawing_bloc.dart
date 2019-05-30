@@ -92,7 +92,8 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
     if (currentState is DrawingLoaded) {
       // Move the index so that it's still undo-able.
       yield DrawingLoaded(
-          drawing: currentState.drawing.copyWith(currentIndex: -1));
+          drawing:
+              currentState.drawing.copyWith(actions: List(), currentIndex: -1));
     }
   }
 

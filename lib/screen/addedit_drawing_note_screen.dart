@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notable/bloc/drawing/drawing_bloc.dart';
+import 'package:notable/bloc/drawing/drawing_events.dart';
 import 'package:notable/bloc/drawing_config/drawing_config_bloc.dart';
 import 'package:notable/bloc/notes/notes.dart';
 import 'package:notable/entity/drawing_entity.dart';
@@ -17,14 +18,14 @@ class AddEditDrawingNoteScreen extends StatefulWidget {
 }
 
 class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
+  NotesBloc<Drawing, DrawingEntity> _notesBloc;
   DrawingBloc _drawingBloc;
   DrawingConfigBloc _drawingConfigBloc;
 
   @override
   void initState() {
     super.initState();
-    NotesBloc<Drawing, DrawingEntity> _notesBloc =
-        BlocProvider.of<NotesBloc<Drawing, DrawingEntity>>(context);
+    _notesBloc = BlocProvider.of<NotesBloc<Drawing, DrawingEntity>>(context);
 
     _drawingBloc = DrawingBloc(notesBloc: _notesBloc, id: widget.id);
     _drawingConfigBloc = DrawingConfigBloc();
@@ -33,7 +34,20 @@ class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("Drawing")),
+        appBar: AppBar(
+            title: Text("Drawing"),
+            actions: widget.id == null
+                ? null
+                : <Widget>[
+                    PopupMenuButton(
+                        onSelected: _handleMenuItemSelection,
+                        itemBuilder: (context) => [
+                              PopupMenuItem(
+                                value: "delete",
+                                child: Text("Delete"),
+                              )
+                            ])
+                  ]),
         body: BlocProviderTree(blocProviders: [
           BlocProvider<DrawingBloc>(bloc: _drawingBloc),
           BlocProvider<DrawingConfigBloc>(bloc: _drawingConfigBloc)
@@ -45,5 +59,21 @@ class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
         ));
   }
 
-  void _saveDrawing() {}
+  void _saveDrawing() {
+    _drawingBloc.dispatch(SaveDrawing());
+    Navigator.pop(context);
+  }
+
+  void _handleMenuItemSelection(value) {
+    if (value == "delete") {
+      _deleteNote();
+    }
+  }
+
+  void _deleteNote() {
+    if (widget.id != null) {
+      _notesBloc.dispatch(DeleteNote(widget.id));
+      Navigator.pop(context);
+    }
+  }
 }

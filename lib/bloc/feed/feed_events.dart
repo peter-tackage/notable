@@ -34,3 +34,13 @@ class ChecklistsLoaded extends FeedEvent {
   @override
   String toString() => 'ChecklistsLoaded';
 }
+
+@immutable
+class DrawingsLoaded extends FeedEvent {
+  final List<BaseNote> drawings;
+
+  DrawingsLoaded(this.drawings) : super([drawings]);
+
+  @override
+  String toString() => 'DrawingsLoaded';
+}

@@ -38,8 +38,7 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
     });
     drawingsSubscription = drawingNotesBloc.state.listen((state) {
       if (state is NotesLoaded) {
-        // FIXME implement
-        //  dispatch((state.notes));
+        dispatch(DrawingsLoaded(state.notes));
       }
     });
   }
@@ -58,6 +57,8 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
       yield* _mapTextNotesLoadedEventToState(currentState, event);
     } else if (event is ChecklistsLoaded) {
       yield* _mapChecklistsLoadedEventToState(currentState, event);
+    } else if (event is DrawingsLoaded) {
+      yield* _mapDrawingsLoadedEventToState(currentState, event);
     }
   }
 
@@ -99,6 +100,25 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
         notes.addAll(event.checklists);
       } else {
         notes = event.checklists;
+      }
+
+      notes.sort((a, b) => b.updatedDate.compareTo(a.updatedDate));
+
+      yield (FeedLoaded(notes));
+    }
+  }
+
+  Stream<FeedState> _mapDrawingsLoadedEventToState(
+      FeedState currentState, FeedEvent event) async* {
+    if (event is DrawingsLoaded) {
+      List<BaseNote> notes;
+
+      if (currentState is FeedLoaded) {
+        notes = List.from(currentState.feed);
+        notes.removeWhere((note) => note is Drawing);
+        notes.addAll(event.drawings);
+      } else {
+        notes = event.drawings;
       }
 
       notes.sort((a, b) => b.updatedDate.compareTo(a.updatedDate));
