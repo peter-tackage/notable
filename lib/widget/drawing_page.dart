@@ -39,7 +39,6 @@ class _DrawingPageState extends State<DrawingPage> {
                       children: <Widget>[
                         Expanded(
                             child: Container(
-                                color: Colors.amberAccent,
                                 child: ConstrainedBox(
                                     constraints: const BoxConstraints.expand(),
                                     child: canvasBody(
