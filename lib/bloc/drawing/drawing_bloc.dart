@@ -7,6 +7,7 @@ import 'package:notable/bloc/notes/notes.dart';
 import 'package:notable/bloc/notes/notes_states.dart';
 import 'package:notable/entity/drawing_entity.dart';
 import 'package:notable/model/drawing.dart';
+import 'package:notable/model/drawing_config.dart';
 import 'package:notable/model/label.dart';
 
 import 'drawing_events.dart';
@@ -71,6 +72,7 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
   Stream<DrawingState> _mapSaveDrawingEventToState(
       DrawingState currentState, DrawingEvent event) async* {
     if (currentState is DrawingLoaded) {
+      // TODO Should this clip the drawing's current index and the allActions?
       if (id == null) {
         notesBloc.dispatch(AddNote(currentState.drawing));
       } else {
@@ -133,9 +135,12 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
         actions = List.of(currentState.drawing.allActions);
       }
 
-      // TODO This should be based on the selected tool.
-      DrawingAction action =
-          BrushAction(<Offset>[event.offset], event.config.color);
+      DrawingAction action;
+      if (event.config.tool == Tool.Brush) {
+        action = BrushAction(<Offset>[event.offset], event.config.color);
+      } else if (event.config.tool == Tool.Eraser) {
+        action = EraserAction(<Offset>[event.offset]);
+      }
 
       actions.add(action);
       currentIndex = actions.length - 1;
@@ -166,6 +171,20 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
         Drawing updatedDrawing =
             currentState.drawing.copyWith(actions: updatedActions);
 
+        yield DrawingLoaded(drawing: updatedDrawing);
+      } else if (currentAction is EraserAction) {
+        // This updates the current action with the point associated with the
+        // interaction event.
+        List<Offset> points = List.of(currentAction.points);
+        points.add(event.offset);
+        EraserAction updatedAction = currentAction.copyWith(points);
+
+        List<DrawingAction> updatedActions =
+            List.of(currentState.drawing.allActions);
+        updatedActions[currentState.drawing.currentIndex] = updatedAction;
+
+        Drawing updatedDrawing =
+            currentState.drawing.copyWith(actions: updatedActions);
         yield DrawingLoaded(drawing: updatedDrawing);
       } else {
         throw Exception("Unsupported action type: $currentAction");

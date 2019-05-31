@@ -14,6 +14,13 @@ class DrawingConfigBloc extends Bloc<DrawingConfigEvent, DrawingConfigState> {
 
   @override
   Stream<DrawingConfigState> mapEventToState(DrawingConfigEvent event) async* {
-    print("Drawing Bloc got event: $event");
+    if (event is SelectDrawingTool) {
+      yield* _mapSelectDrawingToolEventToState(event, currentState);
+    }
+  }
+
+  Stream<DrawingConfigState> _mapSelectDrawingToolEventToState(
+      SelectDrawingTool event, DrawingConfigState currentState) async* {
+    yield DrawingConfigLoaded(DrawingConfig(tool: event.tool));
   }
 }

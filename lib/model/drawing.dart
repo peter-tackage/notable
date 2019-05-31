@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:notable/model/base_note.dart';
 
@@ -44,8 +45,6 @@ class Drawing extends BaseNote {
   }
 }
 
-enum Tool { Brush, Text, Eraser }
-
 abstract class DrawingAction {
   void draw(Canvas canvas);
 }
@@ -59,20 +58,15 @@ class BrushAction extends DrawingAction {
 
   @override
   void draw(Canvas canvas) {
-    Paint paint = Paint();
-    paint.strokeWidth = 5;
-    final style = PaintingStyle.stroke;
-    paint.style = style;
-    paint.strokeCap = StrokeCap.round;
-    paint.strokeJoin = StrokeJoin.round;
-    paint.color = color;
-    paint.isAntiAlias = true;
+    Paint paint = Paint()
+      ..strokeWidth = 5
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round
+      ..color = color
+      ..isAntiAlias = true;
 
-    for (int index = 0; index < points.length - 1; index++) {
-      Offset from = points[index];
-      Offset to = points[index + 1];
-      canvas.drawLine(from, to, paint);
-    }
+    _drawPoints(canvas, paint, points);
   }
 
   @override
@@ -81,4 +75,45 @@ class BrushAction extends DrawingAction {
   BrushAction copyWith(List<Offset> points) {
     return BrushAction(points, this.color);
   }
+}
+
+@immutable
+class EraserAction extends DrawingAction {
+  final List<Offset> points;
+
+  EraserAction(this.points) : super();
+
+  @override
+  void draw(Canvas canvas) {
+    Paint paint = Paint()
+      ..strokeWidth = 10
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round
+      ..isAntiAlias = true
+      ..color = Color(0x00000000)
+      ..blendMode = BlendMode.clear;
+
+    _drawPoints(canvas, paint, points);
+  }
+
+  @override
+  String toString() => "EraserAction: ${points.length}";
+
+  EraserAction copyWith(List<Offset> points) {
+    return EraserAction(points);
+  }
+}
+
+// TODO Move this somewhere.
+void _drawPoints(Canvas canvas, Paint paint, List<Offset> points) {
+  Path path = Path();
+  for (int index = 0; index <= points.length - 1; index++) {
+    Offset point = points[index];
+    if (index == 0) {
+      path.moveTo(point.dx, point.dy);
+    }
+    path.lineTo(point.dx, point.dy);
+  }
+  canvas.drawPath(path, paint);
 }

@@ -38,9 +38,12 @@ class _DrawingPageState extends State<DrawingPage> {
                     Column(
                       children: <Widget>[
                         Expanded(
-                            child: ConstrainedBox(
-                                constraints: const BoxConstraints.expand(),
-                                child: canvasBody(drawingState, configState))),
+                            child: Container(
+                                color: Colors.amberAccent,
+                                child: ConstrainedBox(
+                                    constraints: const BoxConstraints.expand(),
+                                    child: canvasBody(
+                                        drawingState, configState)))),
                         _buildToolbar(context, drawingState)
                       ],
                     )));
@@ -73,9 +76,15 @@ class _DrawingPageState extends State<DrawingPage> {
         child:
             Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
           IconButton(
-              tooltip: "Brush", onPressed: () => {}, icon: Icon(Icons.brush)),
+              tooltip: "Brush",
+              onPressed: _selectBrush,
+              icon: Icon(Icons.gesture)),
           IconButton(
               tooltip: "Color", onPressed: () => {}, icon: Icon(Icons.palette)),
+          IconButton(
+              tooltip: "Eraser",
+              onPressed: _selectEraser,
+              icon: Icon(Icons.indeterminate_check_box)),
           IconButton(
               tooltip: "Undo",
               onPressed: state is DrawingLoaded && state.drawing.canUndo
@@ -103,13 +112,22 @@ class _DrawingPageState extends State<DrawingPage> {
 
   _clear() => _drawingBloc.dispatch(ClearDrawing());
 
-  _onToolDown(DragStartDetails details, DrawingConfig config) =>
-      _drawingBloc.dispatch(StartDrawing(config, details.globalPosition));
+  _onToolDown(DragStartDetails details, DrawingConfig config) => _drawingBloc
+      .dispatch(StartDrawing(config, _globalToLocal(details.globalPosition)));
 
-  _onToolMoved(DragUpdateDetails details) =>
-      _drawingBloc.dispatch(UpdateDrawing(details.globalPosition));
+  _onToolMoved(DragUpdateDetails details) => _drawingBloc
+      .dispatch(UpdateDrawing(_globalToLocal(details.globalPosition)));
 
   _onToolUp(DragEndDetails details) => _drawingBloc.dispatch(EndDrawing());
 
   Widget _buildLoadingIndicator() => Center(child: CircularProgressIndicator());
+
+  _selectBrush() => _drawingConfigBloc.dispatch(SelectDrawingTool(Tool.Brush));
+
+  _selectEraser() =>
+      _drawingConfigBloc.dispatch(SelectDrawingTool(Tool.Eraser));
+
+  Offset _globalToLocal(Offset global) {
+    return (context.findRenderObject() as RenderBox).globalToLocal(global);
+  }
 }

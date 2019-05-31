@@ -23,21 +23,6 @@ class DrawingLoaded extends DrawingState {
   DrawingLoaded({@required this.drawing}) : super([drawing]);
 
   @override
-  String toString() => 'DrawingLoaded { $drawing }';
+  String toString() => 'DrawingLoaded { id: ${drawing.id} }';
 }
 
-//
-//class TextAction extends Action {
-//  final String text;
-//  final int sizeFactor;
-//  final Color color;
-//  final Offset offset;
-//
-//  TextAction(this.text, this.sizeFactor, this.color, this.offset) : super();
-//
-//  @override
-//  void draw(Canvas canvas) {
-//    TextPainter painter = TextPainter(text: TextSpan(text: text));
-//    painter.paint(canvas, offset);
-//  }
-//}

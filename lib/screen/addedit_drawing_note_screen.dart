@@ -26,7 +26,6 @@ class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
   void initState() {
     super.initState();
     _notesBloc = BlocProvider.of<NotesBloc<Drawing, DrawingEntity>>(context);
-
     _drawingBloc = DrawingBloc(notesBloc: _notesBloc, id: widget.id);
     _drawingConfigBloc = DrawingConfigBloc();
   }
@@ -34,20 +33,7 @@ class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-            title: Text("Drawing"),
-            actions: widget.id == null
-                ? null
-                : <Widget>[
-                    PopupMenuButton(
-                        onSelected: _handleMenuItemSelection,
-                        itemBuilder: (context) => [
-                              PopupMenuItem(
-                                value: "delete",
-                                child: Text("Delete"),
-                              )
-                            ])
-                  ]),
+        appBar: AppBar(title: Text("Drawing"), actions: _createMenuItems()),
         body: BlocProviderTree(blocProviders: [
           BlocProvider<DrawingBloc>(bloc: _drawingBloc),
           BlocProvider<DrawingConfigBloc>(bloc: _drawingConfigBloc)
@@ -59,21 +45,36 @@ class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
         ));
   }
 
-  void _saveDrawing() {
+  _saveDrawing() {
     _drawingBloc.dispatch(SaveDrawing());
     Navigator.pop(context);
   }
 
-  void _handleMenuItemSelection(value) {
+  _handleMenuItemSelection(value) {
     if (value == "delete") {
       _deleteNote();
     }
   }
 
-  void _deleteNote() {
+  _deleteNote() {
     if (widget.id != null) {
       _notesBloc.dispatch(DeleteNote(widget.id));
       Navigator.pop(context);
     }
+  }
+
+  _createMenuItems() {
+    return widget.id == null
+        ? null
+        : <Widget>[
+            PopupMenuButton(
+                onSelected: _handleMenuItemSelection,
+                itemBuilder: (context) => [
+                      PopupMenuItem(
+                        value: "delete",
+                        child: Text("Delete"),
+                      )
+                    ])
+          ];
   }
 }
