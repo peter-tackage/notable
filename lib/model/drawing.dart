@@ -91,7 +91,6 @@ class EraserAction extends DrawingAction {
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round
       ..isAntiAlias = true
-      ..color = Color(0x00000000)
       ..blendMode = BlendMode.clear;
 
     _drawPoints(canvas, paint, points);
