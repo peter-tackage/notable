@@ -6,11 +6,13 @@ class EditChecklistItem extends StatefulWidget {
   final ChecklistItem initialValue;
   final Function(bool isDone, String task) onSaved;
   final Function(ChecklistItem item) onSubmit;
+  final bool isFocused;
 
   EditChecklistItem(
       {@required this.initialValue,
       @required this.onSaved,
-      @required this.onSubmit});
+      @required this.onSubmit,
+      @required this.isFocused});
 
   @override
   State<StatefulWidget> createState() =>
@@ -42,6 +44,7 @@ class _EditChecklistItemState extends State<EditChecklistItem> {
             onFieldSubmitted: (text) =>
                 widget.onSubmit(ChecklistItem(text, _isDone)),
             maxLines: 1,
+            autofocus: widget.isFocused,
             decoration:
                 InputDecoration(border: InputBorder.none, hintText: 'Task...'),
           )),

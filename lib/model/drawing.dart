@@ -72,9 +72,7 @@ class BrushAction extends DrawingAction {
   @override
   String toString() => "BrushAction: ${points.length}";
 
-  BrushAction copyWith(List<Offset> points) {
-    return BrushAction(points, this.color);
-  }
+  BrushAction copyWith(List<Offset> points) => BrushAction(points, this.color);
 }
 
 @immutable
@@ -99,9 +97,7 @@ class EraserAction extends DrawingAction {
   @override
   String toString() => "EraserAction: ${points.length}";
 
-  EraserAction copyWith(List<Offset> points) {
-    return EraserAction(points);
-  }
+  EraserAction copyWith(List<Offset> points) => EraserAction(points);
 }
 
 // TODO Move this somewhere, a utils class.

@@ -65,7 +65,7 @@ class _AddEditChecklistNoteScreenState
                                   border: InputBorder.none,
                                   hintText: 'Title...'),
                               maxLines: 1,
-                              autofocus: true),
+                              autofocus: false),
                           Expanded(
                               child: _buildChecklist(context, state.checklist)),
                           Divider(height: 0),
@@ -110,7 +110,9 @@ class _AddEditChecklistNoteScreenState
           itemBuilder: (BuildContext context, int index) {
             int lastIndex = checklist.items.length - 1;
             bool isLastItem = index == lastIndex;
-            bool isFocused = isLastItem;
+            bool isFocused = isLastItem &&
+                checklist.items.length == 1 &&
+                checklist.id == null;
 
             return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,7 +121,7 @@ class _AddEditChecklistNoteScreenState
                       onSaved: (isDone, task) =>
                           _setItem(index, ChecklistItem(task, isDone)),
                       initialValue: checklist.items[index],
-                      //isFocused: isFocused,
+                      isFocused: isFocused,
                       onSubmit: (item) =>
                           _handleSubmitItem(item, index, isLastItem)),
                   isLastItem
