@@ -11,6 +11,7 @@ class NoteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isUntitled = (note.title == null || note.title.isEmpty);
     return Card(
         child: InkWell(
       child: Padding(
@@ -18,11 +19,9 @@ class NoteCard extends StatelessWidget {
           child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(
-                    (note.title == null || note.title.isEmpty)
-                        ? "Untitled"
-                        : note.title,
-                    style: Theme.of(context).textTheme.title),
+                Text(isUntitled ? "Untitled" : note.title,
+                    style: Theme.of(context).textTheme.title.copyWith(
+                        color: isUntitled ? Colors.grey : Colors.black)),
                 Divider(),
                 ConstrainedBox(
                     constraints: BoxConstraints(maxHeight: 250), child: child),
