@@ -63,8 +63,7 @@ class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
                               decoration: InputDecoration(
                                   border: InputBorder.none,
                                   hintText: 'Title...'),
-                              maxLines: 1,
-                              autofocus: true),
+                              maxLines: 1),
                           Expanded(
                               child: Padding(
                                   padding: EdgeInsets.only(left: 8, right: 8),
@@ -75,6 +74,7 @@ class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
                                           border: InputBorder.none,
                                           hintText: 'Enter your note...'),
                                       maxLines: null,
+                                      autofocus: _note.text.isEmpty,
                                       keyboardType: TextInputType.multiline))),
                           Divider(height: 0),
                           Container(
