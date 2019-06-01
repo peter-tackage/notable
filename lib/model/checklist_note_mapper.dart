@@ -19,7 +19,7 @@ class ChecklistMapper implements Mapper<Checklist, ChecklistEntity> {
       entity.title,
       entity.labels.map(Label.fromEntity).toList(),
       entity.items
-          .map((item) => ChecklistItem(item.task, item.isDone))
+          .map((item) => ChecklistItem(item.task, item.isDone, null))
           .toList(),
       id: entity.id,
       updatedDate: entity.updatedDate);

@@ -41,9 +41,15 @@ class _EditChecklistItemState extends State<EditChecklistItem> {
 //                  : TextInputAction.done,
             initialValue: widget.initialValue.task,
             onSaved: (text) => widget.onSaved(_isDone, text),
-            onFieldSubmitted: (text) =>
-                widget.onSubmit(ChecklistItem(text, _isDone)),
+            onFieldSubmitted: (text) => widget.onSubmit(
+                widget.initialValue.copyWith(task: text, isDone: _isDone)),
             maxLines: 1,
+            enabled: !_isDone,
+
+            style: TextStyle(
+                color: _isDone ? Colors.grey : Colors.black,
+                decoration:
+                    _isDone ? TextDecoration.lineThrough : TextDecoration.none),
             autofocus: widget.isFocused,
             decoration:
                 InputDecoration(border: InputBorder.none, hintText: 'Task...'),

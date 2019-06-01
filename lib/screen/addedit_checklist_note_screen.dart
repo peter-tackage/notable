@@ -34,20 +34,7 @@ class _AddEditChecklistNoteScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-            title: Text("Checklist"),
-            actions: widget.id == null
-                ? null
-                : <Widget>[
-                    PopupMenuButton(
-                        onSelected: _handleMenuItemSelection,
-                        itemBuilder: (context) => [
-                              PopupMenuItem(
-                                value: "delete",
-                                child: Text("Delete"),
-                              )
-                            ])
-                  ]),
+        appBar: AppBar(title: Text("Checklist"), actions: _defineMenuItems()),
         body: Padding(
             padding: EdgeInsets.only(top: 8, left: 8, right: 8),
             child: BlocBuilder(
@@ -101,6 +88,21 @@ class _AddEditChecklistNoteScreenState
         ));
   }
 
+  List<Widget> _defineMenuItems() {
+    return widget.id == null
+        ? null
+        : <Widget>[
+            PopupMenuButton(
+                onSelected: _handleMenuItemSelection,
+                itemBuilder: (context) => [
+                      PopupMenuItem(
+                        value: "delete",
+                        child: Text("Delete"),
+                      )
+                    ]),
+          ];
+  }
+
   //
   // Checklist builder
   //
@@ -108,20 +110,21 @@ class _AddEditChecklistNoteScreenState
   Widget _buildChecklist(BuildContext context, Checklist checklist) =>
       ListView.builder(
           itemBuilder: (BuildContext context, int index) {
+            ChecklistItem item = checklist.items[index];
             int lastIndex = checklist.items.length - 1;
             bool isLastItem = index == lastIndex;
-            bool isFocused = isLastItem && checklist.items[index].task.isEmpty;
-
+            bool isFocused = isLastItem && item.task.isEmpty;
             return Column(
+                key: Key(item.id),
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   EditChecklistItem(
-                      onSaved: (isDone, task) =>
-                          _setItem(index, ChecklistItem(task, isDone)),
-                      initialValue: checklist.items[index],
+                      onSaved: (isDone, task) => _setItem(
+                          index, item.copyWith(task: task, isDone: isDone)),
+                      initialValue: item,
                       isFocused: isFocused,
-                      onSubmit: (item) =>
-                          _handleSubmitItem(item, index, isLastItem)),
+                      onSubmit: (submittedItem) =>
+                          _handleSubmitItem(submittedItem, index, isLastItem)),
                   isLastItem
                       ? FlatButton.icon(
                           icon: Icon(Icons.add, color: Colors.grey),
@@ -171,6 +174,10 @@ class _AddEditChecklistNoteScreenState
     if (value == "delete") {
       _deleteNote();
     }
+
+    //else if (value == 'sortByDone'){
+    // //  _sortByDone();
+    // }
   }
 
   _deleteNote() {
@@ -190,6 +197,7 @@ class _AddEditChecklistNoteScreenState
     _checklistBloc.dispatch(SetChecklistItem(index, item));
   }
 
-  Widget _buildIt(BuildContext context, Checklist checklist) =>
-      _buildChecklist(context, checklist);
+//  _sortByDone(int index, ChecklistItem item) {
+//    _checklistBloc.dispatch(SortBy());
+//  }
 }
