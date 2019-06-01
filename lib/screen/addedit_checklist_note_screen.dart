@@ -110,8 +110,7 @@ class _AddEditChecklistNoteScreenState
           itemBuilder: (BuildContext context, int index) {
             int lastIndex = checklist.items.length - 1;
             bool isLastItem = index == lastIndex;
-            bool isFocused = isLastItem &&
-                checklist.items[index].task.isEmpty;
+            bool isFocused = isLastItem && checklist.items[index].task.isEmpty;
 
             return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
