@@ -11,7 +11,7 @@ class NoteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isUntitled = (note.title == null || note.title.isEmpty);
+    bool isUntitled = note.title == null || note.title.isEmpty;
     return Card(
         child: InkWell(
       child: Padding(
