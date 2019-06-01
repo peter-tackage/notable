@@ -54,10 +54,10 @@ class _DrawingPageState extends State<DrawingPage> {
     } else if (drawingState is DrawingLoaded &&
         configState is DrawingConfigLoaded) {
       return GestureDetector(
-          onHorizontalDragStart: (details) =>
+          onPanStart: (details) =>
               _onToolDown(details, configState.drawingConfig),
-          onHorizontalDragUpdate: _onToolMoved,
-          onHorizontalDragEnd: _onToolUp,
+          onPanUpdate: _onToolMoved,
+          onPanEnd: _onToolUp,
           child: CustomPaint(
             painter: NotePainter(drawingState.drawing.displayedActions),
           ));

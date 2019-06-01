@@ -10,5 +10,11 @@ class DrawingConfig {
   final Tool tool;
   final Color color;
 
-  DrawingConfig({this.tool = Tool.Brush, this.color = Colors.blue});
+  DrawingConfig({@required this.tool, @required this.color});
+
+  DrawingConfig.defaults({this.tool = Tool.Brush, this.color = Colors.blue});
+
+  DrawingConfig copyWith({Tool tool, Color color}) {
+    return DrawingConfig(tool: tool ?? this.tool, color: color ?? this.color);
+  }
 }

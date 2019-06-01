@@ -9,7 +9,7 @@ class Drawing extends BaseNote {
   final List<DrawingAction> allActions;
   final int currentIndex;
 
-  // Derived - SHOULD THESE BE CALCULATED HERE
+  // FIXME Derived properties - should these instead be calculated on demand?
   final List<DrawingAction> displayedActions; // derived subset
   final bool canUndo;
   final bool canRedo;
@@ -104,7 +104,7 @@ class EraserAction extends DrawingAction {
   }
 }
 
-// TODO Move this somewhere.
+// TODO Move this somewhere, a utils class.
 void _drawPoints(Canvas canvas, Paint paint, List<Offset> points) {
   Path path = Path();
   for (int index = 0; index <= points.length - 1; index++) {

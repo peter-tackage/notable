@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:notable/entity/base_note_entity.dart';
+import 'package:notable/model/drawing_config.dart';
 
 import 'label_entity.dart';
 
@@ -33,14 +34,39 @@ class PointEntity {
 }
 
 @JsonSerializable()
-class DrawingActionEntity {
-  final List<PointEntity> points;
-  final int color;
+abstract class DrawingActionEntity {
+  final String tool;
 
-  DrawingActionEntity(this.points, this.color);
+  DrawingActionEntity(this.tool);
 
   factory DrawingActionEntity.fromJson(Map<String, dynamic> json) =>
       _$DrawingActionEntityFromJson(json);
 
   Map<String, dynamic> toJson() => _$DrawingActionEntityToJson(this);
+}
+
+@JsonSerializable()
+class BrushDrawingActionEntity extends DrawingActionEntity {
+  final List<PointEntity> points;
+  final int color;
+
+  BrushDrawingActionEntity(this.points, this.color)
+      : super(Tool.Brush.toString());
+
+  factory BrushDrawingActionEntity.fromJson(Map<String, dynamic> json) =>
+      _$BrushDrawingActionEntityFromJson(json);
+
+  Map<String, dynamic> toJson() => _$BrushDrawingActionEntityToJson(this);
+}
+
+@JsonSerializable()
+class EraserDrawingActionEntity extends DrawingActionEntity {
+  final List<PointEntity> points;
+
+  EraserDrawingActionEntity(this.points) : super(Tool.Eraser.toString());
+
+  factory EraserDrawingActionEntity.fromJson(Map<String, dynamic> json) =>
+      _$EraserDrawingActionEntityFromJson(json);
+
+  Map<String, dynamic> toJson() => _$EraserDrawingActionEntityToJson(this);
 }

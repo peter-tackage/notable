@@ -10,7 +10,8 @@ class DrawingConfigBloc extends Bloc<DrawingConfigEvent, DrawingConfigState> {
   DrawingConfigBloc();
 
   @override
-  DrawingConfigState get initialState => DrawingConfigLoaded(DrawingConfig());
+  DrawingConfigState get initialState =>
+      DrawingConfigLoaded(DrawingConfig.defaults());
 
   @override
   Stream<DrawingConfigState> mapEventToState(DrawingConfigEvent event) async* {
@@ -21,6 +22,9 @@ class DrawingConfigBloc extends Bloc<DrawingConfigEvent, DrawingConfigState> {
 
   Stream<DrawingConfigState> _mapSelectDrawingToolEventToState(
       SelectDrawingTool event, DrawingConfigState currentState) async* {
-    yield DrawingConfigLoaded(DrawingConfig(tool: event.tool));
+    if (currentState is DrawingConfigLoaded) {
+      yield DrawingConfigLoaded(
+          currentState.drawingConfig.copyWith(tool: event.tool));
+    }
   }
 }
