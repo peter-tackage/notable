@@ -18,9 +18,11 @@ class NoteCard extends StatelessWidget {
           child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                note.title.isNotEmpty
-                    ? Text(note.title, style: Theme.of(context).textTheme.title)
-                    : SizedBox.shrink(),
+                Text(
+                    (note.title == null || note.title.isEmpty)
+                        ? "Untitled"
+                        : note.title,
+                    style: Theme.of(context).textTheme.title),
                 Divider(),
                 ConstrainedBox(
                     constraints: BoxConstraints(maxHeight: 250), child: child),
