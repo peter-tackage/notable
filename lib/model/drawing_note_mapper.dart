@@ -36,23 +36,25 @@ class DrawingMapper implements Mapper<Drawing, DrawingEntity> {
   toModel(DrawingEntity entity) => Drawing(
       entity.title,
       entity.labels.map(Label.fromEntity).toList(),
-      entity.actions.map(_mapActionToModel).toList(),
+      entity.actions.map(_mapActionEntityToModel).toList(),
       entity.actions.length - 1, // last index
       id: entity.id,
       updatedDate: entity.updatedDate);
 
-  _mapActionToModel(DrawingActionEntity actionEntity) {
+  _mapActionEntityToModel(DrawingActionEntity actionEntity) {
+    print(actionEntity);
+
     if (actionEntity.tool == Tool.Brush.toString()) {
-      return _mapToBrushActionEntity(actionEntity);
+      return _mapToBrushActionEntityToModel(actionEntity);
     } else if (actionEntity.tool == Tool.Eraser.toString()) {
-      return _mapToEraserActionEntity(actionEntity);
+      return _mapToEraserActionEntityToModel(actionEntity);
     } else {
       throw Exception(
           "Cannot map entity to model - unsupported drawing action tool: ${actionEntity.tool}");
     }
   }
 
-  static EraserAction _mapToEraserActionEntity(
+  static EraserAction _mapToEraserActionEntityToModel(
       DrawingActionEntity actionEntity) {
     EraserDrawingActionEntity eraserEntity =
         actionEntity as EraserDrawingActionEntity;
@@ -62,9 +64,12 @@ class DrawingMapper implements Mapper<Drawing, DrawingEntity> {
         .toList());
   }
 
-  static BrushAction _mapToBrushActionEntity(DrawingActionEntity actionEntity) {
+  static BrushAction _mapToBrushActionEntityToModel(
+      DrawingActionEntity actionEntity) {
+    print("HERE");
     BrushDrawingActionEntity brushEntity =
         actionEntity as BrushDrawingActionEntity;
+    print("AFTER");
 
     return BrushAction(
         brushEntity.points
