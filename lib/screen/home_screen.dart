@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notable/bloc/feed/feed_bloc.dart';
 import 'package:notable/bloc/feed/feed_events.dart';
+import 'package:notable/screen/addedit_audio_note_screen.dart';
 import 'package:notable/screen/addedit_checklist_note_screen.dart';
 import 'package:notable/screen/addedit_drawing_note_screen.dart';
 import 'package:notable/screen/addedit_text_note_screen.dart';
@@ -46,6 +47,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     IconButton(
+                        tooltip: "Create audio clip",
+                        onPressed: () => _openAudioNoteEditor(context),
+                        icon: Icon(Icons.audiotrack)),
+                    IconButton(
                         tooltip: "Create drawing",
                         onPressed: () => _openDrawingNoteEditor(context),
                         icon: Icon(Icons.brush)),
@@ -75,4 +80,9 @@ class _HomeScreenState extends State<HomeScreen> {
       context,
       MaterialPageRoute(
           builder: (context) => AddEditDrawingNoteScreen(id: null)));
+
+  void _openAudioNoteEditor(BuildContext context) => Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => AddEditAudioNoteScreen(id: null)));
 }

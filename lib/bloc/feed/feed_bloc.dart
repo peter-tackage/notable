@@ -6,8 +6,10 @@ import 'package:notable/bloc/feed/feed_events.dart';
 import 'package:notable/bloc/feed/feed_states.dart';
 import 'package:notable/bloc/notes/notes.dart';
 import 'package:notable/bloc/notes/notes_states.dart';
+import 'package:notable/entity/audio_note_entity.dart';
 import 'package:notable/entity/drawing_entity.dart';
 import 'package:notable/entity/entity.dart';
+import 'package:notable/model/audio_note.dart';
 import 'package:notable/model/base_note.dart';
 import 'package:notable/model/checklist.dart';
 import 'package:notable/model/drawing.dart';
@@ -17,15 +19,18 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
   final NotesBloc<TextNote, NoteEntity> textNotesBloc;
   final NotesBloc<Checklist, ChecklistEntity> checklistNotesBloc;
   final NotesBloc<Drawing, DrawingEntity> drawingNotesBloc;
+  final NotesBloc<AudioNote, AudioNoteEntity> audioNotesBloc;
 
   StreamSubscription textNotesSubscription;
   StreamSubscription checklistsSubscription;
   StreamSubscription drawingsSubscription;
+  StreamSubscription audioNotesSubscription;
 
   FeedBloc(
       {@required this.textNotesBloc,
       @required this.checklistNotesBloc,
-      @required this.drawingNotesBloc}) {
+      @required this.drawingNotesBloc,
+      @required this.audioNotesBloc}) {
     textNotesSubscription = textNotesBloc.state.listen((state) {
       if (state is NotesLoaded) {
         dispatch(TextNotesLoaded(state.notes));
@@ -41,6 +46,11 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
         dispatch(DrawingsLoaded(state.notes));
       }
     });
+    audioNotesSubscription = audioNotesBloc.state.listen((state) {
+      if (state is NotesLoaded) {
+        dispatch(AudioNotesLoaded(state.notes));
+      }
+    });
   }
 
   @override
@@ -52,12 +62,15 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
       textNotesBloc.dispatch(LoadNotes());
       checklistNotesBloc.dispatch(LoadNotes());
       drawingNotesBloc.dispatch(LoadNotes());
+      audioNotesBloc.dispatch(LoadNotes());
     } else if (event is TextNotesLoaded) {
       yield* _mapTextNotesLoadedEventToState(currentState, event);
     } else if (event is ChecklistsLoaded) {
       yield* _mapChecklistsLoadedEventToState(currentState, event);
     } else if (event is DrawingsLoaded) {
       yield* _mapDrawingsLoadedEventToState(currentState, event);
+    } else if (event is AudioNotesLoaded) {
+      yield* _mapAudioNotesLoadedEventToState(currentState, event);
     }
   }
 
@@ -126,10 +139,31 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
     }
   }
 
+  Stream<FeedState> _mapAudioNotesLoadedEventToState(
+      FeedState currentState, FeedEvent event) async* {
+    if (event is AudioNotesLoaded) {
+      List<BaseNote> notes;
+
+      if (currentState is FeedLoaded) {
+        notes = List.from(currentState.feed);
+        notes.removeWhere((note) => note is AudioNote);
+        notes.addAll(event.audioNotes);
+      } else {
+        notes = event.audioNotes;
+      }
+
+      notes.sort((a, b) => b.updatedDate.compareTo(a.updatedDate));
+
+      yield (FeedLoaded(notes));
+    }
+  }
+
   @override
   void dispose() {
     super.dispose();
     textNotesSubscription.cancel();
     checklistsSubscription.cancel();
+    drawingsSubscription.cancel();
+    audioNotesSubscription.cancel();
   }
 }

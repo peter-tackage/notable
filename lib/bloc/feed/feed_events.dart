@@ -44,3 +44,13 @@ class DrawingsLoaded extends FeedEvent {
   @override
   String toString() => 'DrawingsLoaded';
 }
+
+@immutable
+class AudioNotesLoaded extends FeedEvent {
+  final List<BaseNote> audioNotes;
+
+  AudioNotesLoaded(this.audioNotes) : super([audioNotes]);
+
+  @override
+  String toString() => 'AudioNotesLoaded';
+}

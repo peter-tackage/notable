@@ -39,6 +39,7 @@ class _EditChecklistItemState extends State<EditChecklistItem> {
 //               textInputAction: state.value.isEmpty()
 //                   ? TextInputAction.next
 //                  : TextInputAction.done,
+            textCapitalization: TextCapitalization.sentences,
             initialValue: widget.initialValue.task,
             onSaved: (text) => widget.onSaved(_isDone, text),
             onFieldSubmitted: (text) => widget.onSubmit(
@@ -58,5 +59,4 @@ class _EditChecklistItemState extends State<EditChecklistItem> {
   }
 }
 
-// FIXME Problem with editing existing values, cursor position.
 // FIXME Still want to prevent the cursor from disappearing when submitting last

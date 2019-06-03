@@ -6,11 +6,15 @@ import 'package:notable/bloc/feed/feed_bloc.dart';
 import 'package:notable/bloc/notes/notes.dart';
 import 'package:notable/data/provider.dart';
 import 'package:notable/data/repository.dart';
+import 'package:notable/entity/audio_note_entity.dart';
+import 'package:notable/entity/audio_note_entity_mapper.dart';
 import 'package:notable/entity/checklist_entity_mapper.dart';
 import 'package:notable/entity/drawing_entity.dart';
 import 'package:notable/entity/drawing_entity_mapper.dart';
 import 'package:notable/entity/entity.dart';
 import 'package:notable/entity/note_entity_mapper.dart';
+import 'package:notable/model/audio_note.dart';
+import 'package:notable/model/audio_note_mapper.dart';
 import 'package:notable/model/checklist.dart';
 import 'package:notable/model/checklist_note_mapper.dart';
 import 'package:notable/model/drawing.dart';
@@ -54,6 +58,15 @@ class NotableApp extends StatelessWidget {
                   entityMapper: DrawingEntityMapper()))),
           mapper: DrawingMapper());
 
+  final NotesBloc<AudioNote, AudioNoteEntity> _audioNotesBloc =
+      NotesBloc<AudioNote, AudioNoteEntity>(
+          noteRepository: Repository<AudioNoteEntity>(Provider<AudioNoteEntity>(
+              storage: FileStorage(
+                  tag: "audio",
+                  getDirectory: () => getApplicationDocumentsDirectory(),
+                  entityMapper: AudioNoteEntityMapper()))),
+          mapper: AudioNoteMapper());
+
   @override
   Widget build(BuildContext context) {
     // FIXME  creation of the FeedBloc here like this could create new unwanted instances.
@@ -65,11 +78,14 @@ class NotableApp extends StatelessWidget {
           BlocProvider<NotesBloc<Checklist, ChecklistEntity>>(
               bloc: _checklistBloc),
           BlocProvider<NotesBloc<Drawing, DrawingEntity>>(bloc: _drawingsBloc),
+          BlocProvider<NotesBloc<AudioNote, AudioNoteEntity>>(
+              bloc: _audioNotesBloc),
           BlocProvider<FeedBloc>(
               bloc: FeedBloc(
                   textNotesBloc: _textNoteBloc,
                   checklistNotesBloc: _checklistBloc,
-                  drawingNotesBloc: _drawingsBloc))
+                  drawingNotesBloc: _drawingsBloc,
+                  audioNotesBloc: _audioNotesBloc))
         ],
         child: MaterialApp(
           title: 'Notable',
