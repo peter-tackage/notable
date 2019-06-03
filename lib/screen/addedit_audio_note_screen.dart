@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:notable/bloc/audio/audio.dart';
 import 'package:notable/bloc/notes/notes.dart';
 import 'package:notable/entity/audio_note_entity.dart';
 import 'package:notable/model/audio_note.dart';
+import 'package:notable/widget/audio_note_page.dart';
 
 class AddEditAudioNoteScreen extends StatefulWidget {
   final String id;
@@ -35,50 +35,7 @@ class _AddEditAudioNoteScreenState extends State<AddEditAudioNoteScreen> {
         appBar: AppBar(title: Text("Audio"), actions: _defineMenuItems()),
         body: Padding(
             padding: EdgeInsets.only(top: 8, left: 8, right: 8),
-            child: BlocBuilder(
-                bloc: _audioNoteBloc,
-                builder: (BuildContext context, AudioNoteState state) {
-                  if (state is AudioNoteLoaded) {
-                    return Form(
-                        key: _formKey,
-                        child: Column(children: <Widget>[
-                          TextFormField(
-                              onSaved: _titleChanged,
-                              initialValue: state.audioNote.title,
-                              style: Theme.of(context).textTheme.title,
-                              decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: 'Title...'),
-                              maxLines: 1,
-                              autofocus: false),
-                          Expanded(
-                              child: _buildAudioNote(context, state.audioNote)),
-                          Divider(height: 0),
-                          Container(
-                              padding:
-                                  EdgeInsets.only(left: 4, top: 13, bottom: 13),
-                              // FAB size/position
-                              child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    Text(
-                                      state.audioNote.updatedDate == null
-                                          ? "Unsaved"
-                                          : "Saved " +
-                                              DateFormat("HH:mm dd/MM/yyyy")
-                                                  .format(state
-                                                      .audioNote.updatedDate),
-                                      style: TextStyle(
-                                          color: Colors.grey,
-                                          fontStyle: FontStyle.italic),
-                                    )
-                                  ]))
-                        ]));
-                  } else {
-                    return Center(child: CircularProgressIndicator());
-                  }
-                })),
+            child: BlocProvider(bloc: _audioNoteBloc, child: AudioNotePage())),
         floatingActionButton: FloatingActionButton(
           onPressed: _saveNote,
           tooltip: 'Save audio note',
@@ -139,7 +96,6 @@ class _AddEditAudioNoteScreenState extends State<AddEditAudioNoteScreen> {
   }
 
   Widget _buildAudioNote(BuildContext context, AudioNote audioNote) {
-    // TODO Implement this
-    return Container();
+    return AudioNotePage();
   }
 }
