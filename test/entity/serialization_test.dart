@@ -4,7 +4,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:notable/entity/entity.dart';
 
 void main() {
-
   test('note entity serializes', () {
     final now = DateTime.now();
     NoteEntity noteEntity = NoteEntity(

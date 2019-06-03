@@ -12,7 +12,7 @@ const String eraserTool = "Tool.Eraser";
 
 @JsonSerializable()
 class DrawingEntity extends BaseNoteEntity {
-  @_DrawingActionConverter()
+  @DrawingActionConverter()
   final List<DrawingActionEntity> actions;
 
   DrawingEntity(List<LabelEntity> labels, String title, this.actions,
@@ -24,6 +24,21 @@ class DrawingEntity extends BaseNoteEntity {
 
   Map<String, dynamic> toJson() => _$DrawingEntityToJson(this);
 }
+
+//
+//this@JsonSerializable()
+//class BoringDrawingEntity  {
+//
+//  @DrawingActionConverter()
+//  final List<DrawingActionEntity> actions;
+//
+//  BoringDrawingEntity(this.actions);
+//
+//  factory BoringDrawingEntity.fromJson(Map<String, dynamic> json) =>
+//      _$BoringDrawingEntityFromJson(json);
+//
+//  Map<String, dynamic> toJson() => _$BoringDrawingEntityToJson(this);
+//}
 
 @JsonSerializable()
 class PointEntity {
@@ -38,16 +53,10 @@ class PointEntity {
   Map<String, dynamic> toJson() => _$PointEntityToJson(this);
 }
 
-@JsonSerializable()
 abstract class DrawingActionEntity {
   final String tool;
 
   DrawingActionEntity(this.tool);
-
-  factory DrawingActionEntity.fromJson(Map<String, dynamic> json) =>
-      _$DrawingActionEntityFromJson(json);
-
-  Map<String, dynamic> toJson() => _$DrawingActionEntityToJson(this);
 }
 
 //
@@ -64,7 +73,7 @@ class BrushDrawingActionEntity extends DrawingActionEntity {
   final List<PointEntity> points;
   final int color;
 
-  BrushDrawingActionEntity(this.points, this.color, {String tool = brushTool})
+  BrushDrawingActionEntity(this.points, this.color, {tool = brushTool})
       : super(tool);
 
   factory BrushDrawingActionEntity.fromJson(Map<String, dynamic> json) =>
@@ -77,8 +86,7 @@ class BrushDrawingActionEntity extends DrawingActionEntity {
 class EraserDrawingActionEntity extends DrawingActionEntity {
   final List<PointEntity> points;
 
-  EraserDrawingActionEntity(this.points, {String tool = eraserTool})
-      : super(tool);
+  EraserDrawingActionEntity(this.points, {tool = eraserTool}) : super(tool);
 
   factory EraserDrawingActionEntity.fromJson(Map<String, dynamic> json) =>
       _$EraserDrawingActionEntityFromJson(json);
@@ -86,23 +94,21 @@ class EraserDrawingActionEntity extends DrawingActionEntity {
   Map<String, dynamic> toJson() => _$EraserDrawingActionEntityToJson(this);
 }
 
-class _DrawingActionConverter<DrawingActionEntity>
+class DrawingActionConverter
     implements JsonConverter<DrawingActionEntity, Object> {
-  const _DrawingActionConverter();
+  const DrawingActionConverter();
 
   @override
   DrawingActionEntity fromJson(Object json) {
     if (json is Map<String, dynamic> &&
         json.containsKey('tool') &&
         json['tool'] == brushTool) {
-      print("Making brush entity from json");
-      return BrushDrawingActionEntity.fromJson(json) as DrawingActionEntity;
+      return BrushDrawingActionEntity.fromJson(json);
     }
     if (json is Map<String, dynamic> &&
         json.containsKey('tool') &&
         json['tool'] == eraserTool) {
-      print("Making eraser entity from json");
-      return EraserDrawingActionEntity.fromJson(json) as DrawingActionEntity;
+      return EraserDrawingActionEntity.fromJson(json);
     }
 
     throw Exception("Can't make DrawingActionEntity from JSON: $json");
@@ -110,9 +116,14 @@ class _DrawingActionConverter<DrawingActionEntity>
 
   @override
   Object toJson(DrawingActionEntity object) {
-    // This will only work if `object` is a native JSON type:
-    //   num, String, bool, null, etc
-    // Or if it has a `toJson()` function`.
-    return object;
+    if (object is BrushDrawingActionEntity) {
+      return object.toJson();
+    }
+
+    if (object is EraserDrawingActionEntity) {
+      return object.toJson();
+    }
+
+    throw Exception("Can't make JSON from DrawingActionEntity: $object");
   }
 }

@@ -36,7 +36,6 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
 
   @override
   Stream<DrawingState> mapEventToState(DrawingEvent event) async* {
-    print("Drawing Bloc got event: $event");
     if (event is LoadDrawing) {
       yield* _mapLoadDrawingEventToState(currentState, event);
     } else if (event is SaveDrawing) {
@@ -72,7 +71,6 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
   Stream<DrawingState> _mapSaveDrawingEventToState(
       DrawingState currentState, DrawingEvent event) async* {
     if (currentState is DrawingLoaded) {
-      // TODO Should this clip the drawing's current index and the allActions?
       if (id == null) {
         notesBloc.dispatch(AddNote(currentState.drawing));
       } else {
@@ -120,7 +118,6 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
 
   Stream<DrawingState> _mapStartDrawingActionEventToState(
       DrawingState currentState, StartDrawing event) async* {
-    print("Handling start $currentState $event");
     if (currentState is DrawingLoaded) {
       // Insert and potentially discard Actions
       int currentIndex = currentState.drawing.currentIndex;
@@ -130,7 +127,7 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
           currentIndex != currentState.drawing.allActions.length - 1) {
         actions = currentState.drawing.allActions.sublist(0, currentIndex + 1);
       } else if (currentIndex == -1) {
-        actions = List();
+        actions = List<DrawingAction>();
       } else {
         actions = List.of(currentState.drawing.allActions);
       }

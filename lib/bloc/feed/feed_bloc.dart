@@ -48,7 +48,6 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
 
   @override
   Stream<FeedState> mapEventToState(FeedEvent event) async* {
-    print("FeedBloc got event: $event");
     if (event is LoadFeed) {
       textNotesBloc.dispatch(LoadNotes());
       checklistNotesBloc.dispatch(LoadNotes());

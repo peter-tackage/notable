@@ -41,9 +41,7 @@ class DrawingMapper implements Mapper<Drawing, DrawingEntity> {
       id: entity.id,
       updatedDate: entity.updatedDate);
 
-  _mapActionEntityToModel(DrawingActionEntity actionEntity) {
-    print(actionEntity);
-
+  DrawingAction _mapActionEntityToModel(DrawingActionEntity actionEntity) {
     if (actionEntity.tool == Tool.Brush.toString()) {
       return _mapToBrushActionEntityToModel(actionEntity);
     } else if (actionEntity.tool == Tool.Eraser.toString()) {
@@ -66,10 +64,8 @@ class DrawingMapper implements Mapper<Drawing, DrawingEntity> {
 
   static BrushAction _mapToBrushActionEntityToModel(
       DrawingActionEntity actionEntity) {
-    print("HERE");
     BrushDrawingActionEntity brushEntity =
         actionEntity as BrushDrawingActionEntity;
-    print("AFTER");
 
     return BrushAction(
         brushEntity.points

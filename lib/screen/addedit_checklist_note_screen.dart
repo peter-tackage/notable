@@ -170,7 +170,6 @@ class _AddEditChecklistNoteScreenState
   //
 
   _handleMenuItemSelection(value) {
-    print("_handleMenuItemSelection");
     if (value == "delete") {
       _deleteNote();
     }
@@ -181,8 +180,6 @@ class _AddEditChecklistNoteScreenState
   }
 
   _deleteNote() {
-    print("_deleteNote: ${widget.id}");
-
     if (widget.id != null) {
       _checklistBloc.dispatch(DeleteChecklist());
       Navigator.pop(context);

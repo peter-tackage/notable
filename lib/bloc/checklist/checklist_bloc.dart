@@ -35,7 +35,6 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
 
   @override
   Stream<ChecklistState> mapEventToState(ChecklistEvent event) async* {
-    print("Checklist Bloc got event: $event");
     if (event is LoadChecklist) {
       yield* _mapLoadChecklistEventToState(currentState, event);
     } else if (event is SaveChecklist) {

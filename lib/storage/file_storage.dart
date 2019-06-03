@@ -38,8 +38,9 @@ class FileStorage<E extends BaseEntity> implements EntityStorage<E> {
     if (await file.exists()) {
       final string = await file.readAsString();
       final json = jsonDecode(string);
-      return List.from(
+      List<E> entities = List.from(
           json.map((entityJson) => entityMapper.toEntity(entityJson)));
+      return entities;
     } else {
       return List<E>();
     }
