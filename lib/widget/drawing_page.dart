@@ -71,38 +71,51 @@ class _DrawingPageState extends State<DrawingPage> {
   Widget _buildToolbar(BuildContext context, DrawingState state) {
     return Container(
         height: 64,
-        color: Colors.grey[200],
-        child:
-            Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-          IconButton(
-              tooltip: "Brush",
-              onPressed: _selectBrush,
-              icon: Icon(Icons.gesture)),
-          IconButton(
-              tooltip: "Color", onPressed: () => {}, icon: Icon(Icons.palette)),
-          IconButton(
-              tooltip: "Eraser",
-              onPressed: _selectEraser,
-              icon: Icon(Icons.indeterminate_check_box)),
-          IconButton(
-              tooltip: "Undo",
-              onPressed: state is DrawingLoaded && state.drawing.canUndo
-                  ? _undo
-                  : null,
-              icon: Icon(Icons.undo)),
-          IconButton(
-              tooltip: "Redo",
-              onPressed: state is DrawingLoaded && state.drawing.canRedo
-                  ? _redo
-                  : null,
-              icon: Icon(Icons.redo)),
-          IconButton(
-              tooltip: "Clear",
-              onPressed: state is DrawingLoaded && state.drawing.canUndo
-                  ? _clear
-                  : null,
-              icon: Icon(Icons.clear_all))
-        ]));
+        child: Material(
+            color: Colors.grey[200],
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  InkWell(
+                      child: IconButton(
+                          tooltip: "Brush",
+                          onPressed: _selectBrush,
+                          icon: Icon(Icons.gesture))),
+                  InkWell(
+                      child: IconButton(
+                          tooltip: "Color",
+                          onPressed: () => {},
+                          icon: Icon(Icons.palette))),
+                  InkWell(
+                      child: IconButton(
+                          tooltip: "Eraser",
+                          onPressed: _selectEraser,
+                          icon: Icon(Icons.indeterminate_check_box))),
+                  InkWell(
+                      child: IconButton(
+                          tooltip: "Undo",
+                          onPressed:
+                              state is DrawingLoaded && state.drawing.canUndo
+                                  ? _undo
+                                  : null,
+                          icon: Icon(Icons.undo))),
+                  InkWell(
+                      child: IconButton(
+                          tooltip: "Redo",
+                          onPressed:
+                              state is DrawingLoaded && state.drawing.canRedo
+                                  ? _redo
+                                  : null,
+                          icon: Icon(Icons.redo))),
+                  InkWell(
+                      child: IconButton(
+                          tooltip: "Clear",
+                          onPressed:
+                              state is DrawingLoaded && state.drawing.canUndo
+                                  ? _clear
+                                  : null,
+                          icon: Icon(Icons.clear_all)))
+                ])));
   }
 
   _undo() => _drawingBloc.dispatch(Undo());

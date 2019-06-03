@@ -41,29 +41,35 @@ class _HomeScreenState extends State<HomeScreen> {
               child: AllNotesPage(),
             )),
             Container(
-              height: 64,
-              color: Colors.grey[200],
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    IconButton(
-                        tooltip: "Create audio clip",
-                        onPressed: () => _openAudioNoteEditor(context),
-                        icon: Icon(Icons.audiotrack)),
-                    IconButton(
-                        tooltip: "Create drawing",
-                        onPressed: () => _openDrawingNoteEditor(context),
-                        icon: Icon(Icons.brush)),
-                    IconButton(
-                        tooltip: "Create note",
-                        onPressed: () => _openTextNoteEditor(context),
-                        icon: Icon(Icons.format_quote)),
-                    IconButton(
-                        tooltip: "Create checklist",
-                        onPressed: () => _openChecklistEditor(context),
-                        icon: Icon(Icons.format_list_bulleted))
-                  ]),
-            ),
+                height: 64,
+                child: Material(
+                  color: Colors.grey[200],
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        InkWell(
+                            child: IconButton(
+                                tooltip: "Create audio clip",
+                                onPressed: () => _openAudioNoteEditor(context),
+                                icon: Icon(Icons.mic))),
+                        InkWell(
+                            child: IconButton(
+                                tooltip: "Create drawing",
+                                onPressed: () =>
+                                    _openDrawingNoteEditor(context),
+                                icon: Icon(Icons.brush))),
+                        InkWell(
+                            child: IconButton(
+                                tooltip: "Create note",
+                                onPressed: () => _openTextNoteEditor(context),
+                                icon: Icon(Icons.format_quote))),
+                        InkWell(
+                            child: IconButton(
+                                tooltip: "Create checklist",
+                                onPressed: () => _openChecklistEditor(context),
+                                icon: Icon(Icons.format_list_bulleted)))
+                      ]),
+                )),
           ],
         ));
   }
