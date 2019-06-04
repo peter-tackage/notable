@@ -40,3 +40,78 @@ class ClearAudioNote extends AudioNoteEvent {
   @override
   String toString() => 'ClearAudioNote';
 }
+
+@immutable
+class StartAudioRecordingRequest extends AudioNoteEvent {
+  StartAudioRecordingRequest() : super([]);
+
+  @override
+  String toString() => 'StartAudioRecordingRequest';
+}
+
+@immutable
+class StopAudioRecordingRequest extends AudioNoteEvent {
+  StopAudioRecordingRequest() : super([]);
+
+  @override
+  String toString() => 'StopAudioRecordingRequest';
+}
+
+@immutable
+class StartAudioPlaybackRequest extends AudioNoteEvent {
+  StartAudioPlaybackRequest() : super([]);
+
+  @override
+  String toString() => 'StartAudioPlaybackRequest';
+}
+
+@immutable
+class PauseAudioPlaybackRequest extends AudioNoteEvent {
+  PauseAudioPlaybackRequest() : super([]);
+
+  @override
+  String toString() => 'PauseAudioPlaybackRequest';
+}
+
+@immutable
+class StopAudioPlaybackRequest extends AudioNoteEvent {
+  StopAudioPlaybackRequest() : super([]);
+
+  @override
+  String toString() => 'StopAudioPlaybackRequest';
+}
+
+@immutable
+class AudioRecordingProgressChanged extends AudioNoteEvent {
+  final bool isRecording;
+  final double progress;
+
+  AudioRecordingProgressChanged(this.isRecording, this.progress)
+      : super([isRecording, progress]);
+
+  @override
+  String toString() =>
+      'AudioRecordingProgressChanged: { isRecording: $isRecording, progress: $progress}';
+}
+
+@immutable
+class AudioRecordingLevelChanged extends AudioNoteEvent {
+  final double level;
+
+  AudioRecordingLevelChanged(this.level) : super([level]);
+
+  @override
+  String toString() => 'AudioRecordingLevelChanged: { level: $level }';
+}
+
+@immutable
+class AudioPlaybackProgress extends AudioNoteEvent {
+  final bool isPlaying;
+  final double progress;
+
+  AudioPlaybackProgress(this.isPlaying, this.progress)
+      : super([isPlaying, progress]);
+
+  @override
+  String toString() => 'AudioPlaybackProgress';
+}

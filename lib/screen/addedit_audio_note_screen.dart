@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_sound/flutter_sound.dart';
 import 'package:notable/bloc/audio/audio.dart';
 import 'package:notable/bloc/notes/notes.dart';
 import 'package:notable/entity/audio_note_entity.dart';
@@ -26,7 +27,8 @@ class _AddEditAudioNoteScreenState extends State<AddEditAudioNoteScreen> {
     _audioNoteBloc = AudioNoteBloc(
         notesBloc:
             BlocProvider.of<NotesBloc<AudioNote, AudioNoteEntity>>(context),
-        id: widget.id);
+        id: widget.id,
+        flutterSound: FlutterSound());
   }
 
   @override
