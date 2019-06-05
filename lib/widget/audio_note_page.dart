@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:notable/bloc/audio/audio.dart';
 import 'package:notable/model/audio_playback.dart';
 import 'package:notable/model/audio_recording.dart';
+import 'package:notable/widget/audio_monitor.dart';
 
 class AudioNotePage extends StatefulWidget {
   @override
@@ -16,12 +19,12 @@ class _AudioNotePageState extends State<AudioNotePage> {
   @override
   void initState() {
     super.initState();
+    initializeDateFormatting();
     _audioNoteBloc = BlocProvider.of<AudioNoteBloc>(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    print("######## BUILDING #########");
     return BlocBuilder(
         bloc: _audioNoteBloc,
         builder: (BuildContext context, AudioNoteState state) {
@@ -48,16 +51,16 @@ class _AudioNotePageState extends State<AudioNotePage> {
   _buildAudioNote(BuildContext context, AudioNoteState state) {
     return Center(
         child: Column(children: <Widget>[
-      Text(
-          state is AudioNoteRecording
-              ? state.audioRecording.progress.toString()
-              : "0",
+      Text(state is AudioNoteRecording ? toDuration(state) : "0",
           style: Theme.of(context).textTheme.display1),
       Text(
           state is AudioNoteRecording
               ? state.audioRecording.level.toString()
               : "-",
           style: Theme.of(context).textTheme.display1),
+      AudioMonitor(
+          peakDb: 160,
+          level: state is AudioNoteRecording ? state.audioRecording.level : 0),
       RawMaterialButton(
         onPressed: () => _audioAction(state),
         child: new Icon(
@@ -73,11 +76,24 @@ class _AudioNotePageState extends State<AudioNotePage> {
     ]));
   }
 
+  static String toDuration(AudioNoteRecording state) {
+    DateTime date = new DateTime.fromMillisecondsSinceEpoch(
+        state.audioRecording.progress.toInt(),
+        isUtc: true);
+    return DateFormat('mm:ss', 'en_GB').format(date);
+  }
+
   IconData _icon(AudioNoteState state) {
     if (state is AudioNoteRecording) {
-      return state.audioRecording.recordingState == RecordingState.Recording
-          ? Icons.stop
-          : Icons.mic;
+      switch (state.audioRecording.recordingState) {
+        case RecordingState.Recording:
+          return Icons.stop;
+        case RecordingState.Recorded:
+          return Icons.play_arrow;
+        default:
+          throw Exception(
+              "Unsupported recording state: ${state.audioRecording.recordingState}");
+      }
     } else if (state is AudioNotePlayback) {
       return state.audioPlayback.playbackState == PlaybackState.Playing
           ? Icons.stop
@@ -88,24 +104,17 @@ class _AudioNotePageState extends State<AudioNotePage> {
   }
 
   void _audioAction(AudioNoteState state) {
-    print("Actioning: $state");
-
     if (state is AudioNoteRecording) {
-      print("recording action");
       if (state.audioRecording.recordingState == RecordingState.Recording) {
-        print("stop recording action");
         _audioNoteBloc.dispatch(StopAudioRecordingRequest());
       } else {
-        print("start recording action");
         _audioNoteBloc.dispatch(StartAudioRecordingRequest());
       }
     } else if (state is AudioNotePlayback) {
-      print("playback action");
       state.audioPlayback.playbackState == PlaybackState.Playing
           ? _audioNoteBloc.dispatch(StopAudioPlaybackRequest())
           : _audioNoteBloc.dispatch(StartAudioPlaybackRequest());
-    } else {
-      print("default action");
+    } else if (state is AudioNoteLoaded) {
       _audioNoteBloc.dispatch(StartAudioRecordingRequest());
     }
   }

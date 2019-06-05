@@ -28,7 +28,9 @@ class _AddEditAudioNoteScreenState extends State<AddEditAudioNoteScreen> {
         notesBloc:
             BlocProvider.of<NotesBloc<AudioNote, AudioNoteEntity>>(context),
         id: widget.id,
-        flutterSound: FlutterSound());
+        flutterSound: FlutterSound()
+          ..setDbLevelEnabled(true)
+          ..setDbPeakLevelUpdate(0.5));
   }
 
   @override

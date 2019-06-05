@@ -18,4 +18,4 @@ class AudioRecording {
           progress ?? this.progress, level ?? this.level);
 }
 
-enum RecordingState { Recording, Idle }
+enum RecordingState { Recording, Recorded }

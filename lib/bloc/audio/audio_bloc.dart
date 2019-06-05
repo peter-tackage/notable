@@ -42,8 +42,6 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
 
   @override
   Stream<AudioNoteState> mapEventToState(AudioNoteEvent event) async* {
-    print("AudioBloc got even: $event");
-
     if (event is LoadAudioNote) {
       yield* _mapLoadAudioNoteEventToState(currentState, event);
     } else if (event is SaveAudioNote) {
@@ -73,6 +71,8 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
   void dispose() {
     super.dispose();
     _audioNotesSubscription.cancel();
+    _recorderSubscription.cancel();
+    _dbPeakSubscription.cancel();
   }
 
   Stream<AudioNoteState> _mapLoadAudioNoteEventToState(
@@ -118,7 +118,7 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
 
       // Start new recording
       String path = await flutterSound.startRecorder(null);
-      print('startRecorder: $path');
+      // print('startRecorder: $path');
 
       // Initial event
       yield AudioNoteRecording(currentState.audioNote,
@@ -143,7 +143,7 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
     // assert(flutterSound.isRecording == true);
 
     if (currentState is AudioNoteRecording) {
-      // Start new recording
+      // Stop recording
       String result = await flutterSound.stopRecorder();
 
       // DO THIS??
@@ -156,14 +156,12 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
   Stream<AudioNoteState> _mapAudioRecordingProgressChangedEventToState(
       AudioNoteState currentState, AudioRecordingProgressChanged event) async* {
     if (currentState is AudioNoteRecording) {
-      print("mapping progress: $event");
-
       yield AudioNoteRecording(
           currentState.audioNote,
           currentState.audioRecording.copyWith(
               recordingState: event.isRecording
                   ? RecordingState.Recording
-                  : RecordingState.Idle,
+                  : RecordingState.Recorded,
               progress: event.progress));
     }
   }
@@ -171,8 +169,6 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
   Stream<AudioNoteState> _mapAudioRecordingLevelChangedEventToState(
       AudioNoteState currentState, AudioRecordingLevelChanged event) async* {
     if (currentState is AudioNoteRecording) {
-      print("mapping level: $event");
-
       yield AudioNoteRecording(currentState.audioNote,
           currentState.audioRecording.copyWith(level: event.level));
     }
