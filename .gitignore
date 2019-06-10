@@ -7,3 +7,9 @@
 build/
 
 .flutter-plugins
+
+.idea
+
+# generated dart files
+*.g.dart
+
