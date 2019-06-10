@@ -52,6 +52,7 @@ class _AddEditChecklistNoteScreenState
                                   border: InputBorder.none,
                                   hintText: 'Title...'),
                               maxLines: 1,
+                              textCapitalization: TextCapitalization.sentences,
                               autofocus: false),
                           Expanded(
                               child: _buildChecklist(context, state.checklist)),

@@ -60,6 +60,7 @@ class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
                               onSaved: _titleChanged,
                               initialValue: _updatedTitle ?? _note.title,
                               style: Theme.of(context).textTheme.title,
+                              textCapitalization: TextCapitalization.sentences,
                               decoration: InputDecoration(
                                   border: InputBorder.none,
                                   hintText: 'Title...'),
