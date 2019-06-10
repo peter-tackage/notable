@@ -76,6 +76,7 @@ class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
                                           hintText: 'Enter your note...'),
                                       maxLines: null,
                                       autofocus: _note.text.isEmpty,
+                                      textCapitalization: TextCapitalization.sentences,
                                       keyboardType: TextInputType.multiline))),
                           Divider(height: 0),
                           Container(
