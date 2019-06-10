@@ -76,6 +76,16 @@ class AllNotesPage extends StatelessWidget {
             builder: (context) => AddEditDrawingNoteScreen(id: drawing.id)),
       );
 
-  static Widget _buildEmptyNoteList(BuildContext context) =>
-      Center(child: Text("You don't have any notes"));
+  static Widget _buildEmptyNoteList(BuildContext context) => Center(
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+            Icon(
+              Icons.assignment,
+              size: 100.0,
+              color: Colors.blueGrey,
+            ),
+            Text("You don't have any notes")
+          ]));
 }
