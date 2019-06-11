@@ -72,8 +72,12 @@ abstract class DrawingActionEntity {
 class BrushDrawingActionEntity extends DrawingActionEntity {
   final List<PointEntity> points;
   final int color;
+  final PenShapeEntity penShape;
+  final double strokeWidth;
 
-  BrushDrawingActionEntity(this.points, this.color, {tool = brushTool})
+  BrushDrawingActionEntity(
+      this.points, this.color, this.penShape, this.strokeWidth,
+      {tool = brushTool})
       : super(tool);
 
   factory BrushDrawingActionEntity.fromJson(Map<String, dynamic> json) =>
@@ -85,14 +89,20 @@ class BrushDrawingActionEntity extends DrawingActionEntity {
 @JsonSerializable()
 class EraserDrawingActionEntity extends DrawingActionEntity {
   final List<PointEntity> points;
+  final PenShapeEntity penShape;
+  final double strokeWidth;
 
-  EraserDrawingActionEntity(this.points, {tool = eraserTool}) : super(tool);
+  EraserDrawingActionEntity(this.points, this.penShape, this.strokeWidth,
+      {tool = eraserTool})
+      : super(tool);
 
   factory EraserDrawingActionEntity.fromJson(Map<String, dynamic> json) =>
       _$EraserDrawingActionEntityFromJson(json);
 
   Map<String, dynamic> toJson() => _$EraserDrawingActionEntityToJson(this);
 }
+
+enum PenShapeEntity { Square, Round }
 
 class DrawingActionConverter
     implements JsonConverter<DrawingActionEntity, Object> {

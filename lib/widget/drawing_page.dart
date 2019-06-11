@@ -38,10 +38,12 @@ class _DrawingPageState extends State<DrawingPage> {
                     Container(
                         child: ConstrainedBox(
                             constraints: const BoxConstraints.expand(),
-                            child: canvasBody(drawingState, configState)))));
+                            child:
+                                _buildCanvasBody(drawingState, configState)))));
   }
 
-  Widget canvasBody(DrawingState drawingState, DrawingConfigState configState) {
+  Widget _buildCanvasBody(
+      DrawingState drawingState, DrawingConfigState configState) {
     if (drawingState is DrawingLoading) {
       return _buildLoadingIndicator();
     } else if (drawingState is DrawingLoaded &&
@@ -52,8 +54,7 @@ class _DrawingPageState extends State<DrawingPage> {
           onPanUpdate: _onToolMoved,
           onPanEnd: _onToolUp,
           child: CustomPaint(
-            painter: NotePainter(drawingState.drawing.displayedActions),
-          ));
+              painter: NotePainter(drawingState.drawing.displayedActions)));
     } else {
       throw Exception("Unsupported State: $drawingState $configState");
     }
@@ -69,7 +70,6 @@ class _DrawingPageState extends State<DrawingPage> {
 
   Widget _buildLoadingIndicator() => Center(child: CircularProgressIndicator());
 
-  Offset _globalToLocal(Offset global) {
-    return (context.findRenderObject() as RenderBox).globalToLocal(global);
-  }
+  Offset _globalToLocal(Offset global) =>
+      (context.findRenderObject() as RenderBox).globalToLocal(global);
 }

@@ -134,9 +134,11 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
 
       DrawingAction action;
       if (event.config.tool == Tool.Brush) {
-        action = BrushAction(<Offset>[event.offset], event.config.color);
+        action = BrushAction(<Offset>[event.offset], event.config.color,
+            event.config.penShape, event.config.strokeWidth);
       } else if (event.config.tool == Tool.Eraser) {
-        action = EraserAction(<Offset>[event.offset]);
+        action = EraserAction(<Offset>[event.offset], event.config.penShape,
+            event.config.strokeWidth);
       }
 
       actions.add(action);

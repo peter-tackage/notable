@@ -20,6 +20,8 @@ class DrawingConfigBloc extends Bloc<DrawingConfigEvent, DrawingConfigState> {
       yield* _mapSelectDrawingToolEventToState(event, currentState);
     } else if (event is SelectDrawingToolColor) {
       yield* _mapSelectDrawingToolColorEventToState(event, currentState);
+    } else if (event is SelectToolStyle) {
+      yield* _mapSelectDrawingToolStyleEventToState(event, currentState);
     }
   }
 
@@ -36,6 +38,14 @@ class DrawingConfigBloc extends Bloc<DrawingConfigEvent, DrawingConfigState> {
     if (currentState is DrawingConfigLoaded) {
       yield DrawingConfigLoaded(
           currentState.drawingConfig.copyWith(color: Color(event.color)));
+    }
+  }
+
+  Stream<DrawingConfigState> _mapSelectDrawingToolStyleEventToState(
+      SelectToolStyle event, DrawingConfigState currentState) async* {
+    if (currentState is DrawingConfigLoaded) {
+      yield DrawingConfigLoaded(currentState.drawingConfig
+          .copyWith(penShape: event.penShape, strokeWidth: event.strokeWidth));
     }
   }
 }

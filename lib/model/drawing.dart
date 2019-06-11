@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:notable/model/base_note.dart';
+import 'package:notable/model/drawing_config.dart';
 
 @immutable
 class Drawing extends BaseNote {
@@ -53,16 +54,19 @@ abstract class DrawingAction {
 class BrushAction extends DrawingAction {
   final List<Offset> points;
   final Color color;
+  final PenShape penShape;
+  final double strokeWidth;
 
-  BrushAction(this.points, this.color) : super();
+  BrushAction(this.points, this.color, this.penShape, this.strokeWidth)
+      : super();
 
   @override
   void draw(Canvas canvas) {
     Paint paint = Paint()
-      ..strokeWidth = 5
+      ..strokeWidth = this.strokeWidth
       ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.round
+      ..strokeCap = toStrokeCap(this.penShape)
+      ..strokeJoin = toStrokeJoin(this.penShape)
       ..color = color
       ..isAntiAlias = true;
 
@@ -72,22 +76,26 @@ class BrushAction extends DrawingAction {
   @override
   String toString() => "BrushAction: ${points.length}";
 
-  BrushAction copyWith(List<Offset> points) => BrushAction(points, this.color);
+  BrushAction copyWith(List<Offset> points) =>
+      BrushAction(points, this.color, this.penShape, this.strokeWidth);
 }
 
 @immutable
 class EraserAction extends DrawingAction {
   final List<Offset> points;
+  final PenShape penShape;
+  final double strokeWidth;
 
-  EraserAction(this.points) : super();
+  EraserAction(this.points, this.penShape, this.strokeWidth) : super();
 
   @override
   void draw(Canvas canvas) {
     Paint paint = Paint()
-      ..strokeWidth = 10
       ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.round
+      ..strokeWidth = this.strokeWidth
+      ..style = PaintingStyle.stroke
+      ..strokeCap = toStrokeCap(this.penShape)
+      ..strokeJoin = toStrokeJoin(this.penShape)
       ..isAntiAlias = true
       ..blendMode = BlendMode.clear;
 
@@ -97,7 +105,8 @@ class EraserAction extends DrawingAction {
   @override
   String toString() => "EraserAction: ${points.length}";
 
-  EraserAction copyWith(List<Offset> points) => EraserAction(points);
+  EraserAction copyWith(List<Offset> points) =>
+      EraserAction(points, this.penShape, this.strokeWidth);
 }
 
 // TODO Move this somewhere, a utils class.
@@ -111,4 +120,26 @@ void _drawPoints(Canvas canvas, Paint paint, List<Offset> points) {
     path.lineTo(point.dx, point.dy);
   }
   canvas.drawPath(path, paint);
+}
+
+StrokeJoin toStrokeJoin(PenShape penShape) {
+  switch (penShape) {
+    case PenShape.Square:
+      return StrokeJoin.miter;
+    case PenShape.Round:
+      return StrokeJoin.round;
+    default:
+      throw Exception("Unsupported PenShape: $penShape");
+  }
+}
+
+StrokeCap toStrokeCap(PenShape penShape) {
+  switch (penShape) {
+    case PenShape.Square:
+      return StrokeCap.square;
+    case PenShape.Round:
+      return StrokeCap.round;
+    default:
+      throw Exception("Unsupported PenShape: $penShape");
+  }
 }

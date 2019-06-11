@@ -97,17 +97,29 @@ class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: <Widget>[
                                   InkWell(
-                                      child: IconButton(
-                                          tooltip: "Brush",
-                                          onPressed: _selectBrush,
-                                          icon: Icon(Icons.gesture))),
+                                      child: DropdownButtonHideUnderline(
+                                          child: ButtonTheme(
+                                              alignedDropdown: true,
+                                              child: DropdownButton(
+                                                  items: _availablePens(),
+                                                  value: configState
+                                                          is DrawingConfigLoaded
+                                                      ? _ToolStyle(
+                                                          configState
+                                                              .drawingConfig
+                                                              .penShape,
+                                                          configState
+                                                              .drawingConfig
+                                                              .strokeWidth)
+                                                      : null,
+                                                  onChanged: _selectToolStyle,
+                                                  icon: Icon(Icons.gesture))))),
                                   InkWell(
                                       child: DropdownButtonHideUnderline(
                                           child: ButtonTheme(
                                               alignedDropdown: true,
                                               child: DropdownButton(
                                                   items: _availableColors(),
-                                                  //isDense: true,
                                                   value: configState
                                                           is DrawingConfigLoaded
                                                       ? configState
@@ -115,12 +127,7 @@ class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
                                                           .color
                                                           .value
                                                       : null,
-                                                  onChanged: (color) =>
-                                                      _drawingConfigBloc.dispatch(
-                                                          SelectDrawingToolColor(
-                                                              color)),
-                                                  // tooltip: "Color",
-                                                  // onPressed: _openColorSelection,
+                                                  onChanged: _setToolColor,
                                                   icon: Icon(Icons.palette))))),
                                   InkWell(
                                       child: IconButton(
@@ -158,6 +165,9 @@ class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
                                 ])))));
   }
 
+  _setToolColor(color) =>
+      _drawingConfigBloc.dispatch(SelectDrawingToolColor(color));
+
   _undo() => _drawingBloc.dispatch(Undo());
 
   _redo() => _drawingBloc.dispatch(Redo());
@@ -165,6 +175,11 @@ class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
   _clear() => _drawingBloc.dispatch(ClearDrawing());
 
   _selectBrush() => _drawingConfigBloc.dispatch(SelectDrawingTool(Tool.Brush));
+
+  _selectToolStyle(_ToolStyle toolStyle) {
+    _drawingConfigBloc
+        .dispatch(SelectToolStyle(toolStyle.penShape, toolStyle.strokeWidth));
+  }
 
   _selectEraser() =>
       _drawingConfigBloc.dispatch(SelectDrawingTool(Tool.Eraser));
@@ -177,4 +192,49 @@ class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
                 color: color, child: SizedBox(width: 30, height: 30))))
         .toList();
   }
+
+  List<DropdownMenuItem<_ToolStyle>> _availablePens() {
+    return availableToolStyles
+        .map((toolStyle) => DropdownMenuItem(
+            value: toolStyle,
+            child: Container(
+              decoration: _decorationOf(toolStyle),
+              width: toolStyle.strokeWidth,
+              height: toolStyle.strokeWidth,
+            )))
+        .toList();
+  }
+
+  BoxDecoration _decorationOf(_ToolStyle toolStyle) {
+    return toolStyle.penShape == PenShape.Square
+        ? BoxDecoration(shape: BoxShape.rectangle, color: Colors.black)
+        : BoxDecoration(shape: BoxShape.circle, color: Colors.black);
+  }
 }
+
+class _ToolStyle {
+  final PenShape penShape;
+  final double strokeWidth;
+
+  _ToolStyle(this.penShape, this.strokeWidth);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is _ToolStyle &&
+          runtimeType == other.runtimeType &&
+          penShape == other.penShape &&
+          strokeWidth == other.strokeWidth;
+
+  @override
+  int get hashCode => penShape.hashCode ^ strokeWidth.hashCode;
+}
+
+final availableToolStyles = <_ToolStyle>[
+  _ToolStyle(PenShape.Square, 20),
+  _ToolStyle(PenShape.Square, 10),
+  _ToolStyle(PenShape.Square, 5),
+  _ToolStyle(PenShape.Round, 20),
+  _ToolStyle(PenShape.Round, 10),
+  _ToolStyle(PenShape.Round, 5)
+];

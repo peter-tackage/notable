@@ -21,11 +21,16 @@ class DrawingMapper implements Mapper<Drawing, DrawingEntity> {
           action.points
               .map((Offset offset) => PointEntity(offset.dx, offset.dy))
               .toList(),
-          action.color.value);
+          action.color.value,
+          _mapPenShapeModelToEntity(action.penShape),
+          action.strokeWidth);
     } else if (action is EraserAction) {
-      return EraserDrawingActionEntity(action.points
-          .map((Offset offset) => PointEntity(offset.dx, offset.dy))
-          .toList());
+      return EraserDrawingActionEntity(
+          action.points
+              .map((Offset offset) => PointEntity(offset.dx, offset.dy))
+              .toList(),
+          _mapPenShapeModelToEntity(action.penShape),
+          action.strokeWidth);
     } else {
       throw Exception(
           "Cannot map to entity - unsupported drawing action: $action");
@@ -43,26 +48,29 @@ class DrawingMapper implements Mapper<Drawing, DrawingEntity> {
 
   DrawingAction _mapActionEntityToModel(DrawingActionEntity actionEntity) {
     if (actionEntity.tool == Tool.Brush.toString()) {
-      return _mapToBrushActionEntityToModel(actionEntity);
+      return _mapBrushActionEntityToModel(actionEntity);
     } else if (actionEntity.tool == Tool.Eraser.toString()) {
-      return _mapToEraserActionEntityToModel(actionEntity);
+      return _mapEraserActionEntityToModel(actionEntity);
     } else {
       throw Exception(
           "Cannot map entity to model - unsupported drawing action tool: ${actionEntity.tool}");
     }
   }
 
-  static EraserAction _mapToEraserActionEntityToModel(
+  static EraserAction _mapEraserActionEntityToModel(
       DrawingActionEntity actionEntity) {
     EraserDrawingActionEntity eraserEntity =
         actionEntity as EraserDrawingActionEntity;
 
-    return EraserAction(eraserEntity.points
-        .map((pointEntity) => Offset(pointEntity.x, pointEntity.y))
-        .toList());
+    return EraserAction(
+        eraserEntity.points
+            .map((pointEntity) => Offset(pointEntity.x, pointEntity.y))
+            .toList(),
+        _mapPenShapeEntityToModel(eraserEntity.penShape),
+        eraserEntity.strokeWidth);
   }
 
-  static BrushAction _mapToBrushActionEntityToModel(
+  static BrushAction _mapBrushActionEntityToModel(
       DrawingActionEntity actionEntity) {
     BrushDrawingActionEntity brushEntity =
         actionEntity as BrushDrawingActionEntity;
@@ -71,6 +79,30 @@ class DrawingMapper implements Mapper<Drawing, DrawingEntity> {
         brushEntity.points
             .map((pointEntity) => Offset(pointEntity.x, pointEntity.y))
             .toList(),
-        Color(brushEntity.color));
+        Color(brushEntity.color),
+        _mapPenShapeEntityToModel(brushEntity.penShape),
+        brushEntity.strokeWidth);
+  }
+
+  static PenShape _mapPenShapeEntityToModel(PenShapeEntity penShapeEntity) {
+    switch (penShapeEntity) {
+      case PenShapeEntity.Square:
+        return PenShape.Square;
+      case PenShapeEntity.Round:
+        return PenShape.Round;
+      default:
+        throw Exception("Can't map PenShapeEntity: $penShapeEntity");
+    }
+  }
+
+  static PenShapeEntity _mapPenShapeModelToEntity(PenShape penShape) {
+    switch (penShape) {
+      case PenShape.Square:
+        return PenShapeEntity.Square;
+      case PenShape.Round:
+        return PenShapeEntity.Round;
+      default:
+        throw Exception("Can't map PenShape: $penShape");
+    }
   }
 }

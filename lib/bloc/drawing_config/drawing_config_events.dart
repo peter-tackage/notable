@@ -35,3 +35,15 @@ class SelectDrawingToolColor extends DrawingConfigEvent {
   @override
   String toString() => 'SelectDrawingToolColor';
 }
+
+@immutable
+class SelectToolStyle extends DrawingConfigEvent {
+  final PenShape penShape;
+  final double strokeWidth;
+
+  SelectToolStyle(this.penShape, this.strokeWidth)
+      : super([penShape, strokeWidth]);
+
+  @override
+  String toString() => 'SelectToolStyle';
+}
