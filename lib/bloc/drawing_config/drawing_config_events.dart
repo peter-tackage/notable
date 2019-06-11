@@ -25,3 +25,13 @@ class SelectDrawingTool extends DrawingConfigEvent {
   @override
   String toString() => 'SelectDrawingTool';
 }
+
+@immutable
+class SelectDrawingToolColor extends DrawingConfigEvent {
+  final int color;
+
+  SelectDrawingToolColor(this.color) : super([color]);
+
+  @override
+  String toString() => 'SelectDrawingToolColor';
+}

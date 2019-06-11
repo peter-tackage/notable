@@ -102,10 +102,26 @@ class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
                                           onPressed: _selectBrush,
                                           icon: Icon(Icons.gesture))),
                                   InkWell(
-                                      child: IconButton(
-                                          tooltip: "Color",
-                                          onPressed: () => {},
-                                          icon: Icon(Icons.palette))),
+                                      child: DropdownButtonHideUnderline(
+                                          child: ButtonTheme(
+                                              alignedDropdown: true,
+                                              child: DropdownButton(
+                                                  items: _availableColors(),
+                                                  //isDense: true,
+                                                  value: configState
+                                                          is DrawingConfigLoaded
+                                                      ? configState
+                                                          .drawingConfig
+                                                          .color
+                                                          .value
+                                                      : null,
+                                                  onChanged: (color) =>
+                                                      _drawingConfigBloc.dispatch(
+                                                          SelectDrawingToolColor(
+                                                              color)),
+                                                  // tooltip: "Color",
+                                                  // onPressed: _openColorSelection,
+                                                  icon: Icon(Icons.palette))))),
                                   InkWell(
                                       child: IconButton(
                                           tooltip: "Eraser",
@@ -152,4 +168,13 @@ class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
 
   _selectEraser() =>
       _drawingConfigBloc.dispatch(SelectDrawingTool(Tool.Eraser));
+
+  List<DropdownMenuItem<int>> _availableColors() {
+    return Colors.primaries
+        .map((color) => DropdownMenuItem(
+            value: color.value,
+            child: Container(
+                color: color, child: SizedBox(width: 30, height: 30))))
+        .toList();
+  }
 }

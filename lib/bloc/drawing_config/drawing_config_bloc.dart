@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:bloc/bloc.dart';
 import 'package:notable/model/drawing_config.dart';
@@ -17,6 +18,8 @@ class DrawingConfigBloc extends Bloc<DrawingConfigEvent, DrawingConfigState> {
   Stream<DrawingConfigState> mapEventToState(DrawingConfigEvent event) async* {
     if (event is SelectDrawingTool) {
       yield* _mapSelectDrawingToolEventToState(event, currentState);
+    } else if (event is SelectDrawingToolColor) {
+      yield* _mapSelectDrawingToolColorEventToState(event, currentState);
     }
   }
 
@@ -25,6 +28,14 @@ class DrawingConfigBloc extends Bloc<DrawingConfigEvent, DrawingConfigState> {
     if (currentState is DrawingConfigLoaded) {
       yield DrawingConfigLoaded(
           currentState.drawingConfig.copyWith(tool: event.tool));
+    }
+  }
+
+  Stream<DrawingConfigState> _mapSelectDrawingToolColorEventToState(
+      SelectDrawingToolColor event, DrawingConfigState currentState) async* {
+    if (currentState is DrawingConfigLoaded) {
+      yield DrawingConfigLoaded(
+          currentState.drawingConfig.copyWith(color: Color(event.color)));
     }
   }
 }
