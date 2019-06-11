@@ -11,6 +11,7 @@ import 'package:notable/entity/drawing_entity.dart';
 import 'package:notable/model/drawing.dart';
 import 'package:notable/model/drawing_config.dart';
 import 'package:notable/widget/drawing_page.dart';
+import 'dart:math';
 
 class AddEditDrawingNoteScreen extends StatefulWidget {
   final String id;
@@ -140,8 +141,9 @@ class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
                                       child: IconButton(
                                           tooltip: "Eraser",
                                           onPressed: _selectEraser,
-                                          icon: Icon(
-                                              Icons.indeterminate_check_box))),
+                                          icon: Transform.rotate(
+                                              angle: pi,
+                                              child: Icon(Icons.create)))),
                                   InkWell(
                                       child: IconButton(
                                           tooltip: "Undo",
