@@ -84,8 +84,8 @@ class AllNotesPage extends StatelessWidget {
             Icon(
               Icons.assignment,
               size: 100.0,
-              color: Colors.blueGrey,
+              color: Colors.blueGrey[200],
             ),
-            Text("You don't have any notes")
+            Text("You don't have any notes yet")
           ]));
 }
