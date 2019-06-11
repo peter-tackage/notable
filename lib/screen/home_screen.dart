@@ -30,48 +30,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-        ),
-        body: Column(
-          children: <Widget>[
-            Expanded(
-                child: BlocProvider<FeedBloc>(
-              bloc: _feedBloc,
-              child: AllNotesPage(),
-            )),
-            Container(
-                height: 64,
-                child: Material(
-                  color: Colors.grey[200],
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        InkWell(
-                            child: IconButton(
-                                tooltip: "Create audio clip",
-                                onPressed: () => _openAudioNoteEditor(context),
-                                icon: Icon(Icons.mic))),
-                        InkWell(
-                            child: IconButton(
-                                tooltip: "Create drawing",
-                                onPressed: () =>
-                                    _openDrawingNoteEditor(context),
-                                icon: Icon(Icons.brush))),
-                        InkWell(
-                            child: IconButton(
-                                tooltip: "Create note",
-                                onPressed: () => _openTextNoteEditor(context),
-                                icon: Icon(Icons.format_quote))),
-                        InkWell(
-                            child: IconButton(
-                                tooltip: "Create checklist",
-                                onPressed: () => _openChecklistEditor(context),
-                                icon: Icon(Icons.format_list_bulleted)))
-                      ]),
-                )),
-          ],
-        ));
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body: BlocProvider<FeedBloc>(bloc: _feedBloc, child: AllNotesPage()),
+      bottomNavigationBar: _buildBottomAppBar(),
+    );
   }
 
   void _openChecklistEditor(BuildContext context) => Navigator.push(
@@ -91,4 +55,33 @@ class _HomeScreenState extends State<HomeScreen> {
       context,
       MaterialPageRoute(
           builder: (context) => AddEditAudioNoteScreen(id: null)));
+
+  Widget _buildBottomAppBar() {
+    return Container(
+        child: Material(
+      color: Colors.grey[200],
+      child: Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
+        InkWell(
+            child: IconButton(
+                tooltip: "Create audio clip",
+                onPressed: () => _openAudioNoteEditor(context),
+                icon: Icon(Icons.mic))),
+        InkWell(
+            child: IconButton(
+                tooltip: "Create drawing",
+                onPressed: () => _openDrawingNoteEditor(context),
+                icon: Icon(Icons.brush))),
+        InkWell(
+            child: IconButton(
+                tooltip: "Create note",
+                onPressed: () => _openTextNoteEditor(context),
+                icon: Icon(Icons.format_quote))),
+        InkWell(
+            child: IconButton(
+                tooltip: "Create checklist",
+                onPressed: () => _openChecklistEditor(context),
+                icon: Icon(Icons.format_list_bulleted)))
+      ]),
+    ));
+  }
 }
