@@ -113,12 +113,19 @@ class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
                                                               .strokeWidth)
                                                       : null,
                                                   onChanged: _selectToolStyle,
-                                                  icon: Icon(Icons.gesture))))),
+                                                  icon: Icon(
+                                                      Icons.border_color))))),
+                                  InkWell(
+                                      child: IconButton(
+                                          tooltip: "Brush",
+                                          onPressed: _selectBrush,
+                                          icon: Icon(Icons.gesture))),
                                   InkWell(
                                       child: DropdownButtonHideUnderline(
                                           child: ButtonTheme(
                                               alignedDropdown: true,
                                               child: DropdownButton(
+                                                  isDense: true,
                                                   items: _availableColors(),
                                                   value: configState
                                                           is DrawingConfigLoaded
@@ -161,7 +168,7 @@ class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
                                                   drawingState.drawing.canUndo
                                               ? _clear
                                               : null,
-                                          icon: Icon(Icons.clear_all)))
+                                          icon: Icon(Icons.clear)))
                                 ])))));
   }
 
@@ -189,7 +196,7 @@ class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
         .map((color) => DropdownMenuItem(
             value: color.value,
             child: Container(
-                color: color, child: SizedBox(width: 30, height: 30))))
+                color: color, child: SizedBox(width: 15, height: 15))))
         .toList();
   }
 
