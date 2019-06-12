@@ -50,15 +50,22 @@ abstract class DrawingAction {
   void draw(Canvas canvas);
 }
 
-@immutable
-class BrushAction extends DrawingAction {
+abstract class StrokeDrawingAction extends DrawingAction {
   final List<Offset> points;
+
+  StrokeDrawingAction(this.points);
+
+  StrokeDrawingAction copyWith(List<Offset> points);
+}
+
+@immutable
+class BrushAction extends StrokeDrawingAction {
   final Color color;
   final PenShape penShape;
   final double strokeWidth;
 
-  BrushAction(this.points, this.color, this.penShape, this.strokeWidth)
-      : super();
+  BrushAction(points, this.color, this.penShape, this.strokeWidth)
+      : super(points);
 
   @override
   void draw(Canvas canvas) {
@@ -76,17 +83,17 @@ class BrushAction extends DrawingAction {
   @override
   String toString() => "BrushAction: ${points.length}";
 
+  @override
   BrushAction copyWith(List<Offset> points) =>
       BrushAction(points, this.color, this.penShape, this.strokeWidth);
 }
 
 @immutable
-class EraserAction extends DrawingAction {
-  final List<Offset> points;
+class EraserAction extends StrokeDrawingAction {
   final PenShape penShape;
   final double strokeWidth;
 
-  EraserAction(this.points, this.penShape, this.strokeWidth) : super();
+  EraserAction(points, this.penShape, this.strokeWidth) : super(points);
 
   @override
   void draw(Canvas canvas) {
@@ -105,6 +112,7 @@ class EraserAction extends DrawingAction {
   @override
   String toString() => "EraserAction: ${points.length}";
 
+  @override
   EraserAction copyWith(List<Offset> points) =>
       EraserAction(points, this.penShape, this.strokeWidth);
 }

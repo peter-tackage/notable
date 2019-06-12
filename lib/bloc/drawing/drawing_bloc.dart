@@ -157,31 +157,14 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
           currentState.drawing.allActions[currentState.drawing.currentIndex];
 
       if (currentAction is BrushAction) {
-        // This updates the current action with the point associated with the
-        // interaction event.
-        List<Offset> points = List.of(currentAction.points);
-        points.add(event.offset);
-        BrushAction updatedAction = currentAction.copyWith(points);
-
         List<DrawingAction> updatedActions =
-            List.of(currentState.drawing.allActions);
-        updatedActions[currentState.drawing.currentIndex] = updatedAction;
-
+            updateAction(currentAction, event, currentState);
         Drawing updatedDrawing =
             currentState.drawing.copyWith(actions: updatedActions);
-
         yield DrawingLoaded(drawing: updatedDrawing);
       } else if (currentAction is EraserAction) {
-        // This updates the current action with the point associated with the
-        // interaction event.
-        List<Offset> points = List.of(currentAction.points);
-        points.add(event.offset);
-        EraserAction updatedAction = currentAction.copyWith(points);
-
         List<DrawingAction> updatedActions =
-            List.of(currentState.drawing.allActions);
-        updatedActions[currentState.drawing.currentIndex] = updatedAction;
-
+            updateAction(currentAction, event, currentState);
         Drawing updatedDrawing =
             currentState.drawing.copyWith(actions: updatedActions);
         yield DrawingLoaded(drawing: updatedDrawing);
@@ -189,6 +172,18 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
         throw Exception("Unsupported action type: $currentAction");
       }
     }
+  }
+
+  List<DrawingAction> updateAction(StrokeDrawingAction currentAction,
+      UpdateDrawing event, DrawingLoaded currentState) {
+    List<Offset> points = List.of(currentAction.points);
+    points.add(event.offset);
+    StrokeDrawingAction updatedAction = currentAction.copyWith(points);
+
+    List<DrawingAction> updatedActions =
+        List.of(currentState.drawing.allActions);
+    updatedActions[currentState.drawing.currentIndex] = updatedAction;
+    return updatedActions;
   }
 
   Stream<DrawingState> _mapEndDrawingActionEventToState(
