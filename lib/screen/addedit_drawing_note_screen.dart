@@ -116,12 +116,7 @@ class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
                                                       : null,
                                                   onChanged: _selectToolStyle,
                                                   icon: Icon(
-                                                      Icons.border_color))))),
-                                  InkWell(
-                                      child: IconButton(
-                                          tooltip: "Brush",
-                                          onPressed: _selectBrush,
-                                          icon: Icon(Icons.gesture))),
+                                                      Icons.line_style))))),
                                   InkWell(
                                       child: DropdownButtonHideUnderline(
                                           child: ButtonTheme(
@@ -138,6 +133,11 @@ class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
                                                       : null,
                                                   onChanged: _setToolColor,
                                                   icon: Icon(Icons.palette))))),
+                                  InkWell(
+                                      child: IconButton(
+                                          tooltip: "Brush",
+                                          onPressed: _selectBrush,
+                                          icon: Icon(Icons.gesture))),
                                   InkWell(
                                       child: IconButton(
                                           tooltip: "Eraser",
