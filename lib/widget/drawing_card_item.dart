@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:notable/model/drawing.dart';
+import 'package:notable/widget/note_painter.dart';
 
 import 'note_card.dart';
 
@@ -19,12 +20,11 @@ class DrawingCardItem extends StatelessWidget {
       note: drawing,
       child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Text("Drawing: ${drawing.id}")),
-//          child: Container(
-//              //height: 80,
-//              child: CustomPaint(
-//                painter: NotePainter(drawing.displayedActions),
-//              ))),
+          child: ConstrainedBox(
+              constraints: const BoxConstraints.expand(),
+              child: CustomPaint(
+                painter: NotePainter(drawing.displayedActions),
+              ))),
       onTap: onTap,
     );
   }

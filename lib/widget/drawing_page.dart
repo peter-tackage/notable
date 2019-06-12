@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -38,16 +40,15 @@ class _DrawingPageState extends State<DrawingPage> {
                     Container(
                         child: ConstrainedBox(
                             constraints: const BoxConstraints.expand(),
-                            child:
-                                _buildCanvasBody(drawingState, configState)))));
+                            child: _buildBody(drawingState, configState)))));
   }
 
-  Widget _buildCanvasBody(
-      DrawingState drawingState, DrawingConfigState configState) {
+  Widget _buildBody(DrawingState drawingState, DrawingConfigState configState) {
     if (drawingState is DrawingLoading) {
       return _buildLoadingIndicator();
     } else if (drawingState is DrawingLoaded &&
         configState is DrawingConfigLoaded) {
+
       return GestureDetector(
           onPanStart: (details) =>
               _onToolDown(details, configState.drawingConfig),
