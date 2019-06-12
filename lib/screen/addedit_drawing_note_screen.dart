@@ -102,7 +102,8 @@ class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
                                           child: ButtonTheme(
                                               alignedDropdown: true,
                                               child: DropdownButton(
-                                                  items: _availablePens(),
+                                                  items:
+                                                      _buildToolStyleMenuItems(),
                                                   value: configState
                                                           is DrawingConfigLoaded
                                                       ? _ToolStyle(
@@ -127,7 +128,7 @@ class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
                                               alignedDropdown: true,
                                               child: DropdownButton(
                                                   isDense: true,
-                                                  items: _availableColors(),
+                                                  items: _buildColorMenuItems(),
                                                   value: configState
                                                           is DrawingConfigLoaded
                                                       ? configState
@@ -193,8 +194,8 @@ class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
   _selectEraser() =>
       _drawingConfigBloc.dispatch(SelectDrawingTool(Tool.Eraser));
 
-  List<DropdownMenuItem<int>> _availableColors() {
-    return Colors.primaries
+  List<DropdownMenuItem<int>> _buildColorMenuItems() {
+    return availableColors
         .map((color) => DropdownMenuItem(
             value: color.value,
             child: Container(
@@ -202,7 +203,7 @@ class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
         .toList();
   }
 
-  List<DropdownMenuItem<_ToolStyle>> _availablePens() {
+  List<DropdownMenuItem<_ToolStyle>> _buildToolStyleMenuItems() {
     return availableToolStyles
         .map((toolStyle) => DropdownMenuItem(
             value: toolStyle,
@@ -246,4 +247,10 @@ final availableToolStyles = <_ToolStyle>[
   _ToolStyle(PenShape.Round, 20),
   _ToolStyle(PenShape.Round, 10),
   _ToolStyle(PenShape.Round, 5)
+];
+
+final List<Color> availableColors = [
+  ...Colors.primaries,
+  Colors.black,
+  Colors.white
 ];
