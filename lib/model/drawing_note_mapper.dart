@@ -11,7 +11,7 @@ class DrawingMapper implements Mapper<Drawing, DrawingEntity> {
   toEntity(Drawing model) => DrawingEntity(
       model.labels.map((label) => label.toEntity()).toList(),
       model.title,
-      model.allActions.map(_mapActionToEntity).toList(),
+      model.displayedActions.map(_mapActionToEntity).toList(), // trim to the current index
       id: model.id,
       updatedDate: model.updatedDate);
 

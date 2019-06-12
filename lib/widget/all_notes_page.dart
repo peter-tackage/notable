@@ -86,6 +86,6 @@ class AllNotesPage extends StatelessWidget {
               size: 100.0,
               color: Colors.blueGrey[200],
             ),
-            Text("You don't have any notes yet")
+            Text("You don't have any notes yet", style: TextStyle(color: Colors.blueGrey))
           ]));
 }
