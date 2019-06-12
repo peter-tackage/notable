@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notable/bloc/drawing/drawing_bloc.dart';
@@ -11,7 +13,6 @@ import 'package:notable/entity/drawing_entity.dart';
 import 'package:notable/model/drawing.dart';
 import 'package:notable/model/drawing_config.dart';
 import 'package:notable/widget/drawing_page.dart';
-import 'dart:math';
 
 class AddEditDrawingNoteScreen extends StatefulWidget {
   final String id;
@@ -23,6 +24,8 @@ class AddEditDrawingNoteScreen extends StatefulWidget {
 }
 
 class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
+  static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   NotesBloc<Drawing, DrawingEntity> _notesBloc;
   DrawingBloc _drawingBloc;
   DrawingConfigBloc _drawingConfigBloc;
@@ -42,7 +45,7 @@ class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
         body: BlocProviderTree(blocProviders: [
           BlocProvider<DrawingBloc>(bloc: _drawingBloc),
           BlocProvider<DrawingConfigBloc>(bloc: _drawingConfigBloc)
-        ], child: DrawingPage()),
+        ], child: _buildBody()),
         bottomNavigationBar: _buildBottomAppBar(),
         floatingActionButton: FloatingActionButton(
           onPressed: _saveDrawing,
@@ -51,7 +54,38 @@ class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
         ));
   }
 
+  Widget _buildBody() {
+    return BlocBuilder(
+        bloc: _drawingBloc,
+        builder: (BuildContext context, DrawingState state) {
+          if (state is DrawingLoaded) {
+            return Form(
+                key: _formKey,
+                child: Column(children: <Widget>[
+                  Padding(
+                      padding: EdgeInsets.only(top: 8, left: 8, right: 8),
+                      child: TextFormField(
+                          onSaved: _onSaveTitle,
+                          initialValue: state.drawing.title,
+                          style: Theme.of(context).textTheme.title,
+                          decoration: InputDecoration(
+                              border: InputBorder.none, hintText: 'Title...'),
+                          maxLines: 1,
+                          textCapitalization: TextCapitalization.sentences,
+                          autofocus: false)),
+                  DrawingPage()
+                ]));
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        });
+  }
+
   _saveDrawing() {
+    if (_formKey.currentState.validate()) {
+      _formKey.currentState.save();
+    }
+
     _drawingBloc.dispatch(SaveDrawing());
     Navigator.pop(context);
   }
@@ -215,11 +249,13 @@ class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
         .toList();
   }
 
-  BoxDecoration _decorationOf(_ToolStyle toolStyle) {
-    return toolStyle.penShape == PenShape.Square
-        ? BoxDecoration(shape: BoxShape.rectangle, color: Colors.black)
-        : BoxDecoration(shape: BoxShape.circle, color: Colors.black);
-  }
+  BoxDecoration _decorationOf(_ToolStyle toolStyle) =>
+      toolStyle.penShape == PenShape.Square
+          ? BoxDecoration(shape: BoxShape.rectangle, color: Colors.black)
+          : BoxDecoration(shape: BoxShape.circle, color: Colors.black);
+
+  _onSaveTitle(String newTitle) =>
+      _drawingBloc.dispatch(UpdateDrawingTitle(newTitle));
 }
 
 class _ToolStyle {

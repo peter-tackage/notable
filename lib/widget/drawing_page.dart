@@ -37,10 +37,12 @@ class _DrawingPageState extends State<DrawingPage> {
             BlocBuilder<DrawingEvent, DrawingState>(
                 bloc: BlocProvider.of<DrawingBloc>(context),
                 builder: (BuildContext context, DrawingState drawingState) =>
-                    Container(
-                        child: ConstrainedBox(
-                            constraints: const BoxConstraints.expand(),
-                            child: _buildBody(drawingState, configState)))));
+                    Expanded(
+                        child: Container(
+                            child: ConstrainedBox(
+                                constraints: const BoxConstraints.expand(),
+                                child:
+                                    _buildBody(drawingState, configState))))));
   }
 
   Widget _buildBody(DrawingState drawingState, DrawingConfigState configState) {
@@ -48,7 +50,6 @@ class _DrawingPageState extends State<DrawingPage> {
       return _buildLoadingIndicator();
     } else if (drawingState is DrawingLoaded &&
         configState is DrawingConfigLoaded) {
-
       return GestureDetector(
           onPanStart: (details) =>
               _onToolDown(details, configState.drawingConfig),

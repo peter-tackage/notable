@@ -88,3 +88,13 @@ class EndDrawing extends DrawingEvent {
   @override
   String toString() => 'EndDrawing';
 }
+
+@immutable
+class UpdateDrawingTitle extends DrawingEvent {
+  final String title;
+
+  UpdateDrawingTitle(this.title) : super([title]);
+
+  @override
+  String toString() => 'UpdateDrawingTitle: $title';
+}

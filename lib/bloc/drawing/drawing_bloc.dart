@@ -54,6 +54,8 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
       yield* _mapUpdateDrawingActionEventToState(currentState, event);
     } else if (event is EndDrawing) {
       yield* _mapEndDrawingActionEventToState(currentState, event);
+    } else if (event is UpdateDrawingTitle) {
+      yield* _mapUpdateDrawingTitleEventToState(currentState, event);
     }
   }
 
@@ -189,5 +191,15 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
   Stream<DrawingState> _mapEndDrawingActionEventToState(
       DrawingState currentState, EndDrawing event) async* {
     // Nothing yet
+  }
+
+  Stream<DrawingState> _mapUpdateDrawingTitleEventToState(
+      DrawingState currentState, UpdateDrawingTitle event) async* {
+    if (currentState is DrawingLoaded) {
+      Drawing updatedDrawing =
+          currentState.drawing.copyWith(title: event.title);
+      print("Updated title to ${event.title}");
+      yield DrawingLoaded(drawing: updatedDrawing);
+    }
   }
 }
