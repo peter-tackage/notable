@@ -37,12 +37,10 @@ class _DrawingPageState extends State<DrawingPage> {
             BlocBuilder<DrawingEvent, DrawingState>(
                 bloc: BlocProvider.of<DrawingBloc>(context),
                 builder: (BuildContext context, DrawingState drawingState) =>
-                    Expanded(
-                        child: Container(
-                            child: ConstrainedBox(
-                                constraints: const BoxConstraints.expand(),
-                                child:
-                                    _buildBody(drawingState, configState))))));
+                    Container(
+                        child: ConstrainedBox(
+                            constraints: const BoxConstraints.expand(),
+                            child: _buildBody(drawingState, configState)))));
   }
 
   Widget _buildBody(DrawingState drawingState, DrawingConfigState configState) {

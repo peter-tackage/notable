@@ -59,10 +59,11 @@ class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
         bloc: _drawingBloc,
         builder: (BuildContext context, DrawingState state) {
           if (state is DrawingLoaded) {
-            return Form(
-                key: _formKey,
-                child: Column(children: <Widget>[
-                  Padding(
+            return Stack(children: [
+              DrawingPage(),
+              Form(
+                  key: _formKey,
+                  child: Padding(
                       padding: EdgeInsets.only(top: 8, left: 8, right: 8),
                       child: TextFormField(
                           onSaved: _onSaveTitle,
@@ -72,9 +73,8 @@ class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
                               border: InputBorder.none, hintText: 'Title...'),
                           maxLines: 1,
                           textCapitalization: TextCapitalization.sentences,
-                          autofocus: false)),
-                  DrawingPage()
-                ]));
+                          autofocus: false)))
+            ]);
           } else {
             return Center(child: CircularProgressIndicator());
           }
@@ -129,7 +129,8 @@ class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
                         child: Material(
                             color: Colors.grey[200],
                             child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                 children: <Widget>[
                                   InkWell(
                                       child: DropdownButtonHideUnderline(
