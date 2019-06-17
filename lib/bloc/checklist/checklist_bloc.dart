@@ -79,20 +79,16 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
       ChecklistState currentState, ChecklistEvent event) async* {
     if (event is SaveChecklist) {
       if (currentState is ChecklistLoaded) {
-        removeEmptyItems(currentState);
+        Checklist checklist = currentState.checklist
+            .rebuild((b) => b..items.removeWhere((item) => item.isEmpty()));
 
         if (id == null) {
-          notesBloc.dispatch(AddNote(currentState.checklist));
+          notesBloc.dispatch(AddNote(checklist));
         } else {
-          notesBloc.dispatch(UpdateNote(currentState.checklist));
+          notesBloc.dispatch(UpdateNote(checklist));
         }
       }
     }
-  }
-
-  BuiltList<ChecklistItem> removeEmptyItems(ChecklistLoaded currentState) {
-    return currentState.checklist.items
-        .rebuild((b) => b..removeWhere((item) => item.isEmpty()));
   }
 
   Stream<ChecklistState> _mapDeleteChecklistEventToState(
