@@ -1,3 +1,4 @@
+import 'package:built_collection/built_collection.dart';
 import 'package:notable/data/mapper.dart';
 import 'package:notable/entity/entity.dart';
 import 'package:notable/model/checklist.dart';
@@ -9,18 +10,19 @@ class ChecklistMapper implements Mapper<Checklist, ChecklistEntity> {
       model.labels.map((l) => l.toEntity()).toList(),
       model.title,
       model.items
-          .map((item) => ChecklistItemEntity(item.task, item.isDone))
+          .map((item) => ChecklistItemEntity(item.task, item.isDone, item.id))
           .toList(),
       id: model.id,
       updatedDate: model.updatedDate);
 
   @override
-  toModel(ChecklistEntity entity) => Checklist(
-      entity.title,
-      entity.labels.map(Label.fromEntity).toList(),
-      entity.items
-          .map((item) => ChecklistItem(item.task, item.isDone, null))
-          .toList(),
-      id: entity.id,
-      updatedDate: entity.updatedDate);
+  toModel(ChecklistEntity entity) => Checklist((b) => b
+    ..title = entity.title
+    ..labels = entity.labels.map(Label.fromEntity).toList()
+    ..items = ListBuilder(entity.items.map((item) => ChecklistItem((bi) => bi
+      ..task = item.task
+      ..isDone = item.isDone
+      ..id = item.id)))
+    ..id = entity.id
+    ..updatedDate = entity.updatedDate);
 }

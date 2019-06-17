@@ -1,17 +1,18 @@
+import 'package:built_value/built_value.dart';
 import 'package:meta/meta.dart';
 import 'package:notable/model/base_note.dart';
+import 'package:notable/model/label.dart';
+
+part 'text_note.g.dart';
 
 @immutable
-class TextNote extends BaseNote {
-  final String text;
-
-  TextNote(title, labels, this.text, {id, createdDate})
-      : super(title, labels, id: id, updatedDate: createdDate);
+abstract class TextNote implements BaseNote, Built<TextNote, TextNoteBuilder> {
+  String get text;
 
   @override
   String toString() => 'Note: $title';
 
-  TextNote copyWith(String title, String text) =>
-      TextNote(title, this.labels, text,
-          id: this.id, createdDate: this.updatedDate);
+  TextNote._();
+
+  factory TextNote([updates(TextNoteBuilder b)]) = _$TextNote;
 }

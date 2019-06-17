@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:built_collection/built_collection.dart';
 import 'package:meta/meta.dart';
 import 'package:notable/bloc/checklist/checklist_events.dart';
 import 'package:notable/bloc/checklist/checklist_states.dart';
@@ -21,11 +22,13 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
       if (state is NotesLoaded) {
         // FIXME Editing entries with no items renders as empty
         // FIXME This dispatches too often
-        dispatch(LoadChecklist(state.notes.firstWhere(
-                (note) => note.id == this.id,
-                orElse: () => Checklist(
-                    '', List<Label>(), [ChecklistItem.empty()].toList()))
-            as Checklist));
+        dispatch(LoadChecklist(
+            state.notes.firstWhere((note) => note.id == this.id,
+                    orElse: () => Checklist((b) => b
+                      ..title = ''
+                      ..labels = List<Label>()
+                      ..items = ListBuilder([ChecklistItem.empty()])))
+                as Checklist));
       }
     });
   }
@@ -55,8 +58,21 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
   Stream<ChecklistState> _mapLoadChecklistEventToState(
       ChecklistState currentState, ChecklistEvent event) async* {
     if (event is LoadChecklist) {
-      yield ChecklistLoaded(event.checklist);
+      // We apply the item sorting here so that the insertion order of the items
+      // is not altered by toggling the done flag.
+      List<ChecklistItem> items = List.from(event.checklist.items);
+      items.sort(itemComparator);
+
+      yield ChecklistLoaded(
+          event.checklist.rebuild((b) => b..items.replace(items)));
     }
+  }
+
+  int itemComparator(ChecklistItem a, ChecklistItem b) {
+    if (a.isDone && !b.isDone) return 1;
+    if (!a.isDone && b.isDone) return -1;
+
+    return 0;
   }
 
   Stream<ChecklistState> _mapSaveChecklistEventToState(
@@ -74,8 +90,9 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
     }
   }
 
-  void removeEmptyItems(ChecklistLoaded currentState) {
-    currentState.checklist.items.removeWhere((item) => item.isEmpty());
+  BuiltList<ChecklistItem> removeEmptyItems(ChecklistLoaded currentState) {
+    return currentState.checklist.items
+        .rebuild((b) => b..removeWhere((item) => item.isEmpty()));
   }
 
   Stream<ChecklistState> _mapDeleteChecklistEventToState(
@@ -95,7 +112,10 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
       if (currentState is ChecklistLoaded) {
         List<ChecklistItem> items = List.from(currentState.checklist.items);
         items[event.index] = event.item;
-        yield ChecklistLoaded(currentState.checklist.copyWith(items: items));
+        items.sort(itemComparator);
+
+        yield ChecklistLoaded(
+            currentState.checklist.rebuild((b) => b..items.replace(items)));
       }
     }
   }
@@ -107,7 +127,10 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
       if (currentState is ChecklistLoaded) {
         List<ChecklistItem> items = List.from(currentState.checklist.items);
         items.removeAt(event.index);
-        yield ChecklistLoaded(currentState.checklist.copyWith(items: items));
+        items.sort(itemComparator);
+
+        yield ChecklistLoaded(
+            currentState.checklist.rebuild((b) => b..items.replace(items)));
       }
     }
   }
@@ -119,7 +142,8 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
       if (currentState is ChecklistLoaded) {
         List<ChecklistItem> items = List.from(currentState.checklist.items);
         items.add(ChecklistItem.empty());
-        yield ChecklistLoaded(currentState.checklist.copyWith(items: items));
+        yield ChecklistLoaded(
+            currentState.checklist.rebuild((b) => b.items.replace(items)));
       }
     }
   }
@@ -129,7 +153,7 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
     if (event is UpdateChecklistTitle) {
       if (currentState is ChecklistLoaded) {
         yield ChecklistLoaded(
-            currentState.checklist.copyWith(title: event.title));
+            currentState.checklist.rebuild((b) => b..title = event.title));
       }
     }
   }

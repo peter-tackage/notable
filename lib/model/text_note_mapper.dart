@@ -10,7 +10,10 @@ class TextNoteMapper implements Mapper<TextNote, NoteEntity> {
       id: model.id, updatedDate: model.updatedDate);
 
   @override
-  toModel(NoteEntity entity) => TextNote(
-      entity.title, entity.labels.map(Label.fromEntity).toList(), entity.text,
-      id: entity.id, createdDate: entity.updatedDate);
+  toModel(NoteEntity entity) => TextNote((b) => b
+    ..title = entity.title
+    ..labels = entity.labels.map(Label.fromEntity).toList()
+    ..text = entity.text
+    ..id = entity.id
+    ..updatedDate = entity.updatedDate);
 }

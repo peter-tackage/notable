@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
@@ -11,7 +9,7 @@ class DrawingConfig {
   final Tool tool;
   final PenShape penShape;
   final double strokeWidth;
-  final Color color;
+  final int color;
 
   DrawingConfig(
       {@required this.tool,
@@ -19,15 +17,14 @@ class DrawingConfig {
       @required this.strokeWidth,
       @required this.color});
 
-  DrawingConfig.defaults({
-    this.tool = Tool.Brush,
-    this.penShape = PenShape.Square,
-    this.strokeWidth = 5,
-    this.color = Colors.blue,
-  });
+  DrawingConfig.defaults()
+      : this.tool = Tool.Brush,
+        this.penShape = PenShape.Square,
+        this.strokeWidth = 5,
+        this.color = Colors.blue.value;
 
   DrawingConfig copyWith(
-      {Tool tool, PenShape penShape, double strokeWidth, Color color}) {
+      {Tool tool, PenShape penShape, double strokeWidth, int color}) {
     return DrawingConfig(
         tool: tool ?? this.tool,
         penShape: penShape ?? this.penShape,

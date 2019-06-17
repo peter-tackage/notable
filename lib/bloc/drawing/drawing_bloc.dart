@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:bloc/bloc.dart';
+import 'package:built_collection/built_collection.dart';
 import 'package:meta/meta.dart';
 import 'package:notable/bloc/notes/notes.dart';
 import 'package:notable/bloc/notes/notes_states.dart';
@@ -22,11 +22,13 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
   DrawingBloc({@required this.notesBloc, @required this.id}) {
     drawingsSubscription = notesBloc.state.listen((state) {
       if (state is NotesLoaded) {
-        dispatch(LoadDrawing(state.notes.firstWhere(
-                (note) => note.id == this.id,
-                orElse: () =>
-                    Drawing('', List<Label>(), List<DrawingAction>(), -1))
-            as Drawing));
+        dispatch(
+            LoadDrawing(state.notes.firstWhere((note) => note.id == this.id,
+                orElse: () => Drawing((b) => b
+                  ..title = ''
+                  ..labels = List<Label>()
+                  ..allActions = ListBuilder<DrawingAction>()
+                  ..currentIndex = -1)) as Drawing));
       }
     });
   }
@@ -94,8 +96,9 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
     if (currentState is DrawingLoaded) {
       // Move the index so that it's still undo-able.
       yield DrawingLoaded(
-          drawing:
-              currentState.drawing.copyWith(actions: List(), currentIndex: -1));
+          drawing: currentState.drawing.rebuild((b) => b
+            ..allActions = ListBuilder()
+            ..currentIndex = -1));
     }
   }
 
@@ -104,7 +107,8 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
     if (currentState is DrawingLoaded) {
       int movedIndex = currentState.drawing.currentIndex - 1;
       yield DrawingLoaded(
-          drawing: currentState.drawing.copyWith(currentIndex: movedIndex));
+          drawing: currentState.drawing
+              .rebuild((b) => b..currentIndex = movedIndex));
     }
   }
 
@@ -114,7 +118,8 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
       int movedIndex = currentState.drawing.currentIndex + 1;
 
       yield DrawingLoaded(
-          drawing: currentState.drawing.copyWith(currentIndex: movedIndex));
+          drawing: currentState.drawing
+              .rebuild((b) => b..currentIndex = movedIndex));
     }
   }
 
@@ -127,7 +132,9 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
       List<DrawingAction> actions;
       if (currentIndex >= 0 &&
           currentIndex != currentState.drawing.allActions.length - 1) {
-        actions = currentState.drawing.allActions.sublist(0, currentIndex + 1);
+        actions = currentState.drawing.allActions
+            .sublist(0, currentIndex + 1)
+            .toList();
       } else if (currentIndex == -1) {
         actions = List<DrawingAction>();
       } else {
@@ -136,19 +143,25 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
 
       DrawingAction action;
       if (event.config.tool == Tool.Brush) {
-        action = BrushAction(<Offset>[event.offset], event.config.color,
-            event.config.penShape, event.config.strokeWidth);
+        action = BrushAction((b) => b
+          ..points = ListBuilder<OffsetValue>([event.offset])
+          ..color = event.config.color
+          ..penShape = event.config.penShape
+          ..strokeWidth = event.config.strokeWidth);
       } else if (event.config.tool == Tool.Eraser) {
-        action = EraserAction(<Offset>[event.offset], event.config.penShape,
-            event.config.strokeWidth);
+        action = EraserAction((b) => b
+          ..points = ListBuilder<OffsetValue>([event.offset])
+          ..penShape = event.config.penShape
+          ..strokeWidth = event.config.strokeWidth);
       }
 
-      actions.add(action);
+      actions = [...actions, action];
       currentIndex = actions.length - 1;
 
       yield DrawingLoaded(
-          drawing: currentState.drawing
-              .copyWith(actions: actions, currentIndex: currentIndex));
+          drawing: currentState.drawing.rebuild((b) => b
+            ..allActions = ListBuilder(actions)
+            ..currentIndex = currentIndex));
     }
   }
 
@@ -157,18 +170,9 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
     if (currentState is DrawingLoaded) {
       DrawingAction currentAction =
           currentState.drawing.allActions[currentState.drawing.currentIndex];
-
-      if (currentAction is BrushAction) {
-        List<DrawingAction> updatedActions =
-            updateAction(currentAction, event, currentState);
-        Drawing updatedDrawing =
-            currentState.drawing.copyWith(actions: updatedActions);
-        yield DrawingLoaded(drawing: updatedDrawing);
-      } else if (currentAction is EraserAction) {
-        List<DrawingAction> updatedActions =
-            updateAction(currentAction, event, currentState);
-        Drawing updatedDrawing =
-            currentState.drawing.copyWith(actions: updatedActions);
+      if (currentAction is BrushAction || currentAction is EraserAction) {
+        Drawing updatedDrawing = _updateDrawingWithStrokeDrawingActionEvent(
+            currentAction, event, currentState);
         yield DrawingLoaded(drawing: updatedDrawing);
       } else {
         throw Exception("Unsupported action type: $currentAction");
@@ -176,16 +180,24 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
     }
   }
 
-  List<DrawingAction> updateAction(StrokeDrawingAction currentAction,
-      UpdateDrawing event, DrawingLoaded currentState) {
-    List<Offset> points = List.of(currentAction.points);
-    points.add(event.offset);
-    StrokeDrawingAction updatedAction = currentAction.copyWith(points);
+  // FIXME Can probably compact this a bit, we extract bits and put them back in when it could be possible to do it one statement.
 
-    List<DrawingAction> updatedActions =
-        List.of(currentState.drawing.allActions);
-    updatedActions[currentState.drawing.currentIndex] = updatedAction;
-    return updatedActions;
+  // This adds another point to an ongoing action in the current state
+  Drawing _updateDrawingWithStrokeDrawingActionEvent(
+      StrokeDrawingAction currentAction,
+      UpdateDrawing event,
+      DrawingLoaded currentState) {
+    // Add the new event to the current action
+    StrokeDrawingAction updatedAction =
+        currentAction.rebuild((b) => b..points.add(event.offset));
+
+    // Update the action in the overall state
+    BuiltList updatedActions = currentState.drawing.allActions
+        .rebuild((b) => b..[currentState.drawing.currentIndex] = updatedAction);
+
+    // Update the drawing with the new items
+    return currentState.drawing
+        .rebuild((existing) => existing..allActions.replace(updatedActions));
   }
 
   Stream<DrawingState> _mapEndDrawingActionEventToState(
@@ -197,7 +209,7 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
       DrawingState currentState, UpdateDrawingTitle event) async* {
     if (currentState is DrawingLoaded) {
       Drawing updatedDrawing =
-          currentState.drawing.copyWith(title: event.title);
+          currentState.drawing.rebuild((b) => b..title = event.title);
       print("Updated title to ${event.title}");
       yield DrawingLoaded(drawing: updatedDrawing);
     }

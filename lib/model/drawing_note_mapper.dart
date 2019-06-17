@@ -1,5 +1,4 @@
-import 'dart:ui';
-
+import 'package:built_collection/built_collection.dart';
 import 'package:notable/data/mapper.dart';
 import 'package:notable/entity/drawing_entity.dart';
 import 'package:notable/model/drawing.dart';
@@ -11,7 +10,8 @@ class DrawingMapper implements Mapper<Drawing, DrawingEntity> {
   toEntity(Drawing model) => DrawingEntity(
       model.labels.map((label) => label.toEntity()).toList(),
       model.title,
-      model.displayedActions.map(_mapActionToEntity).toList(), // trim to the current index
+      model.displayedActions.map(_mapActionToEntity).toList(),
+      // trim to the current index
       id: model.id,
       updatedDate: model.updatedDate);
 
@@ -19,15 +19,15 @@ class DrawingMapper implements Mapper<Drawing, DrawingEntity> {
     if (action is BrushAction) {
       return BrushDrawingActionEntity(
           action.points
-              .map((Offset offset) => PointEntity(offset.dx, offset.dy))
+              .map((OffsetValue offset) => PointEntity(offset.dx, offset.dy))
               .toList(),
-          action.color.value,
+          action.color,
           _mapPenShapeModelToEntity(action.penShape),
           action.strokeWidth);
     } else if (action is EraserAction) {
       return EraserDrawingActionEntity(
           action.points
-              .map((Offset offset) => PointEntity(offset.dx, offset.dy))
+              .map((OffsetValue offset) => PointEntity(offset.dx, offset.dy))
               .toList(),
           _mapPenShapeModelToEntity(action.penShape),
           action.strokeWidth);
@@ -38,19 +38,21 @@ class DrawingMapper implements Mapper<Drawing, DrawingEntity> {
   }
 
   @override
-  toModel(DrawingEntity entity) => Drawing(
-      entity.title,
-      entity.labels.map(Label.fromEntity).toList(),
-      entity.actions.map(_mapActionEntityToModel).toList(),
-      entity.actions.length - 1, // last index
-      id: entity.id,
-      updatedDate: entity.updatedDate);
+  toModel(DrawingEntity entity) => Drawing((b) => b
+    ..title = entity.title
+    ..labels = entity.labels.map(Label.fromEntity).toList()
+    ..allActions = ListBuilder(entity.actions.map(_mapActionEntityToModel))
+    ..currentIndex = entity.actions.length - 1 // last index
+    ..id = entity.id
+    ..updatedDate = entity.updatedDate);
 
   DrawingAction _mapActionEntityToModel(DrawingActionEntity actionEntity) {
     if (actionEntity.tool == Tool.Brush.toString()) {
-      return _mapBrushActionEntityToModel(actionEntity);
+      return _mapBrushActionEntityToModel(
+          actionEntity as BrushDrawingActionEntity);
     } else if (actionEntity.tool == Tool.Eraser.toString()) {
-      return _mapEraserActionEntityToModel(actionEntity);
+      return _mapEraserActionEntityToModel(
+          actionEntity as EraserDrawingActionEntity);
     } else {
       throw Exception(
           "Cannot map entity to model - unsupported drawing action tool: ${actionEntity.tool}");
@@ -58,30 +60,26 @@ class DrawingMapper implements Mapper<Drawing, DrawingEntity> {
   }
 
   static EraserAction _mapEraserActionEntityToModel(
-      DrawingActionEntity actionEntity) {
-    EraserDrawingActionEntity eraserEntity =
-        actionEntity as EraserDrawingActionEntity;
-
-    return EraserAction(
-        eraserEntity.points
-            .map((pointEntity) => Offset(pointEntity.x, pointEntity.y))
-            .toList(),
-        _mapPenShapeEntityToModel(eraserEntity.penShape),
-        eraserEntity.strokeWidth);
+      EraserDrawingActionEntity eraserActionEntity) {
+    return EraserAction((b) => b
+      ..points = ListBuilder(
+          eraserActionEntity.points.map((pointEntity) => OffsetValue((sb) => sb
+            ..dx = pointEntity.x
+            ..dy = pointEntity.y)))
+      ..penShape = _mapPenShapeEntityToModel(eraserActionEntity.penShape)
+      ..strokeWidth = eraserActionEntity.strokeWidth);
   }
 
   static BrushAction _mapBrushActionEntityToModel(
-      DrawingActionEntity actionEntity) {
-    BrushDrawingActionEntity brushEntity =
-        actionEntity as BrushDrawingActionEntity;
-
-    return BrushAction(
-        brushEntity.points
-            .map((pointEntity) => Offset(pointEntity.x, pointEntity.y))
-            .toList(),
-        Color(brushEntity.color),
-        _mapPenShapeEntityToModel(brushEntity.penShape),
-        brushEntity.strokeWidth);
+      BrushDrawingActionEntity brushActionEntity) {
+    return BrushAction((b) => b
+      ..points = ListBuilder(
+          brushActionEntity.points.map((pointEntity) => OffsetValue((sb) => sb
+            ..dx = pointEntity.x
+            ..dy = pointEntity.y)))
+      ..color = brushActionEntity.color
+      ..penShape = _mapPenShapeEntityToModel(brushActionEntity.penShape)
+      ..strokeWidth = brushActionEntity.strokeWidth);
   }
 
   static PenShape _mapPenShapeEntityToModel(PenShapeEntity penShapeEntity) {

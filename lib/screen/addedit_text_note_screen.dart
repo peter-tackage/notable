@@ -49,9 +49,12 @@ class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
                 bloc: _notesBloc,
                 builder: (BuildContext context, NotesState state) {
                   if (state is NotesLoaded) {
-                    _note = state.notes.firstWhere(
-                        (note) => note.id == widget.id,
-                        orElse: () => TextNote('', List<Label>(), ''));
+                    _note =
+                        state.notes.firstWhere((note) => note.id == widget.id,
+                            orElse: () => TextNote((b) => b
+                              ..title = ''
+                              ..labels = List<Label>()
+                              ..text = ''));
 
                     return Form(
                         key: _formKey,
@@ -76,7 +79,8 @@ class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
                                           hintText: 'Enter your note...'),
                                       maxLines: null,
                                       autofocus: _note.text.isEmpty,
-                                      textCapitalization: TextCapitalization.sentences,
+                                      textCapitalization:
+                                          TextCapitalization.sentences,
                                       keyboardType: TextInputType.multiline))),
                           Divider(height: 0),
                           Container(
@@ -128,11 +132,14 @@ class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
 
     // Create or update
     if (widget.id == null) {
-      _notesBloc.dispatch(
-          AddNote(TextNote(_updatedTitle, List<Label>(), _updatedText)));
+      _notesBloc.dispatch(AddNote(TextNote((b) => b
+        ..title = _updatedTitle
+        ..labels = List<Label>()
+        ..text = _updatedText)));
     } else {
-      _notesBloc
-          .dispatch(UpdateNote(_note.copyWith(_updatedTitle, _updatedText)));
+      _notesBloc.dispatch(UpdateNote(_note.rebuild((b) => b
+        ..title = _updatedTitle
+        ..text = _updatedText)));
     }
 
     Navigator.pop(context);

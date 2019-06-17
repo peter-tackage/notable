@@ -5,52 +5,59 @@ import 'package:notable/model/checklist.dart';
 class EditChecklistItem extends StatefulWidget {
   final ChecklistItem initialValue;
   final Function(bool isDone, String task) onSaved;
-  final Function(ChecklistItem item) onSubmit;
+  final Function(bool isDone, String task) onCommit;
   final bool isFocused;
 
   EditChecklistItem(
       {@required this.initialValue,
       @required this.onSaved,
-      @required this.onSubmit,
+      @required this.onCommit,
       @required this.isFocused});
 
   @override
-  State<StatefulWidget> createState() =>
-      _EditChecklistItemState(initialValue.isDone);
+  State<StatefulWidget> createState() => _EditChecklistItemState();
 }
 
 class _EditChecklistItemState extends State<EditChecklistItem> {
-  bool _isDone;
+  TextEditingController _textController;
 
-  _EditChecklistItemState(this._isDone);
+  @override
+  void initState() {
+    super.initState();
+    _textController = TextEditingController(text: widget.initialValue.task);
+  }
 
   @override
   Widget build(BuildContext context) {
+    bool isDone = widget.initialValue.isDone;
+
     return Padding(
         padding: EdgeInsets.all(0),
         child: Row(children: <Widget>[
           Padding(
               padding: const EdgeInsets.only(right: 8),
               child: Checkbox(
-                  value: _isDone,
-                  onChanged: (isDone) => setState(() => _isDone = isDone))),
+                  value: isDone,
+                  onChanged: (newIsDone) =>
+                      widget.onCommit(newIsDone, _textController.text))),
           Expanded(
               child: TextFormField(
 //               textInputAction: state.value.isEmpty()
 //                   ? TextInputAction.next
 //                  : TextInputAction.done,
+            //   focusNode: focusNode,
             textCapitalization: TextCapitalization.sentences,
-            initialValue: widget.initialValue.task,
-            onSaved: (text) => widget.onSaved(_isDone, text),
-            onFieldSubmitted: (text) => widget.onSubmit(
-                widget.initialValue.copyWith(task: text, isDone: _isDone)),
+            controller: _textController,
+            onEditingComplete: () =>
+                widget.onCommit(isDone, _textController.text),
+            onSaved: (text) => widget.onSaved(isDone, text),
             maxLines: 1,
-            enabled: !_isDone,
+            enabled: !isDone,
 
             style: TextStyle(
-                color: _isDone ? Colors.grey : Colors.black,
+                color: isDone ? Colors.grey : Colors.black,
                 decoration:
-                    _isDone ? TextDecoration.lineThrough : TextDecoration.none),
+                    isDone ? TextDecoration.lineThrough : TextDecoration.none),
             autofocus: widget.isFocused,
             decoration:
                 InputDecoration(border: InputBorder.none, hintText: 'Task...'),

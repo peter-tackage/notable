@@ -162,9 +162,7 @@ class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
                                                   value: configState
                                                           is DrawingConfigLoaded
                                                       ? configState
-                                                          .drawingConfig
-                                                          .color
-                                                          .value
+                                                          .drawingConfig.color
                                                       : null,
                                                   onChanged: _setToolColor,
                                                   icon: Icon(Icons.palette))))),

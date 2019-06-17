@@ -1,15 +1,26 @@
+import 'package:built_value/built_value.dart';
 import 'package:meta/meta.dart';
 import 'package:notable/entity/label_entity.dart';
 
-@immutable
-class Label {
-  final String name;
-  final String color;
+part 'label.g.dart';
 
-  Label(this.name, this.color);
+@immutable
+abstract class Label implements Built<Label, LabelBuilder> {
+  String get name;
+
+  String get color;
+
+  Label._();
+
+  factory Label([updates(LabelBuilder b)]) = _$Label;
+
+  //
+  // Mappers
+  //
 
   LabelEntity toEntity() => LabelEntity(name, color);
 
-  static Label fromEntity(LabelEntity entity) =>
-      Label(entity.name, entity.color);
+  static Label fromEntity(LabelEntity entity) => Label((b) => b
+    ..name = entity.name
+    ..color = entity.color);
 }

@@ -30,9 +30,12 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
       @required this.flutterSound}) {
     _audioNotesSubscription = notesBloc.state.listen((state) {
       if (state is NotesLoaded) {
-        dispatch(LoadAudioNote(state.notes.firstWhere(
-            (note) => note.id == this.id,
-            orElse: () => AudioNote('', List<Label>(), '')) as AudioNote));
+        dispatch(
+            LoadAudioNote(state.notes.firstWhere((note) => note.id == this.id,
+                orElse: () => AudioNote((b) => b
+                  ..title = ''
+                  ..labels = List<Label>()
+                  ..filename = '')) as AudioNote));
       }
     });
   }

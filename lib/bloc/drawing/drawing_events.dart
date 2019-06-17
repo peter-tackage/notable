@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:notable/model/drawing.dart';
@@ -63,7 +61,7 @@ class Redo extends DrawingEvent {
 @immutable
 class StartDrawing extends DrawingEvent {
   final DrawingConfig config;
-  final Offset offset;
+  final OffsetValue offset;
 
   StartDrawing(this.config, this.offset) : super([config, offset]);
 
@@ -73,7 +71,7 @@ class StartDrawing extends DrawingEvent {
 
 @immutable
 class UpdateDrawing extends DrawingEvent {
-  final Offset offset;
+  final OffsetValue offset;
 
   UpdateDrawing(this.offset) : super([offset]);
 

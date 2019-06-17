@@ -45,7 +45,7 @@ class _AddEditChecklistNoteScreenState
                         key: _formKey,
                         child: Column(children: <Widget>[
                           TextFormField(
-                              onSaved: _titleChanged,
+                              onSaved: _onSaveTitle,
                               initialValue: state.checklist.title,
                               style: Theme.of(context).textTheme.title,
                               decoration: InputDecoration(
@@ -58,9 +58,7 @@ class _AddEditChecklistNoteScreenState
                               child: _buildChecklist(context, state.checklist)),
                           Divider(height: 0),
                           Container(
-                              padding:
-                                  EdgeInsets.only(left: 4, top: 13, bottom: 13),
-                              // FAB size/position
+                              padding: EdgeInsets.only(left: 4, right: 4),
                               child: Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -121,11 +119,18 @@ class _AddEditChecklistNoteScreenState
                 children: <Widget>[
                   EditChecklistItem(
                       onSaved: (isDone, task) => _setItem(
-                          index, item.copyWith(task: task, isDone: isDone)),
+                          index,
+                          item.rebuild((b) => b
+                            ..task = task
+                            ..isDone = isDone)),
+                      onCommit: (isDone, task) => _handleSubmitItem(
+                          item.rebuild((b) => b
+                            ..task = task
+                            ..isDone = isDone),
+                          index,
+                          isLastItem),
                       initialValue: item,
-                      isFocused: isFocused,
-                      onSubmit: (submittedItem) =>
-                          _handleSubmitItem(submittedItem, index, isLastItem)),
+                      isFocused: isFocused),
                   isLastItem
                       ? FlatButton.icon(
                           icon: Icon(Icons.add, color: Colors.grey),
@@ -142,7 +147,7 @@ class _AddEditChecklistNoteScreenState
 
   void _handleSubmitItem(ChecklistItem item, int index, bool isLastItem) {
     // Update the Bloc state with the submitted item
-    _checklistBloc.dispatch(SetChecklistItem(index, item));
+    _setItem(index, item);
 
     if (isLastItem && item.task.isNotEmpty) {
       _checklistBloc.dispatch(AddEmptyChecklistItem());
@@ -174,10 +179,6 @@ class _AddEditChecklistNoteScreenState
     if (value == "delete") {
       _deleteNote();
     }
-
-    //else if (value == 'sortByDone'){
-    // //  _sortByDone();
-    // }
   }
 
   _deleteNote() {
@@ -187,15 +188,11 @@ class _AddEditChecklistNoteScreenState
     }
   }
 
-  _titleChanged(String newTitle) {
+  _onSaveTitle(String newTitle) {
     _checklistBloc.dispatch(UpdateChecklistTitle(newTitle));
   }
 
   _setItem(int index, ChecklistItem item) {
     _checklistBloc.dispatch(SetChecklistItem(index, item));
   }
-
-//  _sortByDone(int index, ChecklistItem item) {
-//    _checklistBloc.dispatch(SortBy());
-//  }
 }

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:bloc/bloc.dart';
 import 'package:notable/model/drawing_config.dart';
@@ -37,7 +36,7 @@ class DrawingConfigBloc extends Bloc<DrawingConfigEvent, DrawingConfigState> {
       SelectDrawingToolColor event, DrawingConfigState currentState) async* {
     if (currentState is DrawingConfigLoaded) {
       yield DrawingConfigLoaded(
-          currentState.drawingConfig.copyWith(color: Color(event.color)));
+          currentState.drawingConfig.copyWith(color: event.color));
     }
   }
 

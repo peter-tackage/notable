@@ -9,6 +9,7 @@ import 'package:notable/bloc/drawing/drawing_states.dart';
 import 'package:notable/bloc/drawing_config/drawing_config_bloc.dart';
 import 'package:notable/bloc/drawing_config/drawing_config_events.dart';
 import 'package:notable/bloc/drawing_config/drawing_config_states.dart';
+import 'package:notable/model/drawing.dart';
 import 'package:notable/model/drawing_config.dart';
 
 import 'note_painter.dart';
@@ -60,11 +61,12 @@ class _DrawingPageState extends State<DrawingPage> {
     }
   }
 
-  _onToolDown(DragStartDetails details, DrawingConfig config) => _drawingBloc
-      .dispatch(StartDrawing(config, _globalToLocal(details.globalPosition)));
+  _onToolDown(DragStartDetails details, DrawingConfig config) =>
+      _drawingBloc.dispatch(StartDrawing(
+          config, OffsetValue.from(_globalToLocal(details.globalPosition))));
 
-  _onToolMoved(DragUpdateDetails details) => _drawingBloc
-      .dispatch(UpdateDrawing(_globalToLocal(details.globalPosition)));
+  _onToolMoved(DragUpdateDetails details) => _drawingBloc.dispatch(
+      UpdateDrawing(OffsetValue.from(_globalToLocal(details.globalPosition))));
 
   _onToolUp(DragEndDetails details) => _drawingBloc.dispatch(EndDrawing());
 

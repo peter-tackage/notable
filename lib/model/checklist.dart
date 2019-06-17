@@ -1,53 +1,51 @@
+import 'package:built_collection/built_collection.dart';
+import 'package:built_value/built_value.dart';
 import 'package:meta/meta.dart';
 import 'package:notable/model/base_note.dart';
+import 'package:notable/model/label.dart';
 import 'package:uuid/uuid.dart';
 
+part 'checklist.g.dart';
+
 @immutable
-class Checklist extends BaseNote {
-  final List<ChecklistItem> items;
-
-  // final Sorting sorting;
-
-  Checklist(title, labels, this.items, {id, updatedDate})
-      : super(title, labels, id: id, updatedDate: updatedDate);
-
-  Checklist copyWith(
-      {String title, List<ChecklistItem> items, Sorting sorting}) {
-    return Checklist(title ?? this.title, this.labels, items ?? this.items,
-        // sorting ?? this.sorting,
-        id: id,
-        updatedDate: updatedDate);
-  }
+abstract class Checklist
+    implements BaseNote, Built<Checklist, ChecklistBuilder> {
+  BuiltList<ChecklistItem> get items;
 
   @override
   String toString() {
     return 'Checklist: $title';
   }
+
+  Checklist._();
+
+  factory Checklist([updates(ChecklistBuilder b)]) = _$Checklist;
 }
 
 @immutable
-class ChecklistItem {
-  final String task;
-  final bool isDone;
-  final String id;
+abstract class ChecklistItem
+    implements Built<ChecklistItem, ChecklistItemBuilder> {
+  String get task;
 
-  ChecklistItem(this.task, this.isDone, this.id);
+  bool get isDone;
 
-  ChecklistItem.empty()
-      : this.task = '',
-        this.isDone = false,
-        this.id = Uuid().v1().toString();
+  String get id;
+
+  static ChecklistItem empty() => ChecklistItem((b) => b
+    ..task = ''
+    ..isDone = false
+    ..id = Uuid().v1().toString());
 
   isEmpty() => (task == null || task.trim().isEmpty) && isDone == false;
 
   @override
   String toString() {
-    return 'ChecklistItem: $task';
+    return 'ChecklistItem: $task, $id';
   }
 
-  ChecklistItem copyWith({String task, bool isDone}) {
-    return ChecklistItem(task ?? this.task, isDone ?? this.isDone, this.id);
-  }
+  ChecklistItem._();
+
+  factory ChecklistItem([updates(ChecklistItemBuilder b)]) = _$ChecklistItem;
 }
 
 enum Sorting { CREATION, DONE }

@@ -1,72 +1,82 @@
 import 'dart:ui';
 
-import 'package:flutter/material.dart';
+import 'package:built_collection/built_collection.dart';
+import 'package:built_value/built_value.dart';
+import 'package:flutter/material.dart' hide Builder;
 import 'package:meta/meta.dart';
 import 'package:notable/model/base_note.dart';
 import 'package:notable/model/drawing_config.dart';
+import 'package:notable/model/label.dart';
+
+part 'drawing.g.dart';
 
 @immutable
-class Drawing extends BaseNote {
-  final List<DrawingAction> allActions;
-  final int currentIndex;
+abstract class Drawing implements BaseNote, Built<Drawing, DrawingBuilder> {
+  BuiltList<DrawingAction> get allActions;
 
-  // FIXME Derived properties - should these instead be calculated on demand?
-  final List<DrawingAction> displayedActions; // derived subset
-  final bool canUndo;
-  final bool canRedo;
+  int get currentIndex;
 
-  Drawing(title, labels, this.allActions, this.currentIndex, {id, updatedDate})
-      : this.displayedActions = _selectDisplayed(allActions, currentIndex),
-        this.canUndo = _canUndo(allActions, currentIndex),
-        this.canRedo = _canRedo(allActions, currentIndex),
-        super(title, labels, id: id, updatedDate: updatedDate);
+  //
+  // Derived properties
+  //
 
-  Drawing copyWith(
-      {String title, List<DrawingAction> actions, int currentIndex}) {
-    return Drawing(title ?? this.title, this.labels, actions ?? this.allActions,
-        currentIndex ?? this.currentIndex,
-        id: id, updatedDate: updatedDate);
-  }
+  List<DrawingAction> get displayedActions =>
+      _selectDisplayed(allActions, currentIndex);
+
+  bool get canUndo => _canUndo(allActions, currentIndex);
+
+  bool get canRedo => _canRedo(allActions, currentIndex);
 
   @override
   String toString() {
     return 'Drawing: $title';
   }
 
+  Drawing._();
+
+  factory Drawing([updates(DrawingBuilder b)]) = _$Drawing;
+
   static List<DrawingAction> _selectDisplayed(
-          List<DrawingAction> actions, int lastIndex) =>
-      actions.sublist(0, lastIndex + 1);
+          BuiltList<DrawingAction> actions, int currentIndex) =>
+      actions.sublist(0, currentIndex + 1).toList();
 
-  static _canUndo(List<DrawingAction> allActions, int currentIndex) {
-    return currentIndex >= 0;
-  }
+  static _canUndo(BuiltList<DrawingAction> allActions, int currentIndex) =>
+      currentIndex >= 0;
 
-  static _canRedo(List<DrawingAction> allActions, int currentIndex) {
-    return allActions.length > 0 && currentIndex < allActions.length - 1;
-  }
+  static _canRedo(BuiltList<DrawingAction> allActions, int currentIndex) =>
+      allActions.length > 0 && currentIndex < allActions.length - 1;
 }
 
+@BuiltValue(instantiable: false)
 abstract class DrawingAction {
   void draw(Canvas canvas);
 }
 
-abstract class StrokeDrawingAction extends DrawingAction {
-  final List<Offset> points;
+@BuiltValue(instantiable: false)
+@immutable
+abstract class StrokeDrawingAction implements DrawingAction {
+  BuiltList<OffsetValue>
+      get points; // can't use Offset and built_value either it would seem,
 
-  StrokeDrawingAction(this.points);
+  @nullable
+  int get color; // can't use Color and built_value (https://github.com/google/built_value.dart/issues/513)
+  PenShape get penShape;
 
-  StrokeDrawingAction copyWith(List<Offset> points);
+  double get strokeWidth;
+
+  //
+  // We include these operations for non-instantiable base classes with properties.
+  //
+
+  StrokeDrawingAction rebuild(
+      void Function(StrokeDrawingActionBuilder) updates);
+
+  StrokeDrawingActionBuilder toBuilder();
 }
 
 @immutable
-class BrushAction extends StrokeDrawingAction {
-  final Color color;
-  final PenShape penShape;
-  final double strokeWidth;
-
-  BrushAction(points, this.color, this.penShape, this.strokeWidth)
-      : super(points);
-
+abstract class BrushAction
+    implements StrokeDrawingAction, Built<BrushAction, BrushActionBuilder> {
   @override
   void draw(Canvas canvas) {
     Paint paint = Paint()
@@ -74,27 +84,28 @@ class BrushAction extends StrokeDrawingAction {
       ..style = PaintingStyle.stroke
       ..strokeCap = toStrokeCap(this.penShape)
       ..strokeJoin = toStrokeJoin(this.penShape)
-      ..color = color
+      ..color = Color(this.color)
       ..isAntiAlias = true;
 
-    _drawPoints(canvas, paint, points);
+    _drawPoints(canvas, paint,
+        points.map((offset) => Offset(offset.dx, offset.dy)).toList());
   }
 
   @override
   String toString() => "BrushAction: ${points.length}";
 
-  @override
-  BrushAction copyWith(List<Offset> points) =>
-      BrushAction(points, this.color, this.penShape, this.strokeWidth);
+  //
+  // We include these operations for instantiable child classes with properties.
+  //
+
+  BrushAction._();
+
+  factory BrushAction([updates(BrushActionBuilder b)]) = _$BrushAction;
 }
 
 @immutable
-class EraserAction extends StrokeDrawingAction {
-  final PenShape penShape;
-  final double strokeWidth;
-
-  EraserAction(points, this.penShape, this.strokeWidth) : super(points);
-
+abstract class EraserAction
+    implements StrokeDrawingAction, Built<EraserAction, EraserActionBuilder> {
   @override
   void draw(Canvas canvas) {
     Paint paint = Paint()
@@ -106,18 +117,47 @@ class EraserAction extends StrokeDrawingAction {
       ..isAntiAlias = true
       ..blendMode = BlendMode.clear;
 
-    _drawPoints(canvas, paint, points);
+    _drawPoints(canvas, paint,
+        points.map((offset) => Offset(offset.dx, offset.dy)).toList());
   }
 
   @override
   String toString() => "EraserAction: ${points.length}";
 
-  @override
-  EraserAction copyWith(List<Offset> points) =>
-      EraserAction(points, this.penShape, this.strokeWidth);
+  EraserAction._();
+
+  factory EraserAction([updates(EraserActionBuilder b)]) = _$EraserAction;
 }
 
-// TODO Move this somewhere, a utils class.
+//
+// built_value doesn't work with flutter classes like Color and Offset - https://github.com/dart-lang/build/issues/733
+// Need to make our own equivalent (or use the raw value)
+//
+
+@immutable
+abstract class OffsetValue implements Built<OffsetValue, OffsetValueBuilder> {
+  double get dx;
+
+  double get dy;
+
+  @override
+  String toString() {
+    return 'OffsetValue{ dx: $dx, dy: $dy}';
+  }
+
+  OffsetValue._();
+
+  factory OffsetValue([updates(OffsetValueBuilder b)]) = _$OffsetValue;
+
+  static OffsetValue from(Offset offset) => OffsetValue((b) => b
+    ..dx = offset.dx
+    ..dy = offset.dy);
+}
+
+//
+// TODO Move these somewhere, a utils class.
+//
+
 void _drawPoints(Canvas canvas, Paint paint, List<Offset> points) {
   Path path = Path();
   for (int index = 0; index <= points.length - 1; index++) {

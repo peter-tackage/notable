@@ -13,7 +13,10 @@ class AudioNoteMapper implements Mapper<AudioNote, AudioNoteEntity> {
       updatedDate: model.updatedDate);
 
   @override
-  toModel(AudioNoteEntity entity) => AudioNote(entity.title,
-      entity.labels.map(Label.fromEntity).toList(), entity.filename,
-      id: entity.id, createdDate: entity.updatedDate);
+  toModel(AudioNoteEntity entity) => AudioNote((b) => b
+    ..title = entity.title
+    ..labels = entity.labels.map(Label.fromEntity).toList()
+    ..filename = entity.filename
+    ..id = entity.id
+    ..updatedDate = entity.updatedDate);
 }

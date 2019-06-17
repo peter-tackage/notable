@@ -23,8 +23,9 @@ class ChecklistEntity extends BaseNoteEntity {
 class ChecklistItemEntity {
   final String task;
   final bool isDone;
+  final String id;
 
-  ChecklistItemEntity(this.task, this.isDone);
+  ChecklistItemEntity(this.task, this.isDone, this.id);
 
   factory ChecklistItemEntity.fromJson(Map<String, dynamic> json) =>
       _$ChecklistItemEntityFromJson(json);

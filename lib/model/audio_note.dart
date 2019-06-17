@@ -1,17 +1,19 @@
+import 'package:built_value/built_value.dart';
 import 'package:meta/meta.dart';
 import 'package:notable/model/base_note.dart';
+import 'package:notable/model/label.dart';
+
+part 'audio_note.g.dart';
 
 @immutable
-class AudioNote extends BaseNote {
-  final String filename;
-
-  AudioNote(title, labels, this.filename, {id, createdDate})
-      : super(title, labels, id: id, updatedDate: createdDate);
+abstract class AudioNote
+    implements BaseNote, Built<AudioNote, AudioNoteBuilder> {
+  String get filename;
 
   @override
   String toString() => 'AudioNote: $title';
 
-  AudioNote copyWith(String title, String filename) =>
-      AudioNote(title, this.labels, filename,
-          id: this.id, createdDate: this.updatedDate);
+  AudioNote._();
+
+  factory AudioNote([updates(AudioNoteBuilder b)]) = _$AudioNote;
 }
