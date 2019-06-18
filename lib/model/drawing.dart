@@ -12,7 +12,7 @@ part 'drawing.g.dart';
 
 @immutable
 abstract class Drawing implements BaseNote, Built<Drawing, DrawingBuilder> {
-  BuiltList<DrawingAction> get allActions;
+  BuiltList<DrawingAction> get actions;
 
   int get currentIndex;
 
@@ -21,11 +21,11 @@ abstract class Drawing implements BaseNote, Built<Drawing, DrawingBuilder> {
   //
 
   List<DrawingAction> get displayedActions =>
-      _selectDisplayed(allActions, currentIndex);
+      _selectDisplayed(actions, currentIndex);
 
-  bool get canUndo => _canUndo(allActions, currentIndex);
+  bool get canUndo => _canUndo(actions, currentIndex);
 
-  bool get canRedo => _canRedo(allActions, currentIndex);
+  bool get canRedo => _canRedo(actions, currentIndex);
 
   @override
   String toString() {

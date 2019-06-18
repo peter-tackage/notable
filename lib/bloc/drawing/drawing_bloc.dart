@@ -131,14 +131,14 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
 
       List<DrawingAction> actions;
       if (currentIndex >= 0 &&
-          currentIndex != currentState.drawing.allActions.length - 1) {
-        actions = currentState.drawing.allActions
+          currentIndex != currentState.drawing.actions.length - 1) {
+        actions = currentState.drawing.actions
             .sublist(0, currentIndex + 1)
             .toList();
       } else if (currentIndex == -1) {
         actions = List<DrawingAction>();
       } else {
-        actions = List.of(currentState.drawing.allActions);
+        actions = List.of(currentState.drawing.actions);
       }
 
       DrawingAction action;
@@ -169,7 +169,7 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
       DrawingState currentState, UpdateDrawing event) async* {
     if (currentState is DrawingLoaded) {
       DrawingAction currentAction =
-          currentState.drawing.allActions[currentState.drawing.currentIndex];
+          currentState.drawing.actions[currentState.drawing.currentIndex];
       if (currentAction is BrushAction || currentAction is EraserAction) {
         Drawing updatedDrawing = _updateDrawingWithStrokeDrawingActionEvent(
             currentAction, event, currentState);
@@ -192,7 +192,7 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
         currentAction.rebuild((b) => b..points.add(event.offset));
 
     // Update the action in the overall state
-    BuiltList updatedActions = currentState.drawing.allActions
+    BuiltList updatedActions = currentState.drawing.actions
         .rebuild((b) => b..[currentState.drawing.currentIndex] = updatedAction);
 
     // Update the drawing with the new items
