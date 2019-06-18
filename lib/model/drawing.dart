@@ -117,9 +117,6 @@ abstract class EraserAction
         points.map((offset) => Offset(offset.dx, offset.dy)).toList());
   }
 
-  @override
-  String toString() => "EraserAction: ${points.length}";
-
   EraserAction._();
 
   factory EraserAction([updates(EraserActionBuilder b)]) = _$EraserAction;
@@ -135,11 +132,6 @@ abstract class OffsetValue implements Built<OffsetValue, OffsetValueBuilder> {
   double get dx;
 
   double get dy;
-
-  @override
-  String toString() {
-    return 'OffsetValue{ dx: $dx, dy: $dy}';
-  }
 
   OffsetValue._();
 

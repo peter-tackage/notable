@@ -11,9 +11,6 @@ abstract class AudioNote
     implements BaseNote, Built<AudioNote, AudioNoteBuilder> {
   String get filename;
 
-  @override
-  String toString() => 'AudioNote: $title';
-
   AudioNote._();
 
   factory AudioNote([updates(AudioNoteBuilder b)]) = _$AudioNote;

@@ -27,7 +27,7 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
                 orElse: () => Drawing((b) => b
                   ..title = ''
                   ..labels = ListBuilder<Label>()
-                  ..allActions = ListBuilder<DrawingAction>()
+                  ..actions = ListBuilder<DrawingAction>()
                   ..currentIndex = -1)) as Drawing));
       }
     });
@@ -97,7 +97,7 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
       // Move the index so that it's still undo-able.
       yield DrawingLoaded(
           drawing: currentState.drawing.rebuild((b) => b
-            ..allActions = ListBuilder()
+            ..actions = ListBuilder()
             ..currentIndex = -1));
     }
   }
@@ -132,9 +132,8 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
       List<DrawingAction> actions;
       if (currentIndex >= 0 &&
           currentIndex != currentState.drawing.actions.length - 1) {
-        actions = currentState.drawing.actions
-            .sublist(0, currentIndex + 1)
-            .toList();
+        actions =
+            currentState.drawing.actions.sublist(0, currentIndex + 1).toList();
       } else if (currentIndex == -1) {
         actions = List<DrawingAction>();
       } else {
@@ -160,7 +159,7 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
 
       yield DrawingLoaded(
           drawing: currentState.drawing.rebuild((b) => b
-            ..allActions = ListBuilder(actions)
+            ..actions = ListBuilder(actions)
             ..currentIndex = currentIndex));
     }
   }
@@ -197,7 +196,7 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
 
     // Update the drawing with the new items
     return currentState.drawing
-        .rebuild((existing) => existing..allActions.replace(updatedActions));
+        .rebuild((existing) => existing..actions.replace(updatedActions));
   }
 
   Stream<DrawingState> _mapEndDrawingActionEventToState(

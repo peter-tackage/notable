@@ -10,9 +10,6 @@ part 'text_note.g.dart';
 abstract class TextNote implements BaseNote, Built<TextNote, TextNoteBuilder> {
   String get text;
 
-  @override
-  String toString() => 'Note: $title';
-
   TextNote._();
 
   factory TextNote([updates(TextNoteBuilder b)]) = _$TextNote;

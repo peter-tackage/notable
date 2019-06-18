@@ -41,7 +41,7 @@ class DrawingMapper implements Mapper<Drawing, DrawingEntity> {
   toModel(DrawingEntity entity) => Drawing((b) => b
     ..title = entity.title
     ..labels = ListBuilder(entity.labels.map(Label.fromEntity))
-    ..allActions = ListBuilder(entity.actions.map(_mapActionEntityToModel))
+    ..actions = ListBuilder(entity.actions.map(_mapActionEntityToModel))
     ..currentIndex = entity.actions.length - 1 // last index
     ..id = entity.id
     ..updatedDate = entity.updatedDate);

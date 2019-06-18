@@ -12,11 +12,6 @@ abstract class Checklist
     implements BaseNote, Built<Checklist, ChecklistBuilder> {
   BuiltList<ChecklistItem> get items;
 
-  @override
-  String toString() {
-    return 'Checklist: $title';
-  }
-
   Checklist._();
 
   factory Checklist([updates(ChecklistBuilder b)]) = _$Checklist;
@@ -37,11 +32,6 @@ abstract class ChecklistItem
     ..id = Uuid().v1().toString());
 
   isEmpty() => (task == null || task.trim().isEmpty) && isDone == false;
-
-  @override
-  String toString() {
-    return 'ChecklistItem: $task, $id';
-  }
 
   ChecklistItem._();
 
