@@ -80,7 +80,7 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
     if (event is SaveChecklist) {
       if (currentState is ChecklistLoaded) {
         Checklist checklist = currentState.checklist
-            .rebuild((b) => b..items.removeWhere((item) => item.isEmpty()));
+            .rebuild((b) => b..items.removeWhere((item) => item.isEmpty));
 
         if (id == null) {
           notesBloc.dispatch(AddNote(checklist));
