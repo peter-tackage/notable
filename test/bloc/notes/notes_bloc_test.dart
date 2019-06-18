@@ -18,7 +18,7 @@ void main() {
           noteRepository: noteRepository, mapper: TextNoteMapper());
 
   setUp(() {
-    // No point in mocking the Mapper
+    // No value in mocking the Mapper, use the real one.
     noteRepository = MockRepository();
     textNoteBloc = NotesBloc<TextNote, NoteEntity>(
         noteRepository: noteRepository, mapper: TextNoteMapper());
@@ -34,15 +34,15 @@ void main() {
         ]));
   });
 
-  test('LoadNotes triggers NotesLoading, NotesLoaded', () {
+  test('LoadNotes triggers NotesLoading, NotesLoaded with value', () {
     // given
     final title = "The note title";
     final text = "The note text";
-    final uuid = Uuid().v1().toString();
+    final id = Uuid().v1().toString();
     final datetime = DateTime.now();
 
     NoteEntity noteEntity = NoteEntity(List<LabelEntity>(), title, text,
-        id: uuid, updatedDate: datetime);
+        id: id, updatedDate: datetime);
     when(noteRepository.getAll()).thenAnswer((_) => Future.value([noteEntity]));
 
     // when
@@ -58,7 +58,45 @@ void main() {
               ..title = title
               ..labels = ListBuilder<Label>()
               ..text = text
-              ..id = uuid
+              ..id = id
+              ..updatedDate = datetime)
+          ]))
+        ]));
+  });
+
+  test('AddNote triggers NotesLoading, NotesLoaded with value', () {
+    // given
+
+    // This will be the returned "saved" entity from the repository
+    final title = "The note title";
+    final text = "The note text";
+
+    // These properties are actually defined by the (real) repository.
+    final id = Uuid().v1().toString();
+    final datetime = DateTime.now();
+
+    NoteEntity noteEntity = NoteEntity(List<LabelEntity>(), title, text,
+        id: id, updatedDate: datetime);
+    when(noteRepository.getAll()).thenAnswer((_) => Future.value([noteEntity]));
+
+    TextNote textNote = TextNote((b) => b
+      ..title = title
+      ..text = text);
+
+    // when
+    textNoteBloc.dispatch(AddNote(textNote));
+
+    // then
+    expect(
+        textNoteBloc.state,
+        emitsInOrder([
+          isA<NotesLoading>(),
+          equals(NotesLoaded([
+            TextNote((b) => b
+              ..title = title
+              ..labels = ListBuilder<Label>()
+              ..text = text
+              ..id = id
               ..updatedDate = datetime)
           ]))
         ]));
