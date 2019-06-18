@@ -20,12 +20,11 @@ abstract class Drawing implements BaseNote, Built<Drawing, DrawingBuilder> {
   // Derived properties
   //
 
-  List<DrawingAction> get displayedActions =>
-      _selectDisplayed(actions, currentIndex);
+  List<DrawingAction> get displayedActions => _selectDisplayed();
 
-  bool get canUndo => _canUndo(actions, currentIndex);
+  bool get canUndo => _canUndo();
 
-  bool get canRedo => _canRedo(actions, currentIndex);
+  bool get canRedo => _canRedo();
 
   @override
   String toString() {
@@ -36,15 +35,12 @@ abstract class Drawing implements BaseNote, Built<Drawing, DrawingBuilder> {
 
   factory Drawing([updates(DrawingBuilder b)]) = _$Drawing;
 
-  static List<DrawingAction> _selectDisplayed(
-          BuiltList<DrawingAction> actions, int currentIndex) =>
+  List<DrawingAction> _selectDisplayed() =>
       actions.sublist(0, currentIndex + 1).toList();
 
-  static _canUndo(BuiltList<DrawingAction> allActions, int currentIndex) =>
-      currentIndex >= 0;
+  _canUndo() => currentIndex >= 0;
 
-  static _canRedo(BuiltList<DrawingAction> allActions, int currentIndex) =>
-      allActions.length > 0 && currentIndex < allActions.length - 1;
+  _canRedo() => actions.length > 0 && currentIndex < actions.length - 1;
 }
 
 @BuiltValue(instantiable: false)
