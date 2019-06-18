@@ -31,7 +31,7 @@ abstract class ChecklistItem
     ..isDone = false
     ..id = Uuid().v1().toString());
 
-  isEmpty() => (task == null || task.trim().isEmpty) && isDone == false;
+  bool get isEmpty => (task == null || task.trim().isEmpty) && isDone == false;
 
   ChecklistItem._();
 
