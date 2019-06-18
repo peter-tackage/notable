@@ -1,23 +1,24 @@
+import 'package:built_value/built_value.dart';
 import 'package:meta/meta.dart';
 
+part 'audio_playback.g.dart';
+
 @immutable
-class AudioPlayback {
-  final String filename;
-  final PlaybackState playbackState;
-  final int length;
-  final int progress;
-  final int volume;
+abstract class AudioPlayback
+    implements Built<AudioPlayback, AudioPlaybackBuilder> {
+  String get filename;
 
-  AudioPlayback(this.filename, this.playbackState, this.length, this.progress,
-      this.volume);
+  PlaybackState get playbackState;
 
-  @override
-  String toString() => 'AudioPlayback: { playbackState: $playbackState } ';
+  int get length;
 
-  AudioPlayback copyWith(
-          PlaybackState playbackState, int progress, int volume) =>
-      AudioPlayback(this.filename, this.playbackState, this.length, progress,
-          this.volume);
+  int get progress;
+
+  int get volume;
+
+  AudioPlayback._();
+
+  factory AudioPlayback([updates(AudioPlaybackBuilder b)]) = _$AudioPlayback;
 }
 
 enum PlaybackState { Idle, Playing, Paused }

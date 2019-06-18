@@ -1,21 +1,22 @@
+import 'package:built_value/built_value.dart';
 import 'package:meta/meta.dart';
 
+part 'audio_recording.g.dart';
+
 @immutable
-class AudioRecording {
-  final String filename;
-  final RecordingState recordingState;
-  final double progress;
-  final double level;
+abstract class AudioRecording
+    implements Built<AudioRecording, AudioRecordingBuilder> {
+  String get filename;
 
-  AudioRecording(this.filename, this.recordingState, this.progress, this.level);
+  RecordingState get recordingState;
 
-  @override
-  String toString() => 'AudioPlayback: { playbackState: $recordingState, ';
+  double get progress;
 
-  AudioRecording copyWith(
-          {RecordingState recordingState, double progress, double level}) =>
-      AudioRecording(this.filename, recordingState ?? this.recordingState,
-          progress ?? this.progress, level ?? this.level);
+  double get level;
+
+  AudioRecording._();
+
+  factory AudioRecording([updates(AudioRecordingBuilder b)]) = _$AudioRecording;
 }
 
 enum RecordingState { Recording, Recorded }
