@@ -1,3 +1,4 @@
+import 'package:built_collection/built_collection.dart';
 import 'package:notable/data/mapper.dart';
 import 'package:notable/entity/audio_note_entity.dart';
 import 'package:notable/model/audio_note.dart';
@@ -15,7 +16,7 @@ class AudioNoteMapper implements Mapper<AudioNote, AudioNoteEntity> {
   @override
   toModel(AudioNoteEntity entity) => AudioNote((b) => b
     ..title = entity.title
-    ..labels = entity.labels.map(Label.fromEntity).toList()
+    ..labels = ListBuilder(entity.labels.map(Label.fromEntity))
     ..filename = entity.filename
     ..id = entity.id
     ..updatedDate = entity.updatedDate);

@@ -40,7 +40,7 @@ class DrawingMapper implements Mapper<Drawing, DrawingEntity> {
   @override
   toModel(DrawingEntity entity) => Drawing((b) => b
     ..title = entity.title
-    ..labels = entity.labels.map(Label.fromEntity).toList()
+    ..labels = ListBuilder(entity.labels.map(Label.fromEntity))
     ..allActions = ListBuilder(entity.actions.map(_mapActionEntityToModel))
     ..currentIndex = entity.actions.length - 1 // last index
     ..id = entity.id

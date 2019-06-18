@@ -26,7 +26,7 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
             LoadDrawing(state.notes.firstWhere((note) => note.id == this.id,
                 orElse: () => Drawing((b) => b
                   ..title = ''
-                  ..labels = List<Label>()
+                  ..labels = ListBuilder<Label>()
                   ..allActions = ListBuilder<DrawingAction>()
                   ..currentIndex = -1)) as Drawing));
       }

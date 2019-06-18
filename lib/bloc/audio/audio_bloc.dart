@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:built_collection/built_collection.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:meta/meta.dart';
 import 'package:notable/bloc/audio/audio_events.dart';
@@ -34,7 +35,7 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
             LoadAudioNote(state.notes.firstWhere((note) => note.id == this.id,
                 orElse: () => AudioNote((b) => b
                   ..title = ''
-                  ..labels = List<Label>()
+                  ..labels = ListBuilder<Label>()
                   ..filename = '')) as AudioNote));
       }
     });

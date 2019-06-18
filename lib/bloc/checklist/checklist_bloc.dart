@@ -26,7 +26,7 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
             state.notes.firstWhere((note) => note.id == this.id,
                     orElse: () => Checklist((b) => b
                       ..title = ''
-                      ..labels = List<Label>()
+                      ..labels = ListBuilder<Label>()
                       ..items = ListBuilder([ChecklistItem.empty()])))
                 as Checklist));
       }

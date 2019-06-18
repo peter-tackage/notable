@@ -1,3 +1,4 @@
+import 'package:built_collection/built_collection.dart';
 import 'package:notable/data/mapper.dart';
 import 'package:notable/entity/entity.dart';
 import 'package:notable/model/label.dart';
@@ -12,7 +13,7 @@ class TextNoteMapper implements Mapper<TextNote, NoteEntity> {
   @override
   toModel(NoteEntity entity) => TextNote((b) => b
     ..title = entity.title
-    ..labels = entity.labels.map(Label.fromEntity).toList()
+    ..labels = ListBuilder(entity.labels.map(Label.fromEntity))
     ..text = entity.text
     ..id = entity.id
     ..updatedDate = entity.updatedDate);

@@ -1,3 +1,4 @@
+import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -53,7 +54,7 @@ class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
                         state.notes.firstWhere((note) => note.id == widget.id,
                             orElse: () => TextNote((b) => b
                               ..title = ''
-                              ..labels = List<Label>()
+                              ..labels = ListBuilder<Label>()
                               ..text = ''));
 
                     return Form(
@@ -134,7 +135,7 @@ class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
     if (widget.id == null) {
       _notesBloc.dispatch(AddNote(TextNote((b) => b
         ..title = _updatedTitle
-        ..labels = List<Label>()
+        ..labels = ListBuilder<Label>()
         ..text = _updatedText)));
     } else {
       _notesBloc.dispatch(UpdateNote(_note.rebuild((b) => b

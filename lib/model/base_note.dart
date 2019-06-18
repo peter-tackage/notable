@@ -1,3 +1,4 @@
+import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:meta/meta.dart';
 
@@ -20,7 +21,7 @@ abstract class BaseNote {
 
   String get title;
 
-  List<Label> get labels; // TODO Why isn't this required to be a BuiltList
+  BuiltList<Label> get labels;
 
   BaseNote rebuild(void Function(BaseNoteBuilder) updates);
 

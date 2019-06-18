@@ -18,7 +18,7 @@ class ChecklistMapper implements Mapper<Checklist, ChecklistEntity> {
   @override
   toModel(ChecklistEntity entity) => Checklist((b) => b
     ..title = entity.title
-    ..labels = entity.labels.map(Label.fromEntity).toList()
+    ..labels = ListBuilder(entity.labels.map(Label.fromEntity))
     ..items = ListBuilder(entity.items.map((item) => ChecklistItem((bi) => bi
       ..task = item.task
       ..isDone = item.isDone
