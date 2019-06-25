@@ -122,11 +122,15 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
 
       // Start new recording
       String path = await flutterSound.startRecorder(null);
-      // print('startRecorder: $path');
 
       // Initial event
-      yield AudioNoteRecording(currentState.audioNote,
-          AudioRecording("defaultfilename", RecordingState.Recording, 0, 0));
+      yield AudioNoteRecording(
+          currentState.audioNote,
+          AudioRecording((b) => b
+            ..filename = "defaultfilename"
+            ..recordingState = RecordingState.Recording
+            ..level = 0
+            ..progress = 0));
 
       // Send updates to self
       _recorderSubscription = flutterSound.onRecorderStateChanged.listen((e) {
@@ -143,8 +147,8 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
 
   Stream<AudioNoteState> _mapStopAudioRecordingEventToState(
       AudioNoteState currentState, StopAudioRecordingRequest event) async* {
-    // assert(flutterSound.isPlaying == false);
-    // assert(flutterSound.isRecording == true);
+    assert(flutterSound.isPlaying == false);
+    assert(flutterSound.isRecording == true);
 
     if (currentState is AudioNoteRecording) {
       // Stop recording
@@ -162,11 +166,11 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
     if (currentState is AudioNoteRecording) {
       yield AudioNoteRecording(
           currentState.audioNote,
-          currentState.audioRecording.copyWith(
-              recordingState: event.isRecording
-                  ? RecordingState.Recording
-                  : RecordingState.Recorded,
-              progress: event.progress));
+          currentState.audioRecording.rebuild((b) => b
+            ..recordingState = event.isRecording
+                ? RecordingState.Recording
+                : RecordingState.Recorded
+            ..progress = event.progress));
     }
   }
 
@@ -174,13 +178,17 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
       AudioNoteState currentState, AudioRecordingLevelChanged event) async* {
     if (currentState is AudioNoteRecording) {
       yield AudioNoteRecording(currentState.audioNote,
-          currentState.audioRecording.copyWith(level: event.level));
+          currentState.audioRecording.rebuild((b) => b..level = event.level));
     }
   }
 
   Stream<AudioNoteState> _mapStartAudioPlaybackEventToState(
-      AudioNoteState currentState, StartAudioPlaybackRequest event) async* {}
+      AudioNoteState currentState, StartAudioPlaybackRequest event) async* {
+    // TODO
+  }
 
   Stream<AudioNoteState> _mapStopAudioPlaybackEventToState(
-      AudioNoteState currentState, StopAudioPlaybackRequest event) async* {}
+      AudioNoteState currentState, StopAudioPlaybackRequest event) async* {
+    // TODO
+  }
 }

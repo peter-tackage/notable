@@ -25,21 +25,6 @@ class DrawingEntity extends BaseNoteEntity {
   Map<String, dynamic> toJson() => _$DrawingEntityToJson(this);
 }
 
-//
-//this@JsonSerializable()
-//class BoringDrawingEntity  {
-//
-//  @DrawingActionConverter()
-//  final List<DrawingActionEntity> actions;
-//
-//  BoringDrawingEntity(this.actions);
-//
-//  factory BoringDrawingEntity.fromJson(Map<String, dynamic> json) =>
-//      _$BoringDrawingEntityFromJson(json);
-//
-//  Map<String, dynamic> toJson() => _$BoringDrawingEntityToJson(this);
-//}
-
 @JsonSerializable()
 class PointEntity {
   final double x;

@@ -44,6 +44,7 @@ abstract class Drawing implements BaseNote, Built<Drawing, DrawingBuilder> {
 }
 
 @BuiltValue(instantiable: false)
+@immutable
 abstract class DrawingAction {
   void draw(Canvas canvas);
 }
