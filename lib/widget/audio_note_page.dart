@@ -49,42 +49,103 @@ class _AudioNotePageState extends State<AudioNotePage> {
   }
 
   _buildAudioNote(BuildContext context, AudioNoteState state) {
+    print(state);
+
+    bool isRecordingButtonEnabled = state is AudioNotePlayback == false;
+
+    bool isPlaybackButtonEnabled = state is AudioNoteRecord &&
+            state.audioRecording.recordingState == RecordingState.Recorded ||
+        state is AudioNoteLoaded && state.audioNote.id != null;
+
     return Center(
         child: Column(children: <Widget>[
-      Text(state is AudioNoteRecording ? toDuration(state) : "0",
+      Text(state is AudioNoteRecord ? toDuration(state) : "0",
           style: Theme.of(context).textTheme.display1),
       Text(
-          state is AudioNoteRecording
+          state is AudioNoteRecord
               ? state.audioRecording.level.toString()
               : "-",
           style: Theme.of(context).textTheme.display1),
       AudioMonitor(
           peakDb: 160,
-          level: state is AudioNoteRecording ? state.audioRecording.level : 0),
-      RawMaterialButton(
-        onPressed: () => _audioAction(state),
-        child: new Icon(
-          _icon(state),
+          level: state is AudioNoteRecord ? state.audioRecording.level : 0),
+      Row(children: <Widget>[
+        RaisedButton(
+          onPressed:
+              isRecordingButtonEnabled ? () => _audioAction(state) : null,
+          shape: CircleBorder(),
           color: Colors.white,
-          size: 35.0,
+          disabledColor: Colors.grey[300],
+          elevation: 4.0,
+          child: Container(
+              padding: const EdgeInsets.all(20.0),
+              decoration: BoxDecoration(
+                  border: Border.all(
+                      color:
+                          isRecordingButtonEnabled ? Colors.green : Colors.grey,
+                      width: 2.0),
+                  borderRadius: BorderRadius.all(Radius.circular(100))),
+              child: Icon(
+                _recordIconOf(state),
+                color: isRecordingButtonEnabled ? Colors.green : Colors.grey,
+                size: 38.0,
+              )),
         ),
-        shape: new CircleBorder(),
-        elevation: 2.0,
-        fillColor: Colors.blue,
-        padding: const EdgeInsets.all(30.0),
-      ),
+        RaisedButton(
+          onPressed: isPlaybackButtonEnabled ? () => _audioAction(state) : null,
+          shape: CircleBorder(),
+          color: Colors.white,
+          disabledColor: Colors.grey[300],
+          elevation: 4.0,
+          child: Container(
+              padding: const EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                  border: Border.all(
+                      color:
+                          isPlaybackButtonEnabled ? Colors.green : Colors.grey,
+                      width: 2.0),
+                  borderRadius: BorderRadius.all(Radius.circular(100))),
+              child: Icon(
+                _playbackIconOf(state),
+                color: isPlaybackButtonEnabled ? Colors.green : Colors.grey,
+                size: 38.0,
+              )),
+        ),
+      ])
     ]));
   }
 
-  static String toDuration(AudioNoteRecording state) {
+  static String toDuration(AudioNoteRecord state) {
     DateTime date = new DateTime.fromMillisecondsSinceEpoch(
         state.audioRecording.progress.toInt(),
         isUtc: true);
     return DateFormat('mm:ss', 'en_GB').format(date);
   }
 
-  IconData _icon(AudioNoteState state) {
-    if (state is AudioNoteRecording) {
+  IconData _recordIconOf(AudioNoteState state) {
+    if (state is AudioNoteRecord) {
+      switch (state.audioRecording.recordingState) {
+        case RecordingState.Recording:
+          return Icons.pause;
+        case RecordingState.Recorded:
+          return Icons.mic;
+        default:
+          throw Exception(
+              "Unsupported recording state: ${state.audioRecording.recordingState}");
+      }
+    } else if (state is AudioNotePlayback) {
+      return state.audioPlayback.playbackState == PlaybackState.Playing
+          ? Icons.stop
+          : Icons.play_arrow;
+    } else if (state is AudioNoteLoaded) {
+      return Icons.mic;
+    } else {
+      throw Exception("Unsupported state for recording icon: $state");
+    }
+  }
+
+  IconData _playbackIconOf(AudioNoteState state) {
+    if (state is AudioNoteRecord) {
       switch (state.audioRecording.recordingState) {
         case RecordingState.Recording:
           return Icons.stop;
@@ -98,13 +159,16 @@ class _AudioNotePageState extends State<AudioNotePage> {
       return state.audioPlayback.playbackState == PlaybackState.Playing
           ? Icons.stop
           : Icons.play_arrow;
+    } else if (state is AudioNoteLoaded) {
+      return Icons.stop;
     } else {
-      return Icons.mic;
+      // We shouldn't attempt to show this
+      throw Exception("Unsupported state for playback icon: $state");
     }
   }
 
   void _audioAction(AudioNoteState state) {
-    if (state is AudioNoteRecording) {
+    if (state is AudioNoteRecord) {
       if (state.audioRecording.recordingState == RecordingState.Recording) {
         _audioNoteBloc.dispatch(StopAudioRecordingRequest());
       } else {

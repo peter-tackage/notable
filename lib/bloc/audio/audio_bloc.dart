@@ -77,6 +77,8 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
     _audioNotesSubscription.cancel();
     _recorderSubscription.cancel();
     _dbPeakSubscription.cancel();
+
+    // TODO Probably have to stop the recording here.
   }
 
   Stream<AudioNoteState> _mapLoadAudioNoteEventToState(
@@ -121,10 +123,11 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
       _dbPeakSubscription?.cancel();
 
       // Start new recording
+      // TODO An actual filename here
       String path = await flutterSound.startRecorder(null);
 
       // Initial event
-      yield AudioNoteRecording(
+      yield AudioNoteRecord(
           currentState.audioNote,
           AudioRecording((b) => b
             ..filename = "defaultfilename"
@@ -150,7 +153,7 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
     assert(flutterSound.isPlaying == false);
     assert(flutterSound.isRecording == true);
 
-    if (currentState is AudioNoteRecording) {
+    if (currentState is AudioNoteRecord) {
       // Stop recording
       String result = await flutterSound.stopRecorder();
 
@@ -163,22 +166,24 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
 
   Stream<AudioNoteState> _mapAudioRecordingProgressChangedEventToState(
       AudioNoteState currentState, AudioRecordingProgressChanged event) async* {
-    if (currentState is AudioNoteRecording) {
-      yield AudioNoteRecording(
+    if (currentState is AudioNoteRecord) {
+      yield AudioNoteRecord(
           currentState.audioNote,
           currentState.audioRecording.rebuild((b) => b
             ..recordingState = event.isRecording
                 ? RecordingState.Recording
                 : RecordingState.Recorded
-            ..progress = event.progress));
+            ..progress = event.progress ?? 0));
     }
   }
 
   Stream<AudioNoteState> _mapAudioRecordingLevelChangedEventToState(
       AudioNoteState currentState, AudioRecordingLevelChanged event) async* {
-    if (currentState is AudioNoteRecording) {
-      yield AudioNoteRecording(currentState.audioNote,
-          currentState.audioRecording.rebuild((b) => b..level = event.level));
+    if (currentState is AudioNoteRecord) {
+      yield AudioNoteRecord(
+          currentState.audioNote,
+          currentState.audioRecording
+              .rebuild((b) => b..level = event.level ?? 0));
     }
   }
 

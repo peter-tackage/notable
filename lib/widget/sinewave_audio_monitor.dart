@@ -39,7 +39,6 @@ class _AudioMonitorPainter extends CustomPainter {
       ..color = Colors.grey[200]
       ..style = PaintingStyle.fill;
 
-    print("SIZE: $size");
     final double segmentCount = 6;
     final double segmentWidth = 50;
     final double gap = 5;

@@ -40,16 +40,16 @@ class AudioNotePlayback extends AudioNoteLoaded {
 }
 
 @immutable
-class AudioNoteRecording extends AudioNoteLoaded {
+class AudioNoteRecord extends AudioNoteLoaded {
   final AudioRecording audioRecording;
 
-  AudioNoteRecording(
+  AudioNoteRecord(
     AudioNote audioNote,
     this.audioRecording,
   ) : super(audioNote, [audioNote, audioRecording]);
 
   @override
   String toString() {
-    return 'AudioNoteRecording: { audioRecording : ${audioRecording.recordingState}';
+    return 'AudioNoteRecord: { audioRecord : ${audioRecording.recordingState}';
   }
 }
