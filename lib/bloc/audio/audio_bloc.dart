@@ -238,7 +238,10 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
   Stream<AudioNoteState> _mapStopAudioPlaybackEventToState(
       AudioNoteState currentState, StopAudioPlaybackRequest event) async* {
     if (currentState is AudioNotePlayback) {
-      final result = await flutterSound.stopPlayer();
+      // When the audio clip reaches EOF, we don't need to tell the player to stop.
+      if (flutterSound.isPlaying) {
+        final result = await flutterSound.stopPlayer();
+      }
 
       _playbackSubscription?.cancel();
 
