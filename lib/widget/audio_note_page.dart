@@ -67,18 +67,26 @@ class _AudioNotePageState extends State<AudioNotePage> {
         child: Column(mainAxisAlignment: MainAxisAlignment.start, children: <
             Widget>[
       Padding(
-          padding: EdgeInsets.all(24),
+          padding: EdgeInsets.symmetric(vertical: 24),
           child: Text(_timerTextOf(state),
               style: Theme.of(context).textTheme.display1)),
       Padding(
-          padding: EdgeInsets.all(24),
-          child: AudioMonitor(
-              peakDb: 160,
-              level: state is AudioNoteRecording
-                  ? state.audioRecording.level
-                  : 0)),
+          padding: EdgeInsets.symmetric(vertical: 24),
+          child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Icon(Icons.mic,
+                    color: state is AudioNoteRecording
+                        ? Colors.green
+                        : Colors.grey),
+                AudioMonitor(
+                    peakDb: 160,
+                    level: state is AudioNoteRecording
+                        ? state.audioRecording.level
+                        : 0)
+              ])),
       Padding(
-          padding: EdgeInsets.all(24),
+          padding: EdgeInsets.symmetric(vertical: 24),
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: <
               Widget>[
             RaisedButton(

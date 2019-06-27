@@ -15,7 +15,7 @@ class _AudioMonitorState extends State<AudioMonitor> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-        width: 350,
+        width: 300,
         height: 20,
         child: CustomPaint(
           painter: _AudioMonitorPainter(widget.peakDb, widget.level),
@@ -31,7 +31,6 @@ class _AudioMonitorPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    print(size);
     Paint paintOn = Paint()
       ..color = Colors.greenAccent
       ..style = PaintingStyle.fill;
@@ -52,7 +51,6 @@ class _AudioMonitorPainter extends CustomPainter {
 
       Rect rect = Rect.fromPoints(
           Offset(dxLeft, 0), size.bottomLeft(Offset(dxLeft + segmentWidth, 0)));
-      // print("segment: $segment, level: $_level, maxSegmentDb: $maxSegmentDb");
       canvas.drawRect(rect, _level > maxSegmentDb ? paintOn : paintOff);
     }
   }
