@@ -105,13 +105,13 @@ class AudioRecordingLevelChanged extends AudioNoteEvent {
 }
 
 @immutable
-class AudioPlaybackProgress extends AudioNoteEvent {
+class AudioPlaybackProgressChanged extends AudioNoteEvent {
   final bool isPlaying;
   final double progress;
 
-  AudioPlaybackProgress(this.isPlaying, this.progress)
+  AudioPlaybackProgressChanged(this.isPlaying, this.progress)
       : super([isPlaying, progress]);
 
   @override
-  String toString() => 'AudioPlaybackProgress';
+  String toString() => 'AudioPlaybackProgressChanged';
 }

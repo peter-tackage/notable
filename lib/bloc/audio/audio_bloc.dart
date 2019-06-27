@@ -9,6 +9,7 @@ import 'package:notable/bloc/notes/notes.dart';
 import 'package:notable/entity/audio_note_entity.dart';
 import 'package:notable/entity/base_note_entity.dart';
 import 'package:notable/model/audio_note.dart';
+import 'package:notable/model/audio_playback.dart';
 import 'package:notable/model/audio_recording.dart';
 import 'package:notable/model/base_note.dart';
 import 'package:notable/model/label.dart';
@@ -24,6 +25,7 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
   StreamSubscription _audioNotesSubscription;
   StreamSubscription _recorderSubscription;
   StreamSubscription _dbPeakSubscription;
+  StreamSubscription _playbackSubscription;
 
   AudioNoteBloc(
       {@required this.notesBloc,
@@ -63,8 +65,12 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
       yield* _mapStopAudioRecordingEventToState(currentState, event);
     } else if (event is StartAudioPlaybackRequest) {
       yield* _mapStartAudioPlaybackEventToState(currentState, event);
+    } else if (event is PauseAudioPlaybackRequest) {
+      yield* _mapPauseAudioPlaybackEventToState(currentState, event);
     } else if (event is StopAudioPlaybackRequest) {
       yield* _mapStopAudioPlaybackEventToState(currentState, event);
+    } else if (event is AudioPlaybackProgressChanged) {
+      yield* _mapAudioPlaybackProgressChangedEventToState(currentState, event);
     } else if (event is AudioRecordingProgressChanged) {
       yield* _mapAudioRecordingProgressChangedEventToState(currentState, event);
     } else if (event is AudioRecordingLevelChanged) {
@@ -76,8 +82,9 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
   void dispose() {
     super.dispose();
     _audioNotesSubscription.cancel();
-    _recorderSubscription.cancel();
-    _dbPeakSubscription.cancel();
+    _recorderSubscription?.cancel();
+    _dbPeakSubscription?.cancel();
+    _playbackSubscription?.cancel();
 
     // TODO Probably have to stop the recording here.
     // TODO Delete unsaved recording data
@@ -184,8 +191,6 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
       } else {
         yield AudioNoteLoaded(currentState.audioNote);
       }
-    } else {
-      print("Should not be able to do this without being in recording state");
     }
   }
 
@@ -201,11 +206,67 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
 
   Stream<AudioNoteState> _mapStartAudioPlaybackEventToState(
       AudioNoteState currentState, StartAudioPlaybackRequest event) async* {
-    // TODO
+    if (currentState is AudioNoteLoaded) {
+      _playbackSubscription?.cancel();
+
+      // FIXME WORKAROUND: The library doesn't accept Uri with the file:// schema that it returns.
+      final filenameWithoutSchema =
+          Uri.parse(currentState.audioNote.filename).path;
+
+      var filenameAgain = await flutterSound.startPlayer(filenameWithoutSchema);
+      await flutterSound.setVolume(1.0);
+
+      _playbackSubscription = flutterSound.onPlayerStateChanged.listen((e) {
+        // null indicates that playback has stopped (EOF).
+        e == null
+            ? dispatch(StopAudioPlaybackRequest())
+            : dispatch(AudioPlaybackProgressChanged(
+                flutterSound.isPlaying, e?.currentPosition));
+      });
+
+      yield AudioNotePlayback(
+          currentState.audioNote,
+          AudioPlayback((b) => b
+            ..playbackState = PlaybackState.Playing
+            ..progress = 0
+            ..volume = 0));
+    }
   }
 
   Stream<AudioNoteState> _mapStopAudioPlaybackEventToState(
       AudioNoteState currentState, StopAudioPlaybackRequest event) async* {
-    // TODO
+    if (currentState is AudioNotePlayback) {
+      var e = await flutterSound.stopPlayer();
+
+      _playbackSubscription?.cancel();
+
+      yield AudioNoteLoaded(currentState.audioNote);
+    }
+  }
+
+  Stream<AudioNoteState> _mapPauseAudioPlaybackEventToState(
+      AudioNoteState currentState, PauseAudioPlaybackRequest event) async* {
+    if (currentState is AudioNotePlayback) {
+      var e = await flutterSound.pausePlayer();
+      AudioPlaybackProgressChanged(
+          flutterSound.isPlaying, currentState.audioPlayback.progress);
+    }
+  }
+
+  Stream<AudioNoteState> _mapAudioPlaybackProgressChangedEventToState(
+      AudioNoteState currentState, AudioPlaybackProgressChanged event) async* {
+    if (currentState is AudioNotePlayback) {
+      // We have the ability to pause playback
+      // TODO How to differentiate between pause and stop events
+      if (event.isPlaying) {
+        yield AudioNotePlayback(
+            currentState.audioNote,
+            currentState.audioPlayback.rebuild((b) => b
+              ..playbackState = PlaybackState.Playing
+              ..progress = event.progress ?? 0));
+      } else {
+        yield AudioNoteLoaded(currentState.audioNote);
+      }
+    }
   }
 }

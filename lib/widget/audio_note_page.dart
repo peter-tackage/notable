@@ -56,11 +56,11 @@ class _AudioNotePageState extends State<AudioNotePage> {
     bool isRecordingButtonEnabled = state is AudioNotePlayback == false;
 
     bool isPlaybackButtonEnabled =
-        state is AudioNoteLoaded && state.audioNote.length > 0 ||
-            state is AudioNoteLoaded && state.audioNote.id != null;
+        state is AudioNoteLoaded && state.audioNote.filename != null ||
+            state is AudioNotePlayback;
 
     bool isRewindButtonEnabled =
-        state is AudioNoteLoaded && state.audioNote.length > 0 ||
+        state is AudioNoteLoaded && state.audioNote.filename != null ||
             state is AudioNotePlayback;
 
     return Center(

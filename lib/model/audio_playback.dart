@@ -8,7 +8,7 @@ abstract class AudioPlayback
     implements Built<AudioPlayback, AudioPlaybackBuilder> {
   PlaybackState get playbackState;
 
-  int get progress;
+  double get progress;
 
   int get volume;
 
