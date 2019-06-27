@@ -137,8 +137,13 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
       // returned name.
 
       // TODO This will replace the existing recording file - is that a problem?
-      String path =
-          await flutterSound.startRecorder(currentState.audioNote.filename);
+
+      // Fix the Uri to remove the unwanted schema the lib gives us.
+      final filenameWithoutSchema = currentState.audioNote.filename != null
+          ? Uri.parse(currentState.audioNote.filename).path
+          : null;
+
+      String path = await flutterSound.startRecorder(filenameWithoutSchema);
 
       // Initial event
       yield AudioNoteRecording(
