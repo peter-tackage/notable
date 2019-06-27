@@ -9,7 +9,10 @@ part 'audio_note.g.dart';
 @immutable
 abstract class AudioNote
     implements BaseNote, Built<AudioNote, AudioNoteBuilder> {
+  @nullable
   String get filename;
+
+  double get length;
 
   AudioNote._();
 

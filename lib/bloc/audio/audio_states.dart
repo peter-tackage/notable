@@ -19,19 +19,19 @@ class AudioNoteLoading extends AudioNoteState {
 class AudioNoteLoaded extends AudioNoteState {
   final AudioNote audioNote;
 
-  AudioNoteLoaded(this.audioNote, [List props = const []])
-      : super([audioNote, ...props]);
+  AudioNoteLoaded(this.audioNote) : super([audioNote]);
 
   @override
   String toString() => 'AudioNoteLoaded { notes: $audioNote }';
 }
 
 @immutable
-class AudioNotePlayback extends AudioNoteLoaded {
+class AudioNotePlayback extends AudioNoteState {
+  final AudioNote audioNote;
   final AudioPlayback audioPlayback;
 
-  AudioNotePlayback(AudioNote audioNote, this.audioPlayback)
-      : super(audioNote, [audioNote, audioPlayback]);
+  AudioNotePlayback(this.audioNote, this.audioPlayback)
+      : super([audioNote, audioPlayback]);
 
   @override
   String toString() {
@@ -40,16 +40,17 @@ class AudioNotePlayback extends AudioNoteLoaded {
 }
 
 @immutable
-class AudioNoteRecord extends AudioNoteLoaded {
+class AudioNoteRecording extends AudioNoteState {
+  final AudioNote audioNote;
   final AudioRecording audioRecording;
 
-  AudioNoteRecord(
-    AudioNote audioNote,
+  AudioNoteRecording(
+    this.audioNote,
     this.audioRecording,
-  ) : super(audioNote, [audioNote, audioRecording]);
+  ) : super([audioNote, audioRecording]);
 
   @override
   String toString() {
-    return 'AudioNoteRecord: { audioRecord : ${audioRecording.recordingState}';
+    return 'AudioNoteRecording: { audioRecording : ${audioRecording.recordingState}';
   }
 }

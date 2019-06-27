@@ -34,9 +34,10 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
         dispatch(
             LoadAudioNote(state.notes.firstWhere((note) => note.id == this.id,
                 orElse: () => AudioNote((b) => b
+                  ..filename = null
+                  ..length = 0
                   ..title = ''
-                  ..labels = ListBuilder<Label>()
-                  ..filename = '')) as AudioNote));
+                  ..labels = ListBuilder<Label>())) as AudioNote));
       }
     });
   }
@@ -79,6 +80,7 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
     _dbPeakSubscription.cancel();
 
     // TODO Probably have to stop the recording here.
+    // TODO Delete unsaved recording data
   }
 
   Stream<AudioNoteState> _mapLoadAudioNoteEventToState(
@@ -122,15 +124,17 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
       _recorderSubscription?.cancel();
       _dbPeakSubscription?.cancel();
 
-      // Start new recording
-      // TODO An actual filename here
-      String path = await flutterSound.startRecorder(null);
+      // Start new recording, if filename is null, then update the state with the
+      // returned name.
+
+      // TODO This will replace the existing recording file - is that a problem?
+      String path =
+          await flutterSound.startRecorder(currentState.audioNote.filename);
 
       // Initial event
-      yield AudioNoteRecord(
-          currentState.audioNote,
+      yield AudioNoteRecording(
+          currentState.audioNote.rebuild((b) => b..filename = path),
           AudioRecording((b) => b
-            ..filename = "defaultfilename"
             ..recordingState = RecordingState.Recording
             ..level = 0
             ..progress = 0));
@@ -153,34 +157,42 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
     assert(flutterSound.isPlaying == false);
     assert(flutterSound.isRecording == true);
 
-    if (currentState is AudioNoteRecord) {
+    if (currentState is AudioNoteRecording) {
+      _recorderSubscription?.cancel();
+      _dbPeakSubscription?.cancel();
+
       // Stop recording
       String result = await flutterSound.stopRecorder();
 
-      // DO THIS??
-//      _recorderSubscription?.cancel();
-//      _dbPeakSubscription?.cancel();
-
+      yield AudioNoteLoaded(currentState.audioNote
+          .rebuild((b) => b..length = currentState.audioRecording.progress));
     }
   }
 
   Stream<AudioNoteState> _mapAudioRecordingProgressChangedEventToState(
       AudioNoteState currentState, AudioRecordingProgressChanged event) async* {
-    if (currentState is AudioNoteRecord) {
-      yield AudioNoteRecord(
-          currentState.audioNote,
-          currentState.audioRecording.rebuild((b) => b
-            ..recordingState = event.isRecording
-                ? RecordingState.Recording
-                : RecordingState.Recorded
-            ..progress = event.progress ?? 0));
+    if (currentState is AudioNoteRecording) {
+      // NOTE: Because pausing recording is not supported by the current library,
+      // we transition directly from isRecording = true to the AudioNoteLoadedState
+
+      if (event.isRecording) {
+        yield AudioNoteRecording(
+            currentState.audioNote,
+            currentState.audioRecording.rebuild((b) => b
+              ..recordingState = RecordingState.Recording
+              ..progress = event.progress ?? 0));
+      } else {
+        yield AudioNoteLoaded(currentState.audioNote);
+      }
+    } else {
+      print("Should not be able to do this without being in recording state");
     }
   }
 
   Stream<AudioNoteState> _mapAudioRecordingLevelChangedEventToState(
       AudioNoteState currentState, AudioRecordingLevelChanged event) async* {
-    if (currentState is AudioNoteRecord) {
-      yield AudioNoteRecord(
+    if (currentState is AudioNoteRecording) {
+      yield AudioNoteRecording(
           currentState.audioNote,
           currentState.audioRecording
               .rebuild((b) => b..level = event.level ?? 0));

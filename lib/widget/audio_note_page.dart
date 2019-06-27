@@ -28,7 +28,9 @@ class _AudioNotePageState extends State<AudioNotePage> {
     return BlocBuilder(
         bloc: _audioNoteBloc,
         builder: (BuildContext context, AudioNoteState state) {
-          if (state is AudioNoteLoaded) {
+          if (state is AudioNoteLoaded ||
+              state is AudioNotePlayback ||
+              state is AudioNoteRecording) {
             return Column(children: <Widget>[
 //                          TextFormField(
 //                              onSaved: _titleChanged,
@@ -53,26 +55,30 @@ class _AudioNotePageState extends State<AudioNotePage> {
 
     bool isRecordingButtonEnabled = state is AudioNotePlayback == false;
 
-    bool isPlaybackButtonEnabled = state is AudioNoteRecord &&
-            state.audioRecording.recordingState == RecordingState.Recorded ||
-        state is AudioNoteLoaded && state.audioNote.id != null;
+    bool isPlaybackButtonEnabled =
+        state is AudioNoteLoaded && state.audioNote.length > 0 ||
+            state is AudioNoteLoaded && state.audioNote.id != null;
+
+    bool isRewindButtonEnabled =
+        state is AudioNoteLoaded && state.audioNote.length > 0 ||
+            state is AudioNotePlayback;
 
     return Center(
         child: Column(children: <Widget>[
-      Text(state is AudioNoteRecord ? toDuration(state) : "0",
+      Text(state is AudioNoteRecording ? toDuration(state) : "0",
           style: Theme.of(context).textTheme.display1),
       Text(
-          state is AudioNoteRecord
+          state is AudioNoteRecording
               ? state.audioRecording.level.toString()
               : "-",
           style: Theme.of(context).textTheme.display1),
       AudioMonitor(
           peakDb: 160,
-          level: state is AudioNoteRecord ? state.audioRecording.level : 0),
+          level: state is AudioNoteRecording ? state.audioRecording.level : 0),
       Row(children: <Widget>[
         RaisedButton(
           onPressed:
-              isRecordingButtonEnabled ? () => _audioAction(state) : null,
+              isRecordingButtonEnabled ? () => _recordAction(state) : null,
           shape: CircleBorder(),
           color: Colors.white,
           disabledColor: Colors.grey[300],
@@ -92,7 +98,8 @@ class _AudioNotePageState extends State<AudioNotePage> {
               )),
         ),
         RaisedButton(
-          onPressed: isPlaybackButtonEnabled ? () => _audioAction(state) : null,
+          onPressed:
+              isPlaybackButtonEnabled ? () => _playbackAction(state) : null,
           shape: CircleBorder(),
           color: Colors.white,
           disabledColor: Colors.grey[300],
@@ -111,11 +118,30 @@ class _AudioNotePageState extends State<AudioNotePage> {
                 size: 38.0,
               )),
         ),
+        RaisedButton(
+          onPressed: isPlaybackButtonEnabled ? _rewindAction : null,
+          shape: CircleBorder(),
+          color: Colors.white,
+          disabledColor: Colors.grey[300],
+          elevation: 4.0,
+          child: Container(
+              padding: const EdgeInsets.all(6.0),
+              decoration: BoxDecoration(
+                  border: Border.all(
+                      color: isRewindButtonEnabled ? Colors.green : Colors.grey,
+                      width: 2.0),
+                  borderRadius: BorderRadius.all(Radius.circular(100))),
+              child: Icon(
+                Icons.fast_rewind,
+                color: isRewindButtonEnabled ? Colors.green : Colors.grey,
+                size: 24.0,
+              )),
+        )
       ])
     ]));
   }
 
-  static String toDuration(AudioNoteRecord state) {
+  static String toDuration(AudioNoteRecording state) {
     DateTime date = new DateTime.fromMillisecondsSinceEpoch(
         state.audioRecording.progress.toInt(),
         isUtc: true);
@@ -123,63 +149,42 @@ class _AudioNotePageState extends State<AudioNotePage> {
   }
 
   IconData _recordIconOf(AudioNoteState state) {
-    if (state is AudioNoteRecord) {
-      switch (state.audioRecording.recordingState) {
-        case RecordingState.Recording:
-          return Icons.pause;
-        case RecordingState.Recorded:
-          return Icons.mic;
-        default:
-          throw Exception(
-              "Unsupported recording state: ${state.audioRecording.recordingState}");
-      }
-    } else if (state is AudioNotePlayback) {
-      return state.audioPlayback.playbackState == PlaybackState.Playing
-          ? Icons.stop
-          : Icons.play_arrow;
-    } else if (state is AudioNoteLoaded) {
-      return Icons.mic;
+    if (state is AudioNoteRecording &&
+        state.audioRecording.recordingState == RecordingState.Recording) {
+      return Icons.stop;
     } else {
-      throw Exception("Unsupported state for recording icon: $state");
+      return Icons.mic;
     }
   }
 
   IconData _playbackIconOf(AudioNoteState state) {
-    if (state is AudioNoteRecord) {
-      switch (state.audioRecording.recordingState) {
-        case RecordingState.Recording:
-          return Icons.stop;
-        case RecordingState.Recorded:
-          return Icons.play_arrow;
-        default:
-          throw Exception(
-              "Unsupported recording state: ${state.audioRecording.recordingState}");
-      }
-    } else if (state is AudioNotePlayback) {
-      return state.audioPlayback.playbackState == PlaybackState.Playing
-          ? Icons.stop
-          : Icons.play_arrow;
-    } else if (state is AudioNoteLoaded) {
-      return Icons.stop;
+    if (state is AudioNotePlayback &&
+        state.audioPlayback.playbackState == PlaybackState.Playing) {
+      return Icons.pause;
     } else {
-      // We shouldn't attempt to show this
-      throw Exception("Unsupported state for playback icon: $state");
+      return Icons.play_arrow;
     }
   }
 
-  void _audioAction(AudioNoteState state) {
-    if (state is AudioNoteRecord) {
-      if (state.audioRecording.recordingState == RecordingState.Recording) {
-        _audioNoteBloc.dispatch(StopAudioRecordingRequest());
-      } else {
-        _audioNoteBloc.dispatch(StartAudioRecordingRequest());
-      }
-    } else if (state is AudioNotePlayback) {
-      state.audioPlayback.playbackState == PlaybackState.Playing
-          ? _audioNoteBloc.dispatch(StopAudioPlaybackRequest())
-          : _audioNoteBloc.dispatch(StartAudioPlaybackRequest());
-    } else if (state is AudioNoteLoaded) {
+  _rewindAction() => _audioNoteBloc.dispatch(StopAudioPlaybackRequest());
+
+  // TODO Could these be changed to toggle commands instead?
+
+  void _recordAction(AudioNoteState state) {
+    if (state is AudioNoteRecording &&
+        state.audioRecording.recordingState == RecordingState.Recording) {
+      _audioNoteBloc.dispatch(StopAudioRecordingRequest());
+    } else {
       _audioNoteBloc.dispatch(StartAudioRecordingRequest());
+    }
+  }
+
+  void _playbackAction(AudioNoteState state) {
+    if (state is AudioNotePlayback &&
+        state.audioPlayback.playbackState == PlaybackState.Playing) {
+      _audioNoteBloc.dispatch(PauseAudioPlaybackRequest());
+    } else {
+      _audioNoteBloc.dispatch(StartAudioPlaybackRequest());
     }
   }
 }

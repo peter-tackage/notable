@@ -6,8 +6,6 @@ part 'audio_recording.g.dart';
 @immutable
 abstract class AudioRecording
     implements Built<AudioRecording, AudioRecordingBuilder> {
-  String get filename;
-
   RecordingState get recordingState;
 
   double get progress;
@@ -19,4 +17,4 @@ abstract class AudioRecording
   factory AudioRecording([updates(AudioRecordingBuilder b)]) = _$AudioRecording;
 }
 
-enum RecordingState { Recording, Recorded }
+enum RecordingState { Recording, Paused }
