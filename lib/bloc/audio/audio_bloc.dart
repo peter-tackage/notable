@@ -216,11 +216,12 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
     if (currentState is AudioNoteLoaded) {
       _playbackSubscription?.cancel();
 
-      // FIXME WORKAROUND: The library doesn't accept Uri with the file:// schema that it returns.
+      // WORKAROUND: The library doesn't accept Uri with the file:// schema that it returns.
       final filenameWithoutSchema =
           Uri.parse(currentState.audioNote.filename).path;
 
-      var filenameAgain = await flutterSound.startPlayer(filenameWithoutSchema);
+      final filenameAgain =
+          await flutterSound.startPlayer(filenameWithoutSchema);
       await flutterSound.setVolume(1.0);
 
       _playbackSubscription = flutterSound.onPlayerStateChanged.listen((e) {

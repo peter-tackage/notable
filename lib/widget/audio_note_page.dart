@@ -65,13 +65,7 @@ class _AudioNotePageState extends State<AudioNotePage> {
 
     return Center(
         child: Column(children: <Widget>[
-      Text(state is AudioNoteRecording ? toDuration(state) : "0",
-          style: Theme.of(context).textTheme.display1),
-      Text(
-          state is AudioNoteRecording
-              ? state.audioRecording.level.toString()
-              : "-",
-          style: Theme.of(context).textTheme.display1),
+      Text(_timerTextOf(state), style: Theme.of(context).textTheme.display1),
       AudioMonitor(
           peakDb: 160,
           level: state is AudioNoteRecording ? state.audioRecording.level : 0),
@@ -141,13 +135,6 @@ class _AudioNotePageState extends State<AudioNotePage> {
     ]));
   }
 
-  static String toDuration(AudioNoteRecording state) {
-    DateTime date = new DateTime.fromMillisecondsSinceEpoch(
-        state.audioRecording.progress.toInt(),
-        isUtc: true);
-    return DateFormat('mm:ss', 'en_GB').format(date);
-  }
-
   IconData _recordIconOf(AudioNoteState state) {
     if (state is AudioNoteRecording &&
         state.audioRecording.recordingState == RecordingState.Recording) {
@@ -189,5 +176,26 @@ class _AudioNotePageState extends State<AudioNotePage> {
     } else {
       _audioNoteBloc.dispatch(StartAudioPlaybackRequest());
     }
+  }
+
+  String _timerTextOf(AudioNoteState state) {
+    if (state is AudioNoteRecording) {
+      return _toDuration(state.audioRecording.progress); // 00:04
+    } else if (state is AudioNotePlayback) {
+      // 00:01 / 00:04
+      return "${_toDuration(state.audioPlayback.progress)} / ${_toDuration(state.audioNote.length)}";
+    } else if (state is AudioNoteLoaded) {
+      return state.audioNote.filename == null
+          ? "- / -"
+          : "${_toDuration(0)} / ${_toDuration(state.audioNote.length)}";
+    } else {
+      return "";
+    }
+  }
+
+  static String _toDuration(double time) {
+    DateTime date =
+        new DateTime.fromMillisecondsSinceEpoch(time.toInt(), isUtc: true);
+    return DateFormat('mm:ss', 'en_GB').format(date);
   }
 }
