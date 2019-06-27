@@ -183,6 +183,9 @@ class _AudioNotePageState extends State<AudioNotePage> {
     if (state is AudioNotePlayback &&
         state.audioPlayback.playbackState == PlaybackState.Playing) {
       _audioNoteBloc.dispatch(PauseAudioPlaybackRequest());
+    } else if (state is AudioNotePlayback &&
+        state.audioPlayback.playbackState == PlaybackState.Paused) {
+      _audioNoteBloc.dispatch(ResumeAudioPlaybackRequest());
     } else {
       _audioNoteBloc.dispatch(StartAudioPlaybackRequest());
     }

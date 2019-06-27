@@ -35,7 +35,7 @@ class AudioNotePlayback extends AudioNoteState {
 
   @override
   String toString() {
-    return 'AudioNotePlayback: { audioPlayback : ${audioPlayback.playbackState}';
+    return 'AudioNotePlayback: { audioPlayback : ${audioPlayback.playbackState} }';
   }
 }
 
@@ -51,6 +51,6 @@ class AudioNoteRecording extends AudioNoteState {
 
   @override
   String toString() {
-    return 'AudioNoteRecording: { audioRecording : ${audioRecording.recordingState}';
+    return 'AudioNoteRecording: { audioRecording : ${audioRecording.recordingState} }';
   }
 }

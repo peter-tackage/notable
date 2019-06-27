@@ -74,6 +74,14 @@ class PauseAudioPlaybackRequest extends AudioNoteEvent {
 }
 
 @immutable
+class ResumeAudioPlaybackRequest extends AudioNoteEvent {
+  ResumeAudioPlaybackRequest() : super([]);
+
+  @override
+  String toString() => 'ResumeAudioPlaybackRequest';
+}
+
+@immutable
 class StopAudioPlaybackRequest extends AudioNoteEvent {
   StopAudioPlaybackRequest() : super([]);
 

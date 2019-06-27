@@ -67,6 +67,8 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
       yield* _mapStartAudioPlaybackEventToState(currentState, event);
     } else if (event is PauseAudioPlaybackRequest) {
       yield* _mapPauseAudioPlaybackEventToState(currentState, event);
+    } else if (event is ResumeAudioPlaybackRequest) {
+      yield* _mapResumeAudioPlaybackEventToState(currentState, event);
     } else if (event is StopAudioPlaybackRequest) {
       yield* _mapStopAudioPlaybackEventToState(currentState, event);
     } else if (event is AudioPlaybackProgressChanged) {
@@ -236,7 +238,7 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
   Stream<AudioNoteState> _mapStopAudioPlaybackEventToState(
       AudioNoteState currentState, StopAudioPlaybackRequest event) async* {
     if (currentState is AudioNotePlayback) {
-      var e = await flutterSound.stopPlayer();
+      final result = await flutterSound.stopPlayer();
 
       _playbackSubscription?.cancel();
 
@@ -247,9 +249,24 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
   Stream<AudioNoteState> _mapPauseAudioPlaybackEventToState(
       AudioNoteState currentState, PauseAudioPlaybackRequest event) async* {
     if (currentState is AudioNotePlayback) {
-      var e = await flutterSound.pausePlayer();
-      AudioPlaybackProgressChanged(
-          flutterSound.isPlaying, currentState.audioPlayback.progress);
+      final result = await flutterSound.pausePlayer();
+
+      yield AudioNotePlayback(
+          currentState.audioNote,
+          currentState.audioPlayback
+              .rebuild((b) => b..playbackState = PlaybackState.Paused));
+    }
+  }
+
+  Stream<AudioNoteState> _mapResumeAudioPlaybackEventToState(
+      AudioNoteState currentState, ResumeAudioPlaybackRequest event) async* {
+    if (currentState is AudioNotePlayback) {
+      final result = await flutterSound.resumePlayer();
+
+      yield AudioNotePlayback(
+          currentState.audioNote,
+          currentState.audioPlayback
+              .rebuild((b) => b..playbackState = PlaybackState.Playing));
     }
   }
 
@@ -257,16 +274,11 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
       AudioNoteState currentState, AudioPlaybackProgressChanged event) async* {
     if (currentState is AudioNotePlayback) {
       // We have the ability to pause playback
-      // TODO How to differentiate between pause and stop events
-      if (event.isPlaying) {
-        yield AudioNotePlayback(
-            currentState.audioNote,
-            currentState.audioPlayback.rebuild((b) => b
-              ..playbackState = PlaybackState.Playing
-              ..progress = event.progress ?? 0));
-      } else {
-        yield AudioNoteLoaded(currentState.audioNote);
-      }
+      yield AudioNotePlayback(
+          currentState.audioNote,
+          currentState.audioPlayback.rebuild((b) => b
+            ..playbackState = PlaybackState.Playing
+            ..progress = event.progress ?? 0));
     }
   }
 }
