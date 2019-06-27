@@ -64,74 +64,90 @@ class _AudioNotePageState extends State<AudioNotePage> {
             state is AudioNotePlayback;
 
     return Center(
-        child: Column(children: <Widget>[
-      Text(_timerTextOf(state), style: Theme.of(context).textTheme.display1),
-      AudioMonitor(
-          peakDb: 160,
-          level: state is AudioNoteRecording ? state.audioRecording.level : 0),
-      Row(children: <Widget>[
-        RaisedButton(
-          onPressed:
-              isRecordingButtonEnabled ? () => _recordAction(state) : null,
-          shape: CircleBorder(),
-          color: Colors.white,
-          disabledColor: Colors.grey[300],
-          elevation: 4.0,
-          child: Container(
-              padding: const EdgeInsets.all(20.0),
-              decoration: BoxDecoration(
-                  border: Border.all(
-                      color:
-                          isRecordingButtonEnabled ? Colors.green : Colors.grey,
-                      width: 2.0),
-                  borderRadius: BorderRadius.all(Radius.circular(100))),
-              child: Icon(
-                _recordIconOf(state),
-                color: isRecordingButtonEnabled ? Colors.green : Colors.grey,
-                size: 38.0,
-              )),
-        ),
-        RaisedButton(
-          onPressed:
-              isPlaybackButtonEnabled ? () => _playbackAction(state) : null,
-          shape: CircleBorder(),
-          color: Colors.white,
-          disabledColor: Colors.grey[300],
-          elevation: 4.0,
-          child: Container(
-              padding: const EdgeInsets.all(8.0),
-              decoration: BoxDecoration(
-                  border: Border.all(
-                      color:
-                          isPlaybackButtonEnabled ? Colors.green : Colors.grey,
-                      width: 2.0),
-                  borderRadius: BorderRadius.all(Radius.circular(100))),
-              child: Icon(
-                _playbackIconOf(state),
-                color: isPlaybackButtonEnabled ? Colors.green : Colors.grey,
-                size: 38.0,
-              )),
-        ),
-        RaisedButton(
-          onPressed: isPlaybackButtonEnabled ? _rewindAction : null,
-          shape: CircleBorder(),
-          color: Colors.white,
-          disabledColor: Colors.grey[300],
-          elevation: 4.0,
-          child: Container(
-              padding: const EdgeInsets.all(6.0),
-              decoration: BoxDecoration(
-                  border: Border.all(
-                      color: isRewindButtonEnabled ? Colors.green : Colors.grey,
-                      width: 2.0),
-                  borderRadius: BorderRadius.all(Radius.circular(100))),
-              child: Icon(
-                Icons.fast_rewind,
-                color: isRewindButtonEnabled ? Colors.green : Colors.grey,
-                size: 24.0,
-              )),
-        )
-      ])
+        child: Column(mainAxisAlignment: MainAxisAlignment.start, children: <
+            Widget>[
+      Padding(
+          padding: EdgeInsets.all(24),
+          child: Text(_timerTextOf(state),
+              style: Theme.of(context).textTheme.display1)),
+      Padding(
+          padding: EdgeInsets.all(24),
+          child: AudioMonitor(
+              peakDb: 160,
+              level: state is AudioNoteRecording
+                  ? state.audioRecording.level
+                  : 0)),
+      Padding(
+          padding: EdgeInsets.all(24),
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: <
+              Widget>[
+            RaisedButton(
+              onPressed:
+                  isRecordingButtonEnabled ? () => _recordAction(state) : null,
+              shape: CircleBorder(),
+              color: Colors.white,
+              disabledColor: Colors.grey[300],
+              elevation: 4.0,
+              child: Container(
+                  padding: const EdgeInsets.all(20.0),
+                  decoration: BoxDecoration(
+                      border: Border.all(
+                          color: isRecordingButtonEnabled
+                              ? Colors.green
+                              : Colors.grey,
+                          width: 2.0),
+                      borderRadius: BorderRadius.all(Radius.circular(100))),
+                  child: Icon(
+                    _recordIconOf(state),
+                    color:
+                        isRecordingButtonEnabled ? Colors.green : Colors.grey,
+                    size: 38.0,
+                  )),
+            ),
+            RaisedButton(
+              onPressed:
+                  isPlaybackButtonEnabled ? () => _playbackAction(state) : null,
+              shape: CircleBorder(),
+              color: Colors.white,
+              disabledColor: Colors.grey[300],
+              elevation: 4.0,
+              child: Container(
+                  padding: const EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                      border: Border.all(
+                          color: isPlaybackButtonEnabled
+                              ? Colors.green
+                              : Colors.grey,
+                          width: 2.0),
+                      borderRadius: BorderRadius.all(Radius.circular(100))),
+                  child: Icon(
+                    _playbackIconOf(state),
+                    color: isPlaybackButtonEnabled ? Colors.green : Colors.grey,
+                    size: 38.0,
+                  )),
+            ),
+            RaisedButton(
+              onPressed: isPlaybackButtonEnabled ? _rewindAction : null,
+              shape: CircleBorder(),
+              color: Colors.white,
+              disabledColor: Colors.grey[300],
+              elevation: 4.0,
+              child: Container(
+                  padding: const EdgeInsets.all(6.0),
+                  decoration: BoxDecoration(
+                      border: Border.all(
+                          color: isRewindButtonEnabled
+                              ? Colors.green
+                              : Colors.grey,
+                          width: 2.0),
+                      borderRadius: BorderRadius.all(Radius.circular(100))),
+                  child: Icon(
+                    Icons.fast_rewind,
+                    color: isRewindButtonEnabled ? Colors.green : Colors.grey,
+                    size: 24.0,
+                  )),
+            )
+          ]))
     ]));
   }
 
