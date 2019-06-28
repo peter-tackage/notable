@@ -26,7 +26,6 @@ class FileStorage<E extends BaseEntity> implements EntityStorage<E> {
   @override
   Future<File> writeAll(List<E> entities) async {
     final file = await _getLocalFile();
-
     return file.writeAsString(jsonEncode(entities));
   }
 
@@ -48,13 +47,11 @@ class FileStorage<E extends BaseEntity> implements EntityStorage<E> {
 
   Future<File> _getLocalFile() async {
     final dir = await getDirectory();
-
     return File('${dir.path}${Platform.pathSeparator}Notable__$tag.json');
   }
 
   Future<FileSystemEntity> clean() async {
     final file = await _getLocalFile();
-
     return file.delete();
   }
 }

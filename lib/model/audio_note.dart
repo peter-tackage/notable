@@ -10,7 +10,8 @@ part 'audio_note.g.dart';
 abstract class AudioNote
     implements BaseNote, Built<AudioNote, AudioNoteBuilder> {
   @nullable
-  String get filename;
+  String
+      get filename; // the actual path + filename of the audio file once saved.
 
   double get length;
 

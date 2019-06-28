@@ -91,8 +91,10 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
     _dbPeakSubscription?.cancel();
     _playbackSubscription?.cancel();
 
-    // TODO Probably have to stop the recording here.
-    // TODO Delete unsaved recording data
+    // Stop the record, we don't know what action prompted this, so we can't
+    // delete the recording.
+    if (flutterSound.isPlaying) flutterSound.stopPlayer();
+    if (flutterSound.isRecording) flutterSound.stopRecorder();
   }
 
   Stream<AudioNoteState> _mapLoadAudioNoteEventToState(
@@ -103,6 +105,8 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
   Stream<AudioNoteState> _mapSaveAudioNoteEventToState(
       AudioNoteState currentState, AudioNoteEvent event) async* {
     if (currentState is AudioNoteLoaded) {
+      // TODO If there's a working audio note, then we need to commit it.
+
       if (id == null) {
         notesBloc.dispatch(AddNote(currentState.audioNote));
       } else {
@@ -131,18 +135,17 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
     assert(flutterSound.isPlaying == false);
     assert(flutterSound.isRecording == false);
 
-    if (currentState is AudioNoteLoaded) {
+    // IMPORTANT: You're not allowed to record saved notes, only unsaved notes.
+    if (currentState is AudioNoteLoaded && currentState.audioNote.id == null) {
       // Cancel existing
       _recorderSubscription?.cancel();
       _dbPeakSubscription?.cancel();
 
-      // Start new recording, if filename is null, then generate it.
-
-      // TODO This will replace the existing recording file - is that a problem?
-
+      // First time for an unsaved note, we need to set the filename.
       final filename = currentState.audioNote.filename ??
           await soundStorage.generateFilename();
 
+      // Start new recording to a newly generated filename
       await flutterSound.startRecorder(filename);
 
       // Initial event
