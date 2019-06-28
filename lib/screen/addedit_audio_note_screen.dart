@@ -5,7 +5,9 @@ import 'package:notable/bloc/audio/audio.dart';
 import 'package:notable/bloc/notes/notes.dart';
 import 'package:notable/entity/audio_note_entity.dart';
 import 'package:notable/model/audio_note.dart';
+import 'package:notable/storage/sound_storage.dart';
 import 'package:notable/widget/audio_note_page.dart';
+import 'package:path_provider/path_provider.dart';
 
 class AddEditAudioNoteScreen extends StatefulWidget {
   final String id;
@@ -30,7 +32,10 @@ class _AddEditAudioNoteScreenState extends State<AddEditAudioNoteScreen> {
         id: widget.id,
         flutterSound: FlutterSound()
           ..setDbLevelEnabled(true)
-          ..setDbPeakLevelUpdate(0.5));
+          ..setDbPeakLevelUpdate(0.1),
+        soundStorage: SoundStorage(
+            getDirectory: () => getApplicationDocumentsDirectory(),
+            filenameGenerator: soundFilenameGenerator));
   }
 
   @override

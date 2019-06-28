@@ -13,6 +13,7 @@ import 'package:notable/model/audio_playback.dart';
 import 'package:notable/model/audio_recording.dart';
 import 'package:notable/model/base_note.dart';
 import 'package:notable/model/label.dart';
+import 'package:notable/storage/sound_storage.dart';
 
 import 'audio_states.dart';
 
@@ -21,6 +22,7 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
   final NotesBloc<AudioNote, AudioNoteEntity> notesBloc;
   final String id;
   final FlutterSound flutterSound;
+  final SoundStorage soundStorage;
 
   StreamSubscription _audioNotesSubscription;
   StreamSubscription _recorderSubscription;
@@ -30,7 +32,8 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
   AudioNoteBloc(
       {@required this.notesBloc,
       @required this.id,
-      @required this.flutterSound}) {
+      @required this.flutterSound,
+      @required this.soundStorage}) {
     _audioNotesSubscription = notesBloc.state.listen((state) {
       if (state is NotesLoaded) {
         dispatch(
@@ -133,21 +136,18 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
       _recorderSubscription?.cancel();
       _dbPeakSubscription?.cancel();
 
-      // Start new recording, if filename is null, then update the state with the
-      // returned name.
+      // Start new recording, if filename is null, then generate it.
 
       // TODO This will replace the existing recording file - is that a problem?
 
-      // Fix the Uri to remove the unwanted schema the lib gives us.
-      final filenameWithoutSchema = currentState.audioNote.filename != null
-          ? Uri.parse(currentState.audioNote.filename).path
-          : null;
+      final filename = currentState.audioNote.filename ??
+          await soundStorage.generateFilename();
 
-      String path = await flutterSound.startRecorder(filenameWithoutSchema);
+      await flutterSound.startRecorder(filename);
 
       // Initial event
       yield AudioNoteRecording(
-          currentState.audioNote.rebuild((b) => b..filename = path),
+          currentState.audioNote.rebuild((b) => b..filename = filename),
           AudioRecording((b) => b
             ..recordingState = RecordingState.Recording
             ..level = 0
@@ -176,7 +176,7 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
       _dbPeakSubscription?.cancel();
 
       // Stop recording
-      String result = await flutterSound.stopRecorder();
+      await flutterSound.stopRecorder();
 
       yield AudioNoteLoaded(currentState.audioNote
           .rebuild((b) => b..length = currentState.audioRecording.progress));
@@ -216,12 +216,7 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
     if (currentState is AudioNoteLoaded) {
       _playbackSubscription?.cancel();
 
-      // WORKAROUND: The library doesn't accept Uri with the file:// schema that it returns.
-      final filenameWithoutSchema =
-          Uri.parse(currentState.audioNote.filename).path;
-
-      final filenameAgain =
-          await flutterSound.startPlayer(filenameWithoutSchema);
+      await flutterSound.startPlayer(currentState.audioNote.filename);
       await flutterSound.setVolume(1.0);
 
       _playbackSubscription = flutterSound.onPlayerStateChanged.listen((e) {
@@ -246,7 +241,7 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
     if (currentState is AudioNotePlayback) {
       // When the audio clip reaches EOF, we don't need to tell the player to stop.
       if (flutterSound.isPlaying) {
-        final result = await flutterSound.stopPlayer();
+        await flutterSound.stopPlayer();
       }
 
       _playbackSubscription?.cancel();
@@ -258,7 +253,7 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
   Stream<AudioNoteState> _mapPauseAudioPlaybackEventToState(
       AudioNoteState currentState, PauseAudioPlaybackRequest event) async* {
     if (currentState is AudioNotePlayback) {
-      final result = await flutterSound.pausePlayer();
+      await flutterSound.pausePlayer();
 
       yield AudioNotePlayback(
           currentState.audioNote,
@@ -270,7 +265,7 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
   Stream<AudioNoteState> _mapResumeAudioPlaybackEventToState(
       AudioNoteState currentState, ResumeAudioPlaybackRequest event) async* {
     if (currentState is AudioNotePlayback) {
-      final result = await flutterSound.resumePlayer();
+      await flutterSound.resumePlayer();
 
       yield AudioNotePlayback(
           currentState.audioNote,

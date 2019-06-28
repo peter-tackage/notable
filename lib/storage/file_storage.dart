@@ -49,7 +49,7 @@ class FileStorage<E extends BaseEntity> implements EntityStorage<E> {
   Future<File> _getLocalFile() async {
     final dir = await getDirectory();
 
-    return File('${dir.path}/Notable__$tag.json');
+    return File('${dir.path}${Platform.pathSeparator}Notable__$tag.json');
   }
 
   Future<FileSystemEntity> clean() async {
