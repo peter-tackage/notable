@@ -39,7 +39,7 @@ class _AudioNotePageState extends State<AudioNotePage> {
 
   _buildAudioNote(BuildContext context, AudioNoteState state) {
     bool isRecordingFeatureAvailable =
-        state is AudioNoteLoaded && state.audioNote.id == null;
+        state is BaseAudioNoteLoaded && state.audioNote.id == null;
     bool isRecordingButtonEnabled = state is AudioNotePlayback == false;
 
     bool isPlaybackButtonEnabled =
