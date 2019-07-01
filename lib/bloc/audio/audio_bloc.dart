@@ -95,8 +95,7 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
 
     // Stop the record, we don't know what action prompted this (save/back), so we can't
     // delete the recording here.
-    if (flutterSound.isPlaying) flutterSound.stopPlayer();
-    if (flutterSound.isRecording) flutterSound.stopRecorder();
+    _stopAudioEngine();
 
     //
     // TODO Do we have enough information to delete here - will the id be set in time?
@@ -138,8 +137,13 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
       AudioNoteState currentState, AudioNoteEvent event) async* {
     assert(id != null);
 
-    // TODO Delete the audio if it exists
-    // TODO Do we allow this operation when recording/playing?
+    // Stop the audio engine
+    _stopAudioEngine();
+
+    // Delete the audio file
+    if (currentState is BaseAudioNoteLoaded) {
+      soundStorage.delete(currentState.audioNote.filename);
+    }
 
     // Delete the note and return all the notes
     notesBloc.dispatch(DeleteNote(id));
@@ -323,5 +327,10 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
           currentState.audioNote.rebuild((b) => b..title = event.title);
       yield AudioNoteLoaded(updatedAudioNote);
     }
+  }
+
+  void _stopAudioEngine() {
+    if (flutterSound.isPlaying) flutterSound.stopPlayer();
+    if (flutterSound.isRecording) flutterSound.stopRecorder();
   }
 }

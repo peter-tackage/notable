@@ -75,7 +75,8 @@ class _AudioNotePageState extends State<AudioNotePage> {
                   ]))
           : SizedBox.shrink(),
       Padding(
-          padding: EdgeInsets.symmetric(vertical: 24),
+          padding: EdgeInsets.symmetric(
+              vertical: isRecordingFeatureAvailable ? 24 : 0),
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: <
               Widget>[
             isRecordingFeatureAvailable
