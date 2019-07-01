@@ -38,8 +38,8 @@ class _AudioNotePageState extends State<AudioNotePage> {
   }
 
   _buildAudioNote(BuildContext context, AudioNoteState state) {
-    print(state);
-
+    bool isRecordingFeatureAvailable =
+        state is AudioNoteLoaded && state.audioNote.id == null;
     bool isRecordingButtonEnabled = state is AudioNotePlayback == false;
 
     bool isPlaybackButtonEnabled =
@@ -57,48 +57,55 @@ class _AudioNotePageState extends State<AudioNotePage> {
           padding: EdgeInsets.symmetric(vertical: 24),
           child: Text(_timerTextOf(state),
               style: Theme.of(context).textTheme.display1)),
-      Padding(
-          padding: EdgeInsets.symmetric(vertical: 24),
-          child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Icon(Icons.mic,
-                    color: state is AudioNoteRecording
-                        ? Colors.green
-                        : Colors.grey),
-                AudioMonitor(
-                    peakDb: 160,
-                    level: state is AudioNoteRecording
-                        ? state.audioRecording.level
-                        : 0)
-              ])),
+      isRecordingFeatureAvailable
+          ? Padding(
+              padding: EdgeInsets.symmetric(vertical: 24),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(Icons.mic,
+                        color: state is AudioNoteRecording
+                            ? Colors.green
+                            : Colors.grey),
+                    AudioMonitor(
+                        peakDb: 160,
+                        level: state is AudioNoteRecording
+                            ? state.audioRecording.level
+                            : 0)
+                  ]))
+          : SizedBox.shrink(),
       Padding(
           padding: EdgeInsets.symmetric(vertical: 24),
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: <
               Widget>[
-            RaisedButton(
-              onPressed:
-                  isRecordingButtonEnabled ? () => _recordAction(state) : null,
-              shape: CircleBorder(),
-              color: Colors.white,
-              disabledColor: Colors.grey[300],
-              elevation: 4.0,
-              child: Container(
-                  padding: const EdgeInsets.all(20.0),
-                  decoration: BoxDecoration(
-                      border: Border.all(
+            isRecordingFeatureAvailable
+                ? RaisedButton(
+                    onPressed: isRecordingButtonEnabled
+                        ? () => _recordAction(state)
+                        : null,
+                    shape: CircleBorder(),
+                    color: Colors.white,
+                    disabledColor: Colors.grey[300],
+                    elevation: 4.0,
+                    child: Container(
+                        padding: const EdgeInsets.all(20.0),
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                                color: isRecordingButtonEnabled
+                                    ? Colors.green
+                                    : Colors.grey,
+                                width: 2.0),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(100))),
+                        child: Icon(
+                          _recordIconOf(state),
                           color: isRecordingButtonEnabled
                               ? Colors.green
                               : Colors.grey,
-                          width: 2.0),
-                      borderRadius: BorderRadius.all(Radius.circular(100))),
-                  child: Icon(
-                    _recordIconOf(state),
-                    color:
-                        isRecordingButtonEnabled ? Colors.green : Colors.grey,
-                    size: 38.0,
-                  )),
-            ),
+                          size: 38.0,
+                        )),
+                  )
+                : SizedBox.shrink(),
             RaisedButton(
               onPressed:
                   isPlaybackButtonEnabled ? () => _playbackAction(state) : null,
