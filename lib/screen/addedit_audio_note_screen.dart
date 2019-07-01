@@ -42,14 +42,41 @@ class _AddEditAudioNoteScreenState extends State<AddEditAudioNoteScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: Text("Audio"), actions: _defineMenuItems()),
-        body: Padding(
-            padding: EdgeInsets.only(top: 8, left: 8, right: 8),
-            child: BlocProvider(bloc: _audioNoteBloc, child: AudioNotePage())),
+        body: BlocProvider<AudioNoteBloc>(
+            bloc: _audioNoteBloc, child: _buildBody()),
         floatingActionButton: FloatingActionButton(
           onPressed: _saveNote,
           tooltip: 'Save audio note',
           child: Icon(Icons.check),
         ));
+  }
+
+  Widget _buildBody() {
+    return BlocBuilder(
+        bloc: _audioNoteBloc,
+        builder: (BuildContext context, AudioNoteState state) {
+          print(state);
+          if (state is BaseAudioNoteLoaded) {
+            return Padding(
+                padding: EdgeInsets.only(top: 8, left: 8, right: 8),
+                child: Form(
+                    key: _formKey,
+                    child: Column(children: <Widget>[
+                      TextFormField(
+                          enabled: state is AudioNoteLoaded,
+                          onSaved: _titleChanged,
+                          initialValue: state.audioNote.title,
+                          style: Theme.of(context).textTheme.title,
+                          textCapitalization: TextCapitalization.sentences,
+                          decoration: InputDecoration(
+                              border: InputBorder.none, hintText: 'Title...'),
+                          maxLines: 1),
+                      AudioNotePage()
+                    ])));
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        });
   }
 
   List<Widget> _defineMenuItems() {
@@ -99,12 +126,11 @@ class _AddEditAudioNoteScreenState extends State<AddEditAudioNoteScreen> {
     }
   }
 
-  _titleChanged(String newTitle) {
-    // TODO Implement this
-    //  _audioNoteBloc.dispatch(UpdateAudioNoteTitle(newTitle));
-  }
+  //
+  // Title change
+  //
 
-  Widget _buildAudioNote(BuildContext context, AudioNote audioNote) {
-    return AudioNotePage();
+  _titleChanged(String newTitle) {
+    _audioNoteBloc.dispatch(UpdateAudioNoteTitle(newTitle));
   }
 }

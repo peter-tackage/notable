@@ -76,6 +76,7 @@ class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
                           autofocus: false)))
             ]);
           } else {
+            // FIXME This is duplicated in the DrawingPage
             return Center(child: CircularProgressIndicator());
           }
         });

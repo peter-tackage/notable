@@ -42,6 +42,16 @@ class ClearAudioNote extends AudioNoteEvent {
 }
 
 @immutable
+class UpdateAudioNoteTitle extends AudioNoteEvent {
+  final String title;
+
+  UpdateAudioNoteTitle(this.title) : super([title]);
+
+  @override
+  String toString() => 'UpdateDrawingTitle: $title';
+}
+
+@immutable
 class StartAudioRecordingRequest extends AudioNoteEvent {
   StartAudioRecordingRequest() : super([]);
 

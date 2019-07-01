@@ -28,23 +28,10 @@ class _AudioNotePageState extends State<AudioNotePage> {
     return BlocBuilder(
         bloc: _audioNoteBloc,
         builder: (BuildContext context, AudioNoteState state) {
-          if (state is AudioNoteLoaded ||
-              state is AudioNotePlayback ||
-              state is AudioNoteRecording) {
-            return Column(children: <Widget>[
-//                          TextFormField(
-//                              onSaved: _titleChanged,
-//                              initialValue: state.audioNote.title,
-//                              style: Theme.of(context).textTheme.title,
-//                              decoration: InputDecoration(
-//                                  border: InputBorder.none,
-//                                  hintText: 'Title...'),
-//                              maxLines: 1,
-//                              autofocus: false),
-              Expanded(child: _buildAudioNote(context, state)),
-              Divider(height: 0),
-            ]);
+          if (state is BaseAudioNoteLoaded) {
+            return _buildAudioNote(context, state);
           } else {
+            // FIXME Duplication again here - where should the BlocBuilder live?
             return Center(child: CircularProgressIndicator());
           }
         });
@@ -207,11 +194,11 @@ class _AudioNotePageState extends State<AudioNotePage> {
       return _toDuration(state.audioRecording.progress); // 00:04
     } else if (state is AudioNotePlayback) {
       // 00:01 / 00:04
-      return "${_toDuration(state.audioPlayback.progress)} / ${_toDuration(state.audioNote.length)}";
+      return "${_toDuration(state.audioPlayback.progress)} / ${_toDuration(state.audioNote.lengthMillis)}";
     } else if (state is AudioNoteLoaded) {
       return state.audioNote.filename == null
           ? "- / -"
-          : "${_toDuration(0)} / ${_toDuration(state.audioNote.length)}";
+          : "${_toDuration(0)} / ${_toDuration(state.audioNote.lengthMillis)}";
     } else {
       return "";
     }

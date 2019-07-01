@@ -4,13 +4,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notable/bloc/feed/feed_bloc.dart';
 import 'package:notable/bloc/feed/feed_events.dart';
 import 'package:notable/bloc/feed/feed_states.dart';
+import 'package:notable/model/audio_note.dart';
 import 'package:notable/model/base_note.dart';
 import 'package:notable/model/checklist.dart';
 import 'package:notable/model/drawing.dart';
 import 'package:notable/model/text_note.dart';
+import 'package:notable/screen/addedit_audio_note_screen.dart';
 import 'package:notable/screen/addedit_checklist_note_screen.dart';
 import 'package:notable/screen/addedit_drawing_note_screen.dart';
 import 'package:notable/screen/addedit_text_note_screen.dart';
+import 'package:notable/widget/audio_note_card_item.dart';
 import 'package:notable/widget/drawing_card_item.dart';
 import 'package:notable/widget/note_card_item.dart';
 
@@ -52,6 +55,9 @@ class AllNotesPage extends StatelessWidget {
     } else if (note is Drawing) {
       return DrawingCardItem(
           drawing: note, onTap: () => _openDrawing(context, note));
+    } else if (note is AudioNote) {
+      return AudioNoteCardItem(
+          note: note, onTap: () => _openAudioNote(context, note));
     } else {
       throw Exception("Unsupported Note type: $note");
     }
@@ -76,6 +82,13 @@ class AllNotesPage extends StatelessWidget {
             builder: (context) => AddEditDrawingNoteScreen(id: drawing.id)),
       );
 
+  static _openAudioNote(BuildContext context, AudioNote audioNote) =>
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => AddEditAudioNoteScreen(id: audioNote.id)),
+      );
+
   static Widget _buildEmptyNoteList(BuildContext context) => Center(
           child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -86,6 +99,7 @@ class AllNotesPage extends StatelessWidget {
               size: 100.0,
               color: Colors.blueGrey[200],
             ),
-            Text("You don't have any notes yet", style: TextStyle(color: Colors.blueGrey))
+            Text("You don't have any notes yet",
+                style: TextStyle(color: Colors.blueGrey))
           ]));
 }

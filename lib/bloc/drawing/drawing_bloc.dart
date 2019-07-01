@@ -209,7 +209,6 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
     if (currentState is DrawingLoaded) {
       Drawing updatedDrawing =
           currentState.drawing.rebuild((b) => b..title = event.title);
-      print("Updated title to ${event.title}");
       yield DrawingLoaded(drawing: updatedDrawing);
     }
   }

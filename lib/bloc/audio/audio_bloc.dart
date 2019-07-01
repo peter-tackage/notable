@@ -40,7 +40,7 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
             LoadAudioNote(state.notes.firstWhere((note) => note.id == this.id,
                 orElse: () => AudioNote((b) => b
                   ..filename = null
-                  ..length = 0
+                  ..lengthMillis = 0
                   ..title = ''
                   ..labels = ListBuilder<Label>())) as AudioNote));
       }
@@ -80,6 +80,8 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
       yield* _mapAudioRecordingProgressChangedEventToState(currentState, event);
     } else if (event is AudioRecordingLevelChanged) {
       yield* _mapAudioRecordingLevelChangedEventToState(currentState, event);
+    } else if (event is UpdateAudioNoteTitle) {
+      yield* _mapUpdateAudioNoteTitleEventToState(currentState, event);
     }
   }
 
@@ -91,10 +93,21 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
     _dbPeakSubscription?.cancel();
     _playbackSubscription?.cancel();
 
-    // Stop the record, we don't know what action prompted this, so we can't
-    // delete the recording.
+    // Stop the record, we don't know what action prompted this (save/back), so we can't
+    // delete the recording here.
     if (flutterSound.isPlaying) flutterSound.stopPlayer();
     if (flutterSound.isRecording) flutterSound.stopRecorder();
+
+    //
+    // TODO Do we have enough information to delete here - will the id be set in time?
+    //
+    // Probably not, because the pop happens synchronously and the dispatch is asynchronous.
+    //
+
+    if (currentState is AudioNoteLoaded &&
+        (currentState as AudioNoteLoaded).audioNote.id == null) {
+      print("Deleting note recording without id");
+    }
   }
 
   Stream<AudioNoteState> _mapLoadAudioNoteEventToState(
@@ -104,14 +117,20 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
 
   Stream<AudioNoteState> _mapSaveAudioNoteEventToState(
       AudioNoteState currentState, AudioNoteEvent event) async* {
-    if (currentState is AudioNoteLoaded) {
-      // TODO If there's a working audio note, then we need to commit it.
+    // Smart cast only works with local variables and parameters.
+    final AudioNoteState noteState = currentState;
+    if (noteState is AudioNoteLoaded) _updateAudioNote(noteState.audioNote);
+    if (noteState is AudioNotePlayback) _updateAudioNote(noteState.audioNote);
+  }
 
-      if (id == null) {
-        notesBloc.dispatch(AddNote(currentState.audioNote));
-      } else {
-        notesBloc.dispatch(UpdateNote(currentState.audioNote));
-      }
+  void _updateAudioNote(AudioNote audioNote) {
+    print(
+        "Looking to save audio note id: ${audioNote.id} filename: ${audioNote.filename}");
+
+    if (id == null) {
+      notesBloc.dispatch(AddNote(audioNote));
+    } else {
+      notesBloc.dispatch(UpdateNote(audioNote));
     }
   }
 
@@ -119,13 +138,16 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
       AudioNoteState currentState, AudioNoteEvent event) async* {
     assert(id != null);
 
+    // TODO Delete the audio if it exists
+    // TODO Do we allow this operation when recording/playing?
+
     // Delete the note and return all the notes
     notesBloc.dispatch(DeleteNote(id));
   }
 
   Stream<AudioNoteState> _mapClearAudioNoteEventToState(
       AudioNoteState currentState, ClearAudioNote event) async* {
-    if (currentState is AudioNoteLoaded) {
+    if (currentState is BaseAudioNoteLoaded) {
       // TODO yield - delete the actual recording (not the note)
     }
   }
@@ -135,8 +157,10 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
     assert(flutterSound.isPlaying == false);
     assert(flutterSound.isRecording == false);
 
+    print("Attempting to record");
     // IMPORTANT: You're not allowed to record saved notes, only unsaved notes.
     if (currentState is AudioNoteLoaded && currentState.audioNote.id == null) {
+      print("More like it");
       // Cancel existing
       _recorderSubscription?.cancel();
       _dbPeakSubscription?.cancel();
@@ -181,8 +205,8 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
       // Stop recording
       await flutterSound.stopRecorder();
 
-      yield AudioNoteLoaded(currentState.audioNote
-          .rebuild((b) => b..length = currentState.audioRecording.progress));
+      yield AudioNoteLoaded(currentState.audioNote.rebuild(
+          (b) => b..lengthMillis = currentState.audioRecording.progress));
     }
   }
 
@@ -286,6 +310,18 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
           currentState.audioPlayback.rebuild((b) => b
             ..playbackState = PlaybackState.Playing
             ..progress = event.progress ?? 0));
+    }
+  }
+
+  Stream<AudioNoteState> _mapUpdateAudioNoteTitleEventToState(
+      AudioNoteState currentState, UpdateAudioNoteTitle event) async* {
+    // Can only update the title when the recorder/player is idle.
+    // Otherwise it gets too fiddly to check which is the current state
+    // and then modify the field.
+    if (currentState is AudioNoteLoaded) {
+      AudioNote updatedAudioNote =
+          currentState.audioNote.rebuild((b) => b..title = event.title);
+      yield AudioNoteLoaded(updatedAudioNote);
     }
   }
 }

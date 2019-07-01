@@ -15,23 +15,29 @@ class AudioNoteLoading extends AudioNoteState {
   String toString() => 'AudioNoteLoading';
 }
 
+// The idea here is for BaseAudioNoteLoaded to be a bit like a sealed class.
 @immutable
-class AudioNoteLoaded extends AudioNoteState {
+abstract class BaseAudioNoteLoaded extends AudioNoteState {
   final AudioNote audioNote;
 
-  AudioNoteLoaded(this.audioNote) : super([audioNote]);
+  BaseAudioNoteLoaded(this.audioNote, [List props = const []])
+      : super([audioNote, ...props]);
+}
+
+@immutable
+class AudioNoteLoaded extends BaseAudioNoteLoaded {
+  AudioNoteLoaded(audioNote) : super(audioNote);
 
   @override
   String toString() => 'AudioNoteLoaded { notes: $audioNote }';
 }
 
 @immutable
-class AudioNotePlayback extends AudioNoteState {
-  final AudioNote audioNote;
+class AudioNotePlayback extends BaseAudioNoteLoaded {
   final AudioPlayback audioPlayback;
 
-  AudioNotePlayback(this.audioNote, this.audioPlayback)
-      : super([audioNote, audioPlayback]);
+  AudioNotePlayback(audioNote, this.audioPlayback)
+      : super(audioNote, [audioPlayback]);
 
   @override
   String toString() {
@@ -40,14 +46,13 @@ class AudioNotePlayback extends AudioNoteState {
 }
 
 @immutable
-class AudioNoteRecording extends AudioNoteState {
-  final AudioNote audioNote;
+class AudioNoteRecording extends BaseAudioNoteLoaded {
   final AudioRecording audioRecording;
 
   AudioNoteRecording(
-    this.audioNote,
+    audioNote,
     this.audioRecording,
-  ) : super([audioNote, audioRecording]);
+  ) : super(audioNote, [audioRecording]);
 
   @override
   String toString() {

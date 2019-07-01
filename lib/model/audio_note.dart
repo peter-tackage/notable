@@ -13,7 +13,7 @@ abstract class AudioNote
   String
       get filename; // the actual path + filename of the audio file once saved.
 
-  double get length;
+  double get lengthMillis;
 
   AudioNote._();
 

@@ -10,6 +10,7 @@ class AudioNoteMapper implements Mapper<AudioNote, AudioNoteEntity> {
       model.labels.map((l) => l.toEntity()).toList(),
       model.title,
       model.filename,
+      model.lengthMillis,
       id: model.id,
       updatedDate: model.updatedDate);
 
@@ -18,6 +19,7 @@ class AudioNoteMapper implements Mapper<AudioNote, AudioNoteEntity> {
     ..title = entity.title
     ..labels = ListBuilder(entity.labels.map(Label.fromEntity))
     ..filename = entity.filename
+    ..lengthMillis = entity.lengthMillis
     ..id = entity.id
     ..updatedDate = entity.updatedDate);
 }
