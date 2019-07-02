@@ -7,45 +7,46 @@ import 'package:notable/entity/entity.dart';
 import 'package:notable/model/checklist.dart';
 import 'package:notable/widget/edit_checklist_item.dart';
 
-class AddEditChecklistNoteScreen extends StatefulWidget {
+class AddEditChecklistNoteScreen extends StatelessWidget {
   final String id;
 
   AddEditChecklistNoteScreen({Key key, this.id}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _AddEditChecklistNoteScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider<ChecklistBloc>(
+        builder: (BuildContext context) => ChecklistBloc(
+            notesBloc:
+                BlocProvider.of<NotesBloc<Checklist, ChecklistEntity>>(context),
+            id: id),
+        child: _AddEditChecklistNoteScreenContent(id: id));
+  }
 }
 
-class _AddEditChecklistNoteScreenState
-    extends State<AddEditChecklistNoteScreen> {
+class _AddEditChecklistNoteScreenContent extends StatelessWidget {
+  final String id;
+
+  _AddEditChecklistNoteScreenContent({Key key, this.id}) : super(key: key);
+
   static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  ChecklistBloc _checklistBloc;
-
-  @override
-  void initState() {
-    super.initState();
-    _checklistBloc = ChecklistBloc(
-        notesBloc:
-            BlocProvider.of<NotesBloc<Checklist, ChecklistEntity>>(context),
-        id: widget.id);
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("Checklist"), actions: _defineMenuItems()),
+        appBar: AppBar(
+            title: Text("Checklist"), actions: _defineMenuItems(context)),
         body: Padding(
             padding: EdgeInsets.only(top: 8, left: 8, right: 8),
             child: BlocBuilder(
-                bloc: _checklistBloc,
+                bloc: _checklistBlocOf(context),
                 builder: (BuildContext context, ChecklistState state) {
                   if (state is ChecklistLoaded) {
                     return Form(
                         key: _formKey,
                         child: Column(children: <Widget>[
                           TextFormField(
-                              onSaved: _onSaveTitle,
+                              onSaved: (newTitle) => _onSaveTitle(
+                                  newTitle, _checklistBlocOf(context)),
                               initialValue: state.checklist.title,
                               style: Theme.of(context).textTheme.title,
                               decoration: InputDecoration(
@@ -81,18 +82,19 @@ class _AddEditChecklistNoteScreenState
                   }
                 })),
         floatingActionButton: FloatingActionButton(
-          onPressed: _saveNote,
+          onPressed: () => _saveNote(context),
           tooltip: 'Save checklist',
           child: Icon(Icons.check),
         ));
   }
 
-  List<Widget> _defineMenuItems() {
-    return widget.id == null
+  List<Widget> _defineMenuItems(context) {
+    return id == null
         ? null
         : <Widget>[
             PopupMenuButton(
-                onSelected: _handleMenuItemSelection,
+                onSelected: (menuItem) =>
+                    _handleMenuItemSelection(menuItem, context),
                 itemBuilder: (context) => [
                       PopupMenuItem(
                         value: "delete",
@@ -102,55 +104,60 @@ class _AddEditChecklistNoteScreenState
           ];
   }
 
+  ChecklistBloc _checklistBlocOf(context) =>
+      BlocProvider.of<ChecklistBloc>(context);
+
   //
   // Checklist builder
   //
 
-  Widget _buildChecklist(BuildContext context, Checklist checklist) =>
-      ListView.builder(
-          itemBuilder: (BuildContext context, int index) {
-            ChecklistItem item = checklist.items[index];
-            int lastIndex = checklist.items.length - 1;
-            bool isLastItem = index == lastIndex;
-            bool isFocused = isLastItem && item.task.isEmpty;
-            return Column(
-                key: Key(item.id),
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  EditChecklistItem(
-                      onSaved: (isDone, task) => _setItem(
-                          index,
-                          item.rebuild((b) => b
-                            ..task = task
-                            ..isDone = isDone)),
-                      onCommit: (isDone, task) => _handleSubmitItem(
-                          item.rebuild((b) => b
-                            ..task = task
-                            ..isDone = isDone),
-                          index,
-                          isLastItem),
-                      initialValue: item,
-                      isFocused: isFocused),
-                  isLastItem
-                      ? FlatButton.icon(
-                          icon: Icon(Icons.add, color: Colors.grey),
-                          label: Text("Add item",
-                              style: TextStyle(color: Colors.grey)),
-                          onPressed: () =>
-                              _checklistBloc.dispatch(AddEmptyChecklistItem()))
-                      : SizedBox.shrink()
-                ]);
-          },
-          itemCount: checklist.items.length);
+  Widget _buildChecklist(context, checklist) => ListView.builder(
+      itemBuilder: (BuildContext context, int index) {
+        ChecklistItem item = checklist.items[index];
+        int lastIndex = checklist.items.length - 1;
+        bool isLastItem = index == lastIndex;
+        bool isFocused = isLastItem && item.task.isEmpty;
+        return Column(
+            key: Key(item.id),
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              EditChecklistItem(
+                  onSaved: (isDone, task) => _setItem(
+                      index,
+                      item.rebuild((b) => b
+                        ..task = task
+                        ..isDone = isDone),
+                      _checklistBlocOf(context)),
+                  onCommit: (isDone, task) => _handleSubmitItem(
+                      context,
+                      item.rebuild((b) => b
+                        ..task = task
+                        ..isDone = isDone),
+                      index,
+                      isLastItem),
+                  initialValue: item,
+                  isFocused: isFocused),
+              isLastItem
+                  ? FlatButton.icon(
+                      icon: Icon(Icons.add, color: Colors.grey),
+                      label: Text("Add item",
+                          style: TextStyle(color: Colors.grey)),
+                      onPressed: () => _checklistBlocOf(context)
+                          .dispatch(AddEmptyChecklistItem()))
+                  : SizedBox.shrink()
+            ]);
+      },
+      itemCount: checklist.items.length);
 
   // TODO Also must not allow submit when the item is empty, because even the act of submitting causes the focus to be lost.
 
-  void _handleSubmitItem(ChecklistItem item, int index, bool isLastItem) {
+  void _handleSubmitItem(
+      BuildContext context, ChecklistItem item, int index, bool isLastItem) {
     // Update the Bloc state with the submitted item
-    _setItem(index, item);
+    _setItem(index, item, _checklistBlocOf(context));
 
     if (isLastItem && item.task.isNotEmpty) {
-      _checklistBloc.dispatch(AddEmptyChecklistItem());
+      _checklistBlocOf(context).dispatch(AddEmptyChecklistItem());
     } else {
       // TODO Focus next
     }
@@ -160,13 +167,13 @@ class _AddEditChecklistNoteScreenState
   // Save
   //
 
-  _saveNote() {
+  _saveNote(context) {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
     }
 
     // Create or update handled elsewhere.
-    _checklistBloc.dispatch(SaveChecklist());
+    _checklistBlocOf(context).dispatch(SaveChecklist());
 
     Navigator.pop(context);
   }
@@ -175,24 +182,24 @@ class _AddEditChecklistNoteScreenState
   // Delete
   //
 
-  _handleMenuItemSelection(value) {
-    if (value == "delete") {
-      _deleteNote();
+  _handleMenuItemSelection(menuItem, context) {
+    if (menuItem == "delete") {
+      _deleteNote(context);
     }
   }
 
-  _deleteNote() {
-    if (widget.id != null) {
-      _checklistBloc.dispatch(DeleteChecklist());
+  _deleteNote(context) {
+    if (id != null) {
+      _checklistBlocOf(context).dispatch(DeleteChecklist());
       Navigator.pop(context);
     }
   }
 
-  _onSaveTitle(String newTitle) {
-    _checklistBloc.dispatch(UpdateChecklistTitle(newTitle));
+  _onSaveTitle(newTitle, checklistBloc) {
+    checklistBloc.dispatch(UpdateChecklistTitle(newTitle));
   }
 
-  _setItem(int index, ChecklistItem item) {
-    _checklistBloc.dispatch(SetChecklistItem(index, item));
+  _setItem(int index, ChecklistItem item, checklistBloc) {
+    checklistBloc.dispatch(SetChecklistItem(index, item));
   }
 }

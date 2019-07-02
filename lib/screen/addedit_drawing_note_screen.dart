@@ -24,8 +24,6 @@ class AddEditDrawingNoteScreen extends StatelessWidget {
     final notesBloc =
         BlocProvider.of<NotesBloc<Drawing, DrawingEntity>>(context);
 
-    print("Building AddEditDrawingNoteScreen");
-
     return BlocProviderTree(blocProviders: [
       BlocProvider<DrawingBloc>(
           builder: (BuildContext context) =>
@@ -100,8 +98,8 @@ class _AddEditDrawingNoteScreenContent extends StatelessWidget {
     Navigator.pop(context);
   }
 
-  _handleMenuItemSelection(value, context) {
-    if (value == "delete") {
+  _handleMenuItemSelection(menuItem, context) {
+    if (menuItem == "delete") {
       _deleteNote(context);
     }
   }
