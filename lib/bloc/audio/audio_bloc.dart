@@ -97,13 +97,7 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
     // Stop the recording/playback.
     _stopAudioEngine();
 
-    //
-    // TODO Do we have enough information to delete here - will the id be set in time?
-    // We don't know what action prompted this (save/back), so we can't delete the recording here.
-    //
-    // Probably not, because the pop happens synchronously and the dispatch is asynchronous.
-    //
-
+    // Remove orphaned audio file if note unsaved.
     AudioNoteState noteState = currentState;
     if (noteState is BaseAudioNoteLoaded &&
         noteState.audioNote.id == null &&
@@ -119,15 +113,23 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
 
   Stream<AudioNoteState> _mapSaveAudioNoteEventToState(
       AudioNoteState currentState, AudioNoteEvent event) async* {
-    // Smart cast only works with local variables and parameters.
-    final AudioNoteState noteState = currentState;
-    if (noteState is AudioNoteLoaded) _updateAudioNote(noteState.audioNote);
-    if (noteState is AudioNotePlayback) _updateAudioNote(noteState.audioNote);
+    // Don't support save when still recording, but allow changes to the title
+    // when the note is being updated.
+    if (currentState is BaseAudioNoteLoaded) {
+      final hasRecording = currentState.audioNote.filename != null;
+
+      final isNoteSaveable = currentState is AudioNoteLoaded && hasRecording ||
+          currentState is AudioNotePlayback && hasRecording;
+
+      if (isNoteSaveable) {
+        _saveAudioNote((currentState).audioNote);
+      }
+    }
   }
 
-  void _updateAudioNote(AudioNote audioNote) {
+  void _saveAudioNote(AudioNote audioNote) {
     print(
-        "Looking to save audio note id: ${audioNote.id} filename: ${audioNote.filename}");
+        "Add/Update audio note id: ${audioNote.id} filename: ${audioNote.filename}");
 
     if (id == null) {
       notesBloc.dispatch(AddNote(audioNote));
@@ -323,6 +325,7 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
     // Can only update the title when the recorder/player is idle.
     // Otherwise it gets too fiddly to check which is the current state
     // and then modify the field.
+    print("Processing update to title");
     if (currentState is AudioNoteLoaded) {
       AudioNote updatedAudioNote =
           currentState.audioNote.rebuild((b) => b..title = event.title);

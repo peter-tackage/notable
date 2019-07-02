@@ -47,42 +47,51 @@ class _AddEditAudioNoteScreenContent extends StatelessWidget {
   Widget build(BuildContext context) {
     AudioNoteBloc audioNoteBloc = BlocProvider.of<AudioNoteBloc>(context);
 
-    return Scaffold(
-        appBar: AppBar(
-            title: Text("Audio"),
-            actions: _defineMenuItems(context, audioNoteBloc)),
-        body: _buildBody(context, audioNoteBloc),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => _saveNote(context, audioNoteBloc),
-          tooltip: 'Save audio note',
-          child: Icon(Icons.check),
-        ));
+    return BlocBuilder(
+        bloc: audioNoteBloc,
+        builder: (BuildContext context, AudioNoteState state) {
+          final isNoteSaveable = state is AudioNoteLoaded &&
+                  state.audioNote.filename != null ||
+              state is AudioNotePlayback && state.audioNote.filename != null;
+
+          return Scaffold(
+              appBar: AppBar(
+                  title: Text("Audio"),
+                  actions: _defineMenuItems(context, audioNoteBloc)),
+              body: _buildBody(context, audioNoteBloc, state),
+              floatingActionButton: isNoteSaveable
+                  ? FloatingActionButton(
+                      onPressed: () => _saveNote(context, audioNoteBloc),
+                      tooltip: 'Save audio note',
+                      child: Icon(Icons.check),
+                    )
+                  : null);
+        });
   }
 
-  Widget _buildBody(context, audioNoteBloc) => BlocBuilder(
-      bloc: audioNoteBloc,
-      builder: (BuildContext context, AudioNoteState state) {
-        if (state is BaseAudioNoteLoaded) {
-          return Padding(
-              padding: EdgeInsets.only(top: 8, left: 8, right: 8),
-              child: Form(
-                  key: _formKey,
-                  child: Column(children: <Widget>[
-                    TextFormField(
-                        enabled: state is AudioNoteLoaded,
-                        onSaved: (value) => _titleChanged(value, audioNoteBloc),
-                        initialValue: state.audioNote.title,
-                        style: Theme.of(context).textTheme.title,
-                        textCapitalization: TextCapitalization.sentences,
-                        decoration: InputDecoration(
-                            border: InputBorder.none, hintText: 'Title...'),
-                        maxLines: 1),
-                    AudioNotePage()
-                  ])));
-        } else {
-          return Center(child: CircularProgressIndicator());
-        }
-      });
+  Widget _buildBody(context, audioNoteBloc, state) {
+    if (state is BaseAudioNoteLoaded) {
+      return Padding(
+          padding: EdgeInsets.only(top: 8, left: 8, right: 8),
+          child: Form(
+              key: _formKey,
+              child: Column(children: <Widget>[
+                TextFormField(
+                    enabled: state is AudioNoteLoaded,
+                    onSaved: (newTitle) =>
+                        _titleChanged(newTitle, audioNoteBloc),
+                    initialValue: state.audioNote.title,
+                    style: Theme.of(context).textTheme.title,
+                    textCapitalization: TextCapitalization.sentences,
+                    decoration: InputDecoration(
+                        border: InputBorder.none, hintText: 'Title...'),
+                    maxLines: 1),
+                AudioNotePage()
+              ])));
+    } else {
+      return Center(child: CircularProgressIndicator());
+    }
+  }
 
   List<Widget> _defineMenuItems(context, audioNoteBloc) {
     return id == null
@@ -109,7 +118,7 @@ class _AddEditAudioNoteScreenContent extends StatelessWidget {
       _formKey.currentState.save();
     }
 
-    // Create or update handled elsewhere.
+    // Create or update handled in bloc.
     audioNoteBloc.dispatch(SaveAudioNote());
 
     Navigator.pop(context);
