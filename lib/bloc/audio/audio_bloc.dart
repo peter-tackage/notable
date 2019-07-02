@@ -88,17 +88,18 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
   @override
   void dispose() {
     super.dispose();
+
     _audioNotesSubscription.cancel();
     _recorderSubscription?.cancel();
     _dbPeakSubscription?.cancel();
     _playbackSubscription?.cancel();
 
-    // Stop the record, we don't know what action prompted this (save/back), so we can't
-    // delete the recording here.
+    // Stop the recording/playback.
     _stopAudioEngine();
 
     //
     // TODO Do we have enough information to delete here - will the id be set in time?
+    // We don't know what action prompted this (save/back), so we can't delete the recording here.
     //
     // Probably not, because the pop happens synchronously and the dispatch is asynchronous.
     //
@@ -329,8 +330,10 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
     }
   }
 
-  void _stopAudioEngine() {
-    if (flutterSound.isPlaying) flutterSound.stopPlayer();
-    if (flutterSound.isRecording) flutterSound.stopRecorder();
+  void _stopAudioEngine() async {
+    print(
+        "stopAudioEngine: ${flutterSound.isPlaying} / ${flutterSound.isRecording}");
+    if (flutterSound.isPlaying) await flutterSound.stopPlayer();
+    if (flutterSound.isRecording) await flutterSound.stopRecorder();
   }
 }

@@ -4,87 +4,94 @@ import 'package:flutter_sound/flutter_sound.dart';
 import 'package:notable/bloc/audio/audio.dart';
 import 'package:notable/bloc/notes/notes.dart';
 import 'package:notable/entity/audio_note_entity.dart';
+import 'package:notable/entity/base_note_entity.dart';
 import 'package:notable/model/audio_note.dart';
+import 'package:notable/model/base_note.dart';
 import 'package:notable/storage/sound_storage.dart';
 import 'package:notable/widget/audio_note_page.dart';
 import 'package:path_provider/path_provider.dart';
 
-class AddEditAudioNoteScreen extends StatefulWidget {
+class AddEditAudioNoteScreen extends StatelessWidget {
   final String id;
 
   AddEditAudioNoteScreen({Key key, this.id}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _AddEditAudioNoteScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider<AudioNoteBloc>(
+        builder: _audioNoteBlocBuilder,
+        child: _AddEditAudioNoteScreenContent(id: id));
+  }
+
+  AudioNoteBloc<BaseNote, BaseNoteEntity> _audioNoteBlocBuilder(context) =>
+      AudioNoteBloc(
+          notesBloc:
+              BlocProvider.of<NotesBloc<AudioNote, AudioNoteEntity>>(context),
+          id: id,
+          flutterSound: FlutterSound()
+            ..setDbLevelEnabled(true)
+            ..setDbPeakLevelUpdate(0.1),
+          soundStorage: SoundStorage(
+              getDirectory: () => getApplicationDocumentsDirectory(),
+              filenameGenerator: soundFilenameGenerator));
 }
 
-class _AddEditAudioNoteScreenState extends State<AddEditAudioNoteScreen> {
+class _AddEditAudioNoteScreenContent extends StatelessWidget {
+  final String id;
+
+  _AddEditAudioNoteScreenContent({Key key, this.id}) : super(key: key);
+
   static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  AudioNoteBloc _audioNoteBloc;
-
-  @override
-  void initState() {
-    super.initState();
-    _audioNoteBloc = AudioNoteBloc(
-        notesBloc:
-            BlocProvider.of<NotesBloc<AudioNote, AudioNoteEntity>>(context),
-        id: widget.id,
-        flutterSound: FlutterSound()
-          ..setDbLevelEnabled(true)
-          ..setDbPeakLevelUpdate(0.1),
-        soundStorage: SoundStorage(
-            getDirectory: () => getApplicationDocumentsDirectory(),
-            filenameGenerator: soundFilenameGenerator));
-  }
 
   @override
   Widget build(BuildContext context) {
+    AudioNoteBloc audioNoteBloc = BlocProvider.of<AudioNoteBloc>(context);
+
     return Scaffold(
-        appBar: AppBar(title: Text("Audio"), actions: _defineMenuItems()),
-        body: BlocProvider<AudioNoteBloc>(
-            bloc: _audioNoteBloc, child: _buildBody()),
+        appBar: AppBar(
+            title: Text("Audio"),
+            actions: _defineMenuItems(context, audioNoteBloc)),
+        body: _buildBody(context, audioNoteBloc),
         floatingActionButton: FloatingActionButton(
-          onPressed: _saveNote,
+          onPressed: () => _saveNote(context, audioNoteBloc),
           tooltip: 'Save audio note',
           child: Icon(Icons.check),
         ));
   }
 
-  Widget _buildBody() {
-    return BlocBuilder(
-        bloc: _audioNoteBloc,
-        builder: (BuildContext context, AudioNoteState state) {
-          print(state);
-          if (state is BaseAudioNoteLoaded) {
-            return Padding(
-                padding: EdgeInsets.only(top: 8, left: 8, right: 8),
-                child: Form(
-                    key: _formKey,
-                    child: Column(children: <Widget>[
-                      TextFormField(
-                          enabled: state is AudioNoteLoaded,
-                          onSaved: _titleChanged,
-                          initialValue: state.audioNote.title,
-                          style: Theme.of(context).textTheme.title,
-                          textCapitalization: TextCapitalization.sentences,
-                          decoration: InputDecoration(
-                              border: InputBorder.none, hintText: 'Title...'),
-                          maxLines: 1),
-                      AudioNotePage()
-                    ])));
-          } else {
-            return Center(child: CircularProgressIndicator());
-          }
-        });
-  }
+  Widget _buildBody(context, audioNoteBloc) => BlocBuilder(
+      bloc: audioNoteBloc,
+      builder: (BuildContext context, AudioNoteState state) {
+        print(state);
+        if (state is BaseAudioNoteLoaded) {
+          return Padding(
+              padding: EdgeInsets.only(top: 8, left: 8, right: 8),
+              child: Form(
+                  key: _formKey,
+                  child: Column(children: <Widget>[
+                    TextFormField(
+                        enabled: state is AudioNoteLoaded,
+                        onSaved: (value) => _titleChanged(value, audioNoteBloc),
+                        initialValue: state.audioNote.title,
+                        style: Theme.of(context).textTheme.title,
+                        textCapitalization: TextCapitalization.sentences,
+                        decoration: InputDecoration(
+                            border: InputBorder.none, hintText: 'Title...'),
+                        maxLines: 1),
+                    AudioNotePage()
+                  ])));
+        } else {
+          return Center(child: CircularProgressIndicator());
+        }
+      });
 
-  List<Widget> _defineMenuItems() {
-    return widget.id == null
+  List<Widget> _defineMenuItems(context, audioNoteBloc) {
+    return id == null
         ? null
         : <Widget>[
             PopupMenuButton(
-                onSelected: _handleMenuItemSelection,
+                onSelected: (value) =>
+                    _handleMenuItemSelection(value, context, audioNoteBloc),
                 itemBuilder: (context) => [
                       PopupMenuItem(
                         value: "delete",
@@ -98,13 +105,13 @@ class _AddEditAudioNoteScreenState extends State<AddEditAudioNoteScreen> {
   // Save
   //
 
-  _saveNote() {
+  _saveNote(context, audioNoteBloc) {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
     }
 
     // Create or update handled elsewhere.
-    _audioNoteBloc.dispatch(SaveAudioNote());
+    audioNoteBloc.dispatch(SaveAudioNote());
 
     Navigator.pop(context);
   }
@@ -113,15 +120,15 @@ class _AddEditAudioNoteScreenState extends State<AddEditAudioNoteScreen> {
   // Delete
   //
 
-  _handleMenuItemSelection(value) {
-    if (value == "delete") {
-      _deleteNote();
+  _handleMenuItemSelection(menuItem, context, audioNoteBloc) {
+    if (menuItem == "delete") {
+      _deleteNote(context, audioNoteBloc);
     }
   }
 
-  _deleteNote() {
-    if (widget.id != null) {
-      _audioNoteBloc.dispatch(DeleteAudioNote());
+  _deleteNote(context, audioNoteBloc) {
+    if (id != null) {
+      audioNoteBloc.dispatch(DeleteAudioNote());
       Navigator.pop(context);
     }
   }
@@ -130,7 +137,7 @@ class _AddEditAudioNoteScreenState extends State<AddEditAudioNoteScreen> {
   // Title change
   //
 
-  _titleChanged(String newTitle) {
-    _audioNoteBloc.dispatch(UpdateAudioNoteTitle(newTitle));
+  _titleChanged(newTitle, audioNoteBloc) {
+    audioNoteBloc.dispatch(UpdateAudioNoteTitle(newTitle));
   }
 }

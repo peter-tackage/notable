@@ -64,6 +64,7 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
   @override
   void dispose() {
     super.dispose();
+
     drawingsSubscription.cancel();
   }
 

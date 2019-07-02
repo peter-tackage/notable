@@ -14,49 +14,52 @@ import 'package:notable/model/drawing.dart';
 import 'package:notable/model/drawing_config.dart';
 import 'package:notable/widget/drawing_page.dart';
 
-class AddEditDrawingNoteScreen extends StatefulWidget {
+class AddEditDrawingNoteScreen extends StatelessWidget {
   final String id;
 
   AddEditDrawingNoteScreen({Key key, this.id}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _AddEditDrawingNoteScreenState();
+  Widget build(BuildContext context) {
+    final notesBloc =
+        BlocProvider.of<NotesBloc<Drawing, DrawingEntity>>(context);
+
+    print("Building AddEditDrawingNoteScreen");
+
+    return BlocProviderTree(blocProviders: [
+      BlocProvider<DrawingBloc>(
+          builder: (BuildContext context) =>
+              DrawingBloc(notesBloc: notesBloc, id: id)),
+      BlocProvider<DrawingConfigBloc>(
+          builder: (BuildContext context) => DrawingConfigBloc())
+    ], child: _AddEditDrawingNoteScreenContent(id: id));
+  }
 }
 
-class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
+class _AddEditDrawingNoteScreenContent extends StatelessWidget {
+  final String id;
+
+  _AddEditDrawingNoteScreenContent({Key key, this.id}) : super(key: key);
+
   static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  NotesBloc<Drawing, DrawingEntity> _notesBloc;
-  DrawingBloc _drawingBloc;
-  DrawingConfigBloc _drawingConfigBloc;
-
-  @override
-  void initState() {
-    super.initState();
-    _notesBloc = BlocProvider.of<NotesBloc<Drawing, DrawingEntity>>(context);
-    _drawingBloc = DrawingBloc(notesBloc: _notesBloc, id: widget.id);
-    _drawingConfigBloc = DrawingConfigBloc();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("Drawing"), actions: _createMenuItems()),
-        body: BlocProviderTree(blocProviders: [
-          BlocProvider<DrawingBloc>(bloc: _drawingBloc),
-          BlocProvider<DrawingConfigBloc>(bloc: _drawingConfigBloc)
-        ], child: _buildBody()),
-        bottomNavigationBar: _buildBottomAppBar(),
+        appBar:
+            AppBar(title: Text("Drawing"), actions: _createMenuItems(context)),
+        body: _buildBody(context),
+        bottomNavigationBar: _buildBottomAppBar(context),
         floatingActionButton: FloatingActionButton(
-          onPressed: _saveDrawing,
+          onPressed: () => _saveDrawing(context),
           tooltip: 'Save drawing',
           child: Icon(Icons.check),
         ));
   }
 
-  Widget _buildBody() {
+  Widget _buildBody(context) {
     return BlocBuilder(
-        bloc: _drawingBloc,
+        bloc: _drawingBlocOf(context),
         builder: (BuildContext context, DrawingState state) {
           if (state is DrawingLoaded) {
             return Stack(children: [
@@ -66,7 +69,8 @@ class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
                   child: Padding(
                       padding: EdgeInsets.only(top: 8, left: 8, right: 8),
                       child: TextFormField(
-                          onSaved: _onSaveTitle,
+                          onSaved: (value) =>
+                              _onSaveTitle(value, _drawingBlocOf(context)),
                           initialValue: state.drawing.title,
                           style: Theme.of(context).textTheme.title,
                           decoration: InputDecoration(
@@ -82,34 +86,39 @@ class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
         });
   }
 
-  _saveDrawing() {
+  DrawingBloc _drawingBlocOf(context) => BlocProvider.of<DrawingBloc>(context);
+
+  DrawingConfigBloc _drawingConfigBlocOf(context) =>
+      BlocProvider.of<DrawingConfigBloc>(context);
+
+  _saveDrawing(context) {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
     }
 
-    _drawingBloc.dispatch(SaveDrawing());
+    _drawingBlocOf(context).dispatch(SaveDrawing());
     Navigator.pop(context);
   }
 
-  _handleMenuItemSelection(value) {
+  _handleMenuItemSelection(value, context) {
     if (value == "delete") {
-      _deleteNote();
+      _deleteNote(context);
     }
   }
 
-  _deleteNote() {
-    if (widget.id != null) {
-      _notesBloc.dispatch(DeleteNote(widget.id));
+  _deleteNote(context) {
+    if (id != null) {
+      _drawingBlocOf(context).dispatch(DeleteDrawing());
       Navigator.pop(context);
     }
   }
 
-  _createMenuItems() {
-    return widget.id == null
+  _createMenuItems(context) {
+    return id == null
         ? null
         : <Widget>[
             PopupMenuButton(
-                onSelected: _handleMenuItemSelection,
+                onSelected: (value) => _handleMenuItemSelection(value, context),
                 itemBuilder: (context) => [
                       PopupMenuItem(
                         value: "delete",
@@ -119,12 +128,12 @@ class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
           ];
   }
 
-  Widget _buildBottomAppBar() {
+  Widget _buildBottomAppBar(context) {
     return BlocBuilder<DrawingConfigEvent, DrawingConfigState>(
-        bloc: _drawingConfigBloc,
+        bloc: _drawingConfigBlocOf(context),
         builder: (BuildContext context, DrawingConfigState configState) =>
             BlocBuilder<DrawingEvent, DrawingState>(
-                bloc: _drawingBloc,
+                bloc: _drawingBlocOf(context),
                 builder: (BuildContext context, DrawingState drawingState) =>
                     BottomAppBar(
                         child: Material(
@@ -132,101 +141,95 @@ class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
                             child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
-                                children: <Widget>[
-                                  InkWell(
-                                      child: DropdownButtonHideUnderline(
-                                          child: ButtonTheme(
-                                              alignedDropdown: true,
-                                              child: DropdownButton(
-                                                  items:
-                                                      _buildToolStyleMenuItems(),
-                                                  value: configState
-                                                          is DrawingConfigLoaded
-                                                      ? _ToolStyle(
-                                                          configState
-                                                              .drawingConfig
-                                                              .penShape,
-                                                          configState
-                                                              .drawingConfig
-                                                              .strokeWidth)
-                                                      : null,
-                                                  onChanged: _selectToolStyle,
-                                                  icon: Icon(
-                                                      Icons.line_style))))),
-                                  InkWell(
-                                      child: DropdownButtonHideUnderline(
-                                          child: ButtonTheme(
-                                              alignedDropdown: true,
-                                              child: DropdownButton(
-                                                  isDense: true,
-                                                  items: _buildColorMenuItems(),
-                                                  value: configState
-                                                          is DrawingConfigLoaded
-                                                      ? configState
-                                                          .drawingConfig.color
-                                                      : null,
-                                                  onChanged: _setToolColor,
-                                                  icon: Icon(Icons.palette))))),
-                                  InkWell(
-                                      child: IconButton(
-                                          tooltip: "Brush",
-                                          onPressed: _selectBrush,
-                                          icon: Icon(Icons.gesture))),
-                                  InkWell(
-                                      child: IconButton(
-                                          tooltip: "Eraser",
-                                          onPressed: _selectEraser,
-                                          icon: Transform.rotate(
-                                              angle: pi,
-                                              child: Icon(Icons.create)))),
-                                  InkWell(
-                                      child: IconButton(
-                                          tooltip: "Undo",
-                                          onPressed: drawingState
-                                                      is DrawingLoaded &&
-                                                  drawingState.drawing.canUndo
-                                              ? _undo
-                                              : null,
-                                          icon: Icon(Icons.undo))),
-                                  InkWell(
-                                      child: IconButton(
-                                          tooltip: "Redo",
-                                          onPressed: drawingState
-                                                      is DrawingLoaded &&
-                                                  drawingState.drawing.canRedo
-                                              ? _redo
-                                              : null,
-                                          icon: Icon(Icons.redo))),
-                                  InkWell(
-                                      child: IconButton(
-                                          tooltip: "Clear",
-                                          onPressed: drawingState
-                                                      is DrawingLoaded &&
-                                                  drawingState.drawing.canUndo
-                                              ? _clear
-                                              : null,
-                                          icon: Icon(Icons.clear)))
-                                ])))));
+                                children: _buildBottomBarItems(
+                                    configState, context, drawingState))))));
   }
 
-  _setToolColor(color) =>
-      _drawingConfigBloc.dispatch(SelectDrawingToolColor(color));
+  List<Widget> _buildBottomBarItems(DrawingConfigState configState,
+      BuildContext context, DrawingState drawingState) {
+    return <Widget>[
+      InkWell(
+          child: DropdownButtonHideUnderline(
+              child: ButtonTheme(
+                  alignedDropdown: true,
+                  child: DropdownButton(
+                      items: _buildToolStyleMenuItems(),
+                      value: configState is DrawingConfigLoaded
+                          ? _ToolStyle(configState.drawingConfig.penShape,
+                              configState.drawingConfig.strokeWidth)
+                          : null,
+                      onChanged: (value) => _selectToolStyle(
+                          value, _drawingConfigBlocOf(context)),
+                      icon: Icon(Icons.line_style))))),
+      InkWell(
+          child: DropdownButtonHideUnderline(
+              child: ButtonTheme(
+                  alignedDropdown: true,
+                  child: DropdownButton(
+                      isDense: true,
+                      items: _buildColorMenuItems(),
+                      value: configState is DrawingConfigLoaded
+                          ? configState.drawingConfig.color
+                          : null,
+                      onChanged: (value) =>
+                          _setToolColor(value, _drawingConfigBlocOf(context)),
+                      icon: Icon(Icons.palette))))),
+      InkWell(
+          child: IconButton(
+              tooltip: "Brush",
+              onPressed: () => _selectBrush(_drawingConfigBlocOf(context)),
+              icon: Icon(Icons.gesture))),
+      InkWell(
+          child: IconButton(
+              tooltip: "Eraser",
+              onPressed: () => _selectEraser(_drawingConfigBlocOf(context)),
+              icon: Transform.rotate(angle: pi, child: Icon(Icons.create)))),
+      InkWell(
+          child: IconButton(
+              tooltip: "Undo",
+              onPressed:
+                  drawingState is DrawingLoaded && drawingState.drawing.canUndo
+                      ? () => _undo(_drawingBlocOf(context))
+                      : null,
+              icon: Icon(Icons.undo))),
+      InkWell(
+          child: IconButton(
+              tooltip: "Redo",
+              onPressed:
+                  drawingState is DrawingLoaded && drawingState.drawing.canRedo
+                      ? () => _redo(_drawingBlocOf(context))
+                      : null,
+              icon: Icon(Icons.redo))),
+      InkWell(
+          child: IconButton(
+              tooltip: "Clear",
+              onPressed:
+                  drawingState is DrawingLoaded && drawingState.drawing.canUndo
+                      ? () => _clear(_drawingBlocOf(context))
+                      : null,
+              icon: Icon(Icons.clear)))
+    ];
+  }
 
-  _undo() => _drawingBloc.dispatch(Undo());
+  _setToolColor(color, drawingConfigBloc) =>
+      drawingConfigBloc.dispatch(SelectDrawingToolColor(color));
 
-  _redo() => _drawingBloc.dispatch(Redo());
+  _undo(drawingBloc) => drawingBloc.dispatch(Undo());
 
-  _clear() => _drawingBloc.dispatch(ClearDrawing());
+  _redo(drawingBloc) => drawingBloc.dispatch(Redo());
 
-  _selectBrush() => _drawingConfigBloc.dispatch(SelectDrawingTool(Tool.Brush));
+  _clear(drawingBloc) => drawingBloc.dispatch(ClearDrawing());
 
-  _selectToolStyle(_ToolStyle toolStyle) {
-    _drawingConfigBloc
+  _selectBrush(drawingConfigBloc) =>
+      drawingConfigBloc.dispatch(SelectDrawingTool(Tool.Brush));
+
+  _selectToolStyle(_ToolStyle toolStyle, drawingConfigBloc) {
+    drawingConfigBloc
         .dispatch(SelectToolStyle(toolStyle.penShape, toolStyle.strokeWidth));
   }
 
-  _selectEraser() =>
-      _drawingConfigBloc.dispatch(SelectDrawingTool(Tool.Eraser));
+  _selectEraser(drawingConfigBloc) =>
+      drawingConfigBloc.dispatch(SelectDrawingTool(Tool.Eraser));
 
   List<DropdownMenuItem<int>> _buildColorMenuItems() {
     return availableColors
@@ -254,8 +257,8 @@ class _AddEditDrawingNoteScreenState extends State<AddEditDrawingNoteScreen> {
           ? BoxDecoration(shape: BoxShape.rectangle, color: Colors.black)
           : BoxDecoration(shape: BoxShape.circle, color: Colors.black);
 
-  _onSaveTitle(String newTitle) =>
-      _drawingBloc.dispatch(UpdateDrawingTitle(newTitle));
+  _onSaveTitle(String newTitle, drawingBloc) =>
+      drawingBloc.dispatch(UpdateDrawingTitle(newTitle));
 }
 
 class _ToolStyle {

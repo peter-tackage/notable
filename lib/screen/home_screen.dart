@@ -2,61 +2,49 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notable/bloc/feed/feed_bloc.dart';
 import 'package:notable/bloc/feed/feed_events.dart';
+import 'package:notable/bloc/notes/notes.dart';
+import 'package:notable/entity/entity.dart';
+import 'package:notable/model/audio_note.dart';
+import 'package:notable/model/checklist.dart';
+import 'package:notable/model/drawing.dart';
+import 'package:notable/model/text_note.dart';
 import 'package:notable/screen/addedit_audio_note_screen.dart';
 import 'package:notable/screen/addedit_checklist_note_screen.dart';
 import 'package:notable/screen/addedit_drawing_note_screen.dart';
 import 'package:notable/screen/addedit_text_note_screen.dart';
 import 'package:notable/widget/all_notes_page.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   HomeScreen({Key key, this.title}) : super(key: key);
 
   final String title;
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  FeedBloc _feedBloc;
-
-  @override
-  void initState() {
-    super.initState();
-    _feedBloc = BlocProvider.of<FeedBloc>(context);
-    _feedBloc.dispatch(LoadFeed()); // FIXME Should be moved out
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(title),
       ),
-      body: BlocProvider<FeedBloc>(bloc: _feedBloc, child: AllNotesPage()),
-      bottomNavigationBar: _buildBottomAppBar(),
+      body: BlocProvider<FeedBloc>(
+          builder: _feedBlocBuilder, child: AllNotesPage()),
+      bottomNavigationBar: _buildBottomAppBar(context),
     );
   }
 
-  void _openChecklistEditor(BuildContext context) => Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => AddEditChecklistNoteScreen(id: null)));
+  FeedBloc _feedBlocBuilder(context) {
+    return FeedBloc(
+        textNotesBloc:
+            BlocProvider.of<NotesBloc<TextNote, NoteEntity>>(context),
+        checklistNotesBloc:
+            BlocProvider.of<NotesBloc<Checklist, ChecklistEntity>>(context),
+        drawingNotesBloc:
+            BlocProvider.of<NotesBloc<Drawing, DrawingEntity>>(context),
+        audioNotesBloc:
+            BlocProvider.of<NotesBloc<AudioNote, AudioNoteEntity>>(context))
+      ..dispatch(LoadFeed());
+  }
 
-  void _openTextNoteEditor(BuildContext context) => Navigator.push(context,
-      MaterialPageRoute(builder: (context) => AddEditTextNoteScreen(id: null)));
-
-  void _openDrawingNoteEditor(BuildContext context) => Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => AddEditDrawingNoteScreen(id: null)));
-
-  void _openAudioNoteEditor(BuildContext context) => Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => AddEditAudioNoteScreen(id: null)));
-
-  Widget _buildBottomAppBar() {
+  Widget _buildBottomAppBar(context) {
     return Container(
         child: Material(
       color: Colors.grey[200],
@@ -84,4 +72,22 @@ class _HomeScreenState extends State<HomeScreen> {
       ]),
     ));
   }
+
+  void _openChecklistEditor(context) => Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => AddEditChecklistNoteScreen(id: null)));
+
+  void _openTextNoteEditor(context) => Navigator.push(context,
+      MaterialPageRoute(builder: (context) => AddEditTextNoteScreen(id: null)));
+
+  void _openDrawingNoteEditor(context) => Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => AddEditDrawingNoteScreen(id: null)));
+
+  void _openAudioNoteEditor(context) => Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => AddEditAudioNoteScreen(id: null)));
 }
