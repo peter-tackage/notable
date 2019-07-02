@@ -32,6 +32,7 @@ class SoundStorage {
   }
 
   Future<FileSystemEntity> delete(String filename) async {
+    print("Deleting sound file: $filename");
     final file = File(filename);
     return file.delete();
   }

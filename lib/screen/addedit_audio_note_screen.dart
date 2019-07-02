@@ -62,7 +62,6 @@ class _AddEditAudioNoteScreenContent extends StatelessWidget {
   Widget _buildBody(context, audioNoteBloc) => BlocBuilder(
       bloc: audioNoteBloc,
       builder: (BuildContext context, AudioNoteState state) {
-        print(state);
         if (state is BaseAudioNoteLoaded) {
           return Padding(
               padding: EdgeInsets.only(top: 8, left: 8, right: 8),

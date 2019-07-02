@@ -51,7 +51,7 @@ class _AudioMonitorPainter extends CustomPainter {
 
       Rect rect = Rect.fromPoints(
           Offset(dxLeft, 0), size.bottomLeft(Offset(dxLeft + segmentWidth, 0)));
-      print("segment: $segment, level: $_level, maxSegmentDb: $maxSegmentDb");
+      //print("segment: $segment, level: $_level, maxSegmentDb: $maxSegmentDb");
       canvas.drawRect(rect, _level > maxSegmentDb ? paintOn : paintOff);
     }
   }

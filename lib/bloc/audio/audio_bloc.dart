@@ -104,9 +104,11 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
     // Probably not, because the pop happens synchronously and the dispatch is asynchronous.
     //
 
-    if (currentState is AudioNoteLoaded &&
-        (currentState as AudioNoteLoaded).audioNote.id == null) {
-      print("Deleting note recording without id");
+    AudioNoteState noteState = currentState;
+    if (noteState is BaseAudioNoteLoaded &&
+        noteState.audioNote.id == null &&
+        noteState.audioNote.filename != null) {
+      soundStorage.delete(noteState.audioNote.filename);
     }
   }
 
@@ -162,10 +164,8 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
     assert(flutterSound.isPlaying == false);
     assert(flutterSound.isRecording == false);
 
-    print("Attempting to record");
     // IMPORTANT: You're not allowed to record saved notes, only unsaved notes.
     if (currentState is AudioNoteLoaded && currentState.audioNote.id == null) {
-      print("More like it");
       // Cancel existing
       _recorderSubscription?.cancel();
       _dbPeakSubscription?.cancel();
