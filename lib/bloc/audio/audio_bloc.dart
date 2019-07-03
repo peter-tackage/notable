@@ -60,6 +60,8 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
       yield* _mapDeleteAudioNoteEventToState(currentState, event);
     } else if (event is ClearAudioNote) {
       yield* _mapClearAudioNoteEventToState(currentState, event);
+    } else if (event is UpdateAudioNoteTitle) {
+      yield* _mapUpdateAudioNoteTitleEventToState(currentState, event);
 
       // TODO Maybe move these to a playback Bloc
     } else if (event is StartAudioRecordingRequest) {
@@ -80,8 +82,6 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
       yield* _mapAudioRecordingProgressChangedEventToState(currentState, event);
     } else if (event is AudioRecordingLevelChanged) {
       yield* _mapAudioRecordingLevelChangedEventToState(currentState, event);
-    } else if (event is UpdateAudioNoteTitle) {
-      yield* _mapUpdateAudioNoteTitleEventToState(currentState, event);
     }
   }
 
@@ -322,14 +322,15 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
 
   Stream<AudioNoteState> _mapUpdateAudioNoteTitleEventToState(
       AudioNoteState currentState, UpdateAudioNoteTitle event) async* {
-    // Can only update the title when the recorder/player is idle.
-    // Otherwise it gets too fiddly to check which is the current state
-    // and then modify the field.
-    print("Processing update to title");
-    if (currentState is AudioNoteLoaded) {
-      AudioNote updatedAudioNote =
-          currentState.audioNote.rebuild((b) => b..title = event.title);
-      yield AudioNoteLoaded(updatedAudioNote);
+    // Can only update the title when the recorder is idle (button shouldn't be available anyway)
+    if (currentState is BaseAudioNoteLoaded) {
+      // need to do this to access the audioNote field.
+      if (currentState is AudioNoteLoaded ||
+          currentState is AudioNotePlayback) {
+        AudioNote updatedAudioNote =
+            currentState.audioNote.rebuild((b) => b..title = event.title);
+        yield AudioNoteLoaded(updatedAudioNote);
+      }
     }
   }
 

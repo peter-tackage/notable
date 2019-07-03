@@ -79,7 +79,7 @@ class _AddEditAudioNoteScreenContent extends StatelessWidget {
                 TextFormField(
                     enabled: state is AudioNoteLoaded,
                     onSaved: (newTitle) =>
-                        _titleChanged(newTitle, audioNoteBloc),
+                        _onSaveTitle(newTitle, audioNoteBloc),
                     initialValue: state.audioNote.title,
                     style: Theme.of(context).textTheme.title,
                     textCapitalization: TextCapitalization.sentences,
@@ -142,10 +142,11 @@ class _AddEditAudioNoteScreenContent extends StatelessWidget {
   }
 
   //
-  // Title change
+  // Title save
   //
 
-  _titleChanged(newTitle, audioNoteBloc) {
+  _onSaveTitle(newTitle, audioNoteBloc) {
+    print("###### SAVING TITLE");
     audioNoteBloc.dispatch(UpdateAudioNoteTitle(newTitle));
   }
 }
