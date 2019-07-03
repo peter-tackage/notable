@@ -158,7 +158,7 @@ class _AddEditDrawingNoteScreenContent extends StatelessWidget {
                           : null,
                       onChanged: (value) => _selectToolStyle(
                           value, _drawingConfigBlocOf(context)),
-                      icon: Icon(Icons.line_style))))),
+                      icon: Icon(Icons.line_weight))))),
       InkWell(
           child: DropdownButtonHideUnderline(
               child: ButtonTheme(

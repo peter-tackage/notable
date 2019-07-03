@@ -192,7 +192,7 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
         currentAction.rebuild((b) => b..points.add(event.offset));
 
     // Update the action in the overall state
-    BuiltList updatedActions = currentState.drawing.actions
+    BuiltList<DrawingAction> updatedActions = currentState.drawing.actions
         .rebuild((b) => b..[currentState.drawing.currentIndex] = updatedAction);
 
     // Update the drawing with the new items
