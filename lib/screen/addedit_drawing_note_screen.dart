@@ -145,6 +145,11 @@ class _AddEditDrawingNoteScreenContent extends StatelessWidget {
 
   List<Widget> _buildBottomBarItems(DrawingConfigState configState,
       BuildContext context, DrawingState drawingState) {
+    final isBrushSelected = configState is DrawingConfigLoaded &&
+        configState.drawingConfig.tool == Tool.Brush;
+    final isEraserSelected = configState is DrawingConfigLoaded &&
+        configState.drawingConfig.tool == Tool.Eraser;
+
     return <Widget>[
       InkWell(
           child: DropdownButtonHideUnderline(
@@ -172,16 +177,25 @@ class _AddEditDrawingNoteScreenContent extends StatelessWidget {
                       onChanged: (value) =>
                           _setToolColor(value, _drawingConfigBlocOf(context)),
                       icon: Icon(Icons.palette))))),
+      SizedBox(height: 30.0, width: 2, child: VerticalDivider()),
       InkWell(
-          child: IconButton(
-              tooltip: "Brush",
-              onPressed: () => _selectBrush(_drawingConfigBlocOf(context)),
-              icon: Icon(Icons.gesture))),
+          child: Container(
+              child: IconButton(
+                  tooltip: "Brush",
+                  onPressed: () => _selectBrush(_drawingConfigBlocOf(context)),
+                  icon: Icon(Icons.gesture,
+                      color: isBrushSelected ? null : Colors.grey[600],
+                      size: isBrushSelected ? 32.0 : null)))),
       InkWell(
           child: IconButton(
               tooltip: "Eraser",
               onPressed: () => _selectEraser(_drawingConfigBlocOf(context)),
-              icon: Transform.rotate(angle: pi, child: Icon(Icons.create)))),
+              icon: Transform.rotate(
+                  angle: pi,
+                  child: Icon(Icons.create,
+                      color: isEraserSelected ? null : Colors.grey[600],
+                      size: isEraserSelected ? 32.0 : null)))),
+      SizedBox(height: 30.0, width: 2, child: VerticalDivider()),
       InkWell(
           child: IconButton(
               tooltip: "Undo",
