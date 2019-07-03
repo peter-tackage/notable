@@ -2,7 +2,7 @@
 
 A simple note taking app written using Flutter.
 
-## Generating `json_serialization` files
+## Generating `json_serialization` and `built_value` files
 
 Run the command: `flutter packages pub run build_runner build`
 

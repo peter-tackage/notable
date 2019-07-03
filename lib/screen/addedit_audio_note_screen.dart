@@ -146,7 +146,6 @@ class _AddEditAudioNoteScreenContent extends StatelessWidget {
   //
 
   _onSaveTitle(newTitle, audioNoteBloc) {
-    print("###### SAVING TITLE");
     audioNoteBloc.dispatch(UpdateAudioNoteTitle(newTitle));
   }
 }

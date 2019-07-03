@@ -128,9 +128,6 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
   }
 
   void _saveAudioNote(AudioNote audioNote) {
-    print(
-        "Add/Update audio note id: ${audioNote.id} filename: ${audioNote.filename}");
-
     if (id == null) {
       notesBloc.dispatch(AddNote(audioNote));
     } else {
@@ -335,8 +332,6 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
   }
 
   void _stopAudioEngine() async {
-    print(
-        "stopAudioEngine: ${flutterSound.isPlaying} / ${flutterSound.isRecording}");
     if (flutterSound.isPlaying) await flutterSound.stopPlayer();
     if (flutterSound.isRecording) await flutterSound.stopRecorder();
   }
