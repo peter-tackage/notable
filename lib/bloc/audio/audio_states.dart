@@ -21,7 +21,7 @@ abstract class BaseAudioNoteLoaded extends AudioNoteState {
   final AudioNote audioNote;
 
   BaseAudioNoteLoaded(this.audioNote, [List props = const []])
-      : super([audioNote, ...props]);
+      : super([audioNote, ...props]); // ignore: sdk_version_ui_as_code
 }
 
 @immutable

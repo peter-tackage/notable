@@ -64,7 +64,7 @@ class NotesBloc<M extends BaseNote, E extends BaseNoteEntity>
       NotesState currentState, NotesEvent event) async* {
     if (event is DeleteNote) {
       // Delete the note and return all the notes
-      noteRepository.delete(event.id);
+      await noteRepository.delete(event.id);
 
       final notes = await noteRepository.getAll();
       yield NotesLoaded(_toModels(notes));

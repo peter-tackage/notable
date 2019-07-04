@@ -40,7 +40,7 @@ abstract class Drawing implements BaseNote, Built<Drawing, DrawingBuilder> {
 
   _canUndo() => currentIndex >= 0;
 
-  _canRedo() => actions.length > 0 && currentIndex < actions.length - 1;
+  _canRedo() => actions.isNotEmpty && currentIndex < actions.length - 1;
 }
 
 @BuiltValue(instantiable: false)

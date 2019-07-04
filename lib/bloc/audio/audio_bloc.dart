@@ -144,7 +144,7 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
 
     // Delete the audio file
     if (currentState is BaseAudioNoteLoaded) {
-      soundStorage.delete(currentState.audioNote.filename);
+      await soundStorage.delete(currentState.audioNote.filename);
     }
 
     // Delete the note and return all the notes
@@ -166,8 +166,8 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
     // IMPORTANT: You're not allowed to record saved notes, only unsaved notes.
     if (currentState is AudioNoteLoaded && currentState.audioNote.id == null) {
       // Cancel existing
-      _recorderSubscription?.cancel();
-      _dbPeakSubscription?.cancel();
+      await _recorderSubscription?.cancel();
+      await _dbPeakSubscription?.cancel();
 
       // First time for an unsaved note, we need to set the filename.
       final filename = currentState.audioNote.filename ??
@@ -203,8 +203,8 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
     assert(flutterSound.isRecording == true);
 
     if (currentState is AudioNoteRecording) {
-      _recorderSubscription?.cancel();
-      _dbPeakSubscription?.cancel();
+      await _recorderSubscription?.cancel();
+      await _dbPeakSubscription?.cancel();
 
       // Stop recording
       await flutterSound.stopRecorder();
@@ -245,8 +245,7 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
   Stream<AudioNoteState> _mapStartAudioPlaybackEventToState(
       AudioNoteState currentState, StartAudioPlaybackRequest event) async* {
     if (currentState is AudioNoteLoaded) {
-      _playbackSubscription?.cancel();
-
+      await _playbackSubscription?.cancel();
       await flutterSound.startPlayer(currentState.audioNote.filename);
       await flutterSound.setVolume(1.0);
 
@@ -275,7 +274,7 @@ class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
         await flutterSound.stopPlayer();
       }
 
-      _playbackSubscription?.cancel();
+      await _playbackSubscription?.cancel();
 
       yield AudioNoteLoaded(currentState.audioNote);
     }

@@ -273,21 +273,21 @@ class _AddEditDrawingNoteScreenContent extends StatelessWidget {
   _onSaveTitle(String newTitle, drawingBloc) =>
       drawingBloc.dispatch(UpdateDrawingTitle(newTitle));
 
-  // TODO Wire this up with some ingenious UI concept.
-  List<Widget> _buildAlphaMenuItem(
-      int alpha, DrawingConfigBloc drawingConfigBloc) {
-    return [
-      Slider(
-          value: alpha.toDouble(),
-          min: 0,
-          max: 255,
-          onChanged: (value) => _setToolAlpha(value, drawingConfigBloc))
-    ];
-  }
-
-  _setToolAlpha(alpha, DrawingConfigBloc drawingConfigBloc) {
-    drawingConfigBloc.dispatch(SelectDrawingToolAlpha(alpha));
-  }
+// TODO Wire this up with some ingenious UI concept.
+//  List<Widget> _buildAlphaMenuItem(
+//      int alpha, DrawingConfigBloc drawingConfigBloc) {
+//    return [
+//      Slider(
+//          value: alpha.toDouble(),
+//          min: 0,
+//          max: 255,
+//          onChanged: (value) => _setToolAlpha(value, drawingConfigBloc))
+//    ];
+//  }
+//
+//  _setToolAlpha(alpha, DrawingConfigBloc drawingConfigBloc) {
+//    drawingConfigBloc.dispatch(SelectDrawingToolAlpha(alpha));
+//  }
 }
 
 class _ToolStyle {
@@ -318,7 +318,7 @@ final availableToolStyles = <_ToolStyle>[
 ];
 
 final List<Color> availableColors = [
-  ...Colors.primaries,
+  ...Colors.primaries, // ignore: sdk_version_ui_as_code
   Colors.black,
   Colors.white
 ];

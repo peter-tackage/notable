@@ -155,7 +155,7 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
           ..strokeWidth = event.config.strokeWidth);
       }
 
-      actions = [...actions, action];
+      actions = [...actions, action]; // ignore: sdk_version_ui_as_code
       currentIndex = actions.length - 1;
 
       yield DrawingLoaded(
