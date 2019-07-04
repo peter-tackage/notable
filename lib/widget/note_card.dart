@@ -13,20 +13,23 @@ class NoteCard extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isUntitled = note.title == null || note.title.isEmpty;
     return Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        elevation: 4,
         child: InkWell(
-      child: Padding(
-          padding: EdgeInsets.all(8),
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(isUntitled ? "Untitled" : note.title,
-                    style: Theme.of(context).textTheme.title.copyWith(
-                        color: isUntitled ? Colors.grey : Colors.black)),
-                Divider(),
-                ConstrainedBox(
-                    constraints: BoxConstraints(maxHeight: 250), child: child),
-              ])),
-      onTap: onTap,
-    ));
+          child: Padding(
+              padding: EdgeInsets.all(8),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(isUntitled ? "Untitled" : note.title,
+                        style: Theme.of(context).textTheme.title.copyWith(
+                            color: isUntitled ? Colors.grey : Colors.black)),
+                    Divider(),
+                    ConstrainedBox(
+                        constraints: BoxConstraints(maxHeight: 250),
+                        child: child),
+                  ])),
+          onTap: onTap,
+        ));
   }
 }
