@@ -1,34 +1,26 @@
-import 'package:flutter/material.dart';
+import 'package:built_value/built_value.dart';
 import 'package:meta/meta.dart';
+
+part 'drawing_config.g.dart';
 
 enum Tool { Brush, Eraser }
 enum PenShape { Square, Round }
 
 @immutable
-class DrawingConfig {
-  final Tool tool;
-  final PenShape penShape;
-  final double strokeWidth;
-  final int color;
+abstract class DrawingConfig
+    implements Built<DrawingConfig, DrawingConfigBuilder> {
+  Tool get tool;
 
-  DrawingConfig(
-      {@required this.tool,
-      @required this.penShape,
-      @required this.strokeWidth,
-      @required this.color});
+  PenShape get penShape;
 
-  DrawingConfig.defaults()
-      : this.tool = Tool.Brush,
-        this.penShape = PenShape.Square,
-        this.strokeWidth = 5,
-        this.color = Colors.blue.value;
+  double get strokeWidth;
 
-  DrawingConfig copyWith(
-      {Tool tool, PenShape penShape, double strokeWidth, int color}) {
-    return DrawingConfig(
-        tool: tool ?? this.tool,
-        penShape: penShape ?? this.penShape,
-        strokeWidth: strokeWidth ?? this.strokeWidth,
-        color: color ?? this.color);
-  }
+  int get color;
+
+  int get alpha;
+
+  DrawingConfig._();
+
+  factory DrawingConfig([void Function(DrawingConfigBuilder) updates]) =
+      _$DrawingConfig;
 }

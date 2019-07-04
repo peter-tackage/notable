@@ -53,10 +53,14 @@ abstract class DrawingAction {
 @immutable
 abstract class StrokeDrawingAction implements DrawingAction {
   BuiltList<OffsetValue>
-      get points; // can't use Offset and built_value either it would seem,
+      get points; // can't use Flutter's Offset and built_value either it would seem.
 
   @nullable
-  int get color; // can't use Color and built_value (https://github.com/google/built_value.dart/issues/513)
+  int get color; // can't use Flutter's Color and built_value (https://github.com/google/built_value.dart/issues/513)
+
+  @nullable
+  int get alpha; // range 0 to 255
+
   PenShape get penShape;
 
   double get strokeWidth;
@@ -81,7 +85,7 @@ abstract class BrushAction
       ..style = PaintingStyle.stroke
       ..strokeCap = toStrokeCap(this.penShape)
       ..strokeJoin = toStrokeJoin(this.penShape)
-      ..color = Color(this.color)
+      ..color = Color(this.color).withAlpha(alpha)
       ..isAntiAlias = true;
 
     _drawPoints(canvas, paint,

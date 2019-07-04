@@ -53,15 +53,17 @@ abstract class DrawingActionEntity {
 // back to objects - so that it tell which one to instantiate (see _DrawingActionConverter).
 //
 
-@JsonSerializable()
+// FIXME Would be nicer if both color and alpha were stored as hex values.
+@JsonSerializable(includeIfNull: false)
 class BrushDrawingActionEntity extends DrawingActionEntity {
   final List<PointEntity> points;
   final int color;
+  final int alpha; // range 0 to 255
   final PenShapeEntity penShape;
   final double strokeWidth;
 
   BrushDrawingActionEntity(
-      this.points, this.color, this.penShape, this.strokeWidth,
+      this.points, this.color, this.alpha, this.penShape, this.strokeWidth,
       {tool = brushTool})
       : super(tool);
 

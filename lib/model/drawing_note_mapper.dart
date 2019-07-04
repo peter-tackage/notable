@@ -22,6 +22,7 @@ class DrawingMapper implements Mapper<Drawing, DrawingEntity> {
               .map((OffsetValue offset) => PointEntity(offset.dx, offset.dy))
               .toList(),
           action.color,
+          action.alpha,
           _mapPenShapeModelToEntity(action.penShape),
           action.strokeWidth);
     } else if (action is EraserAction) {
@@ -78,6 +79,7 @@ class DrawingMapper implements Mapper<Drawing, DrawingEntity> {
             ..dx = pointEntity.x
             ..dy = pointEntity.y)))
       ..color = brushActionEntity.color
+      ..alpha = brushActionEntity.alpha
       ..penShape = _mapPenShapeEntityToModel(brushActionEntity.penShape)
       ..strokeWidth = brushActionEntity.strokeWidth);
   }

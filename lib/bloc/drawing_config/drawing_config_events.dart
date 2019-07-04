@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-import 'package:notable/model/drawing.dart';
 import 'package:notable/model/drawing_config.dart';
 
 @immutable
@@ -23,7 +22,7 @@ class SelectDrawingTool extends DrawingConfigEvent {
   SelectDrawingTool(this.tool) : super([tool]);
 
   @override
-  String toString() => 'SelectDrawingTool';
+  String toString() => 'SelectDrawingTool: { tool : $tool }';
 }
 
 @immutable
@@ -33,7 +32,17 @@ class SelectDrawingToolColor extends DrawingConfigEvent {
   SelectDrawingToolColor(this.color) : super([color]);
 
   @override
-  String toString() => 'SelectDrawingToolColor';
+  String toString() => 'SelectDrawingToolColor: { color: $color }';
+}
+
+@immutable
+class SelectDrawingToolAlpha extends DrawingConfigEvent {
+  final int alpha;
+
+  SelectDrawingToolAlpha(this.alpha) : super([alpha]);
+
+  @override
+  String toString() => 'SelectDrawingToolAlpha: { alpha : $alpha }';
 }
 
 @immutable
@@ -45,5 +54,6 @@ class SelectToolStyle extends DrawingConfigEvent {
       : super([penShape, strokeWidth]);
 
   @override
-  String toString() => 'SelectToolStyle';
+  String toString() =>
+      'SelectToolStyle: { penShape: $penShape, strokeWidth: $strokeWidth }';
 }

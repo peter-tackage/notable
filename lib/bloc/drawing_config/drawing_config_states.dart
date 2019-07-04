@@ -15,5 +15,5 @@ class DrawingConfigLoaded extends DrawingConfigState {
   DrawingConfigLoaded(this.drawingConfig) : super([drawingConfig]);
 
   @override
-  String toString() => 'DrawingConfigLoaded';
+  String toString() => 'DrawingConfigLoaded: { drawingConfig: $drawingConfig }';
 }

@@ -143,6 +143,7 @@ class _AddEditDrawingNoteScreenContent extends StatelessWidget {
                                     configState, context, drawingState))))));
   }
 
+  // TODO Shouldn't we restrict the state here to only be for DrawingConfigLoaded??
   List<Widget> _buildBottomBarItems(DrawingConfigState configState,
       BuildContext context, DrawingState drawingState) {
     final isBrushSelected = configState is DrawingConfigLoaded &&
@@ -271,6 +272,22 @@ class _AddEditDrawingNoteScreenContent extends StatelessWidget {
 
   _onSaveTitle(String newTitle, drawingBloc) =>
       drawingBloc.dispatch(UpdateDrawingTitle(newTitle));
+
+  // TODO Wire this up with some ingenious UI concept.
+  List<Widget> _buildAlphaMenuItem(
+      int alpha, DrawingConfigBloc drawingConfigBloc) {
+    return [
+      Slider(
+          value: alpha.toDouble(),
+          min: 0,
+          max: 255,
+          onChanged: (value) => _setToolAlpha(value, drawingConfigBloc))
+    ];
+  }
+
+  _setToolAlpha(alpha, DrawingConfigBloc drawingConfigBloc) {
+    drawingConfigBloc.dispatch(SelectDrawingToolAlpha(alpha));
+  }
 }
 
 class _ToolStyle {
