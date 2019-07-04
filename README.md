@@ -2,6 +2,8 @@
 
 A simple note taking app written using Flutter.
 
+[![Build Status](https://app.bitrise.io/app/c47c81b05b94cb7a/status.svg?token=6vEQfkde9oSyW7I1DHHOyw&branch=master)](https://app.bitrise.io/app/c47c81b05b94cb7a)
+
 ## Generating `json_serialization` and `built_value` files
 
 Run the command: `flutter packages pub run build_runner build`
