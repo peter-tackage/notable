@@ -34,16 +34,20 @@ class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("Note"), actions: <Widget>[
-          PopupMenuButton(
-              onSelected: _handleMenuItemSelection,
-              itemBuilder: (context) => [
-                    PopupMenuItem(
-                      value: "delete",
-                      child: Text("Delete"),
-                    )
-                  ])
-        ]),
+        appBar: AppBar(
+            title: Text("Note"),
+            actions: widget.id == null
+                ? null
+                : <Widget>[
+                    PopupMenuButton(
+                        onSelected: _handleMenuItemSelection,
+                        itemBuilder: (context) => [
+                              PopupMenuItem(
+                                value: "delete",
+                                child: Text("Delete"),
+                              )
+                            ])
+                  ]),
         body: Padding(
             padding: EdgeInsets.only(top: 8, left: 8, right: 8),
             child: BlocBuilder(
