@@ -5,6 +5,7 @@ import 'package:notable/bloc/audio/audio.dart';
 import 'package:notable/bloc/notes/notes.dart';
 import 'package:notable/entity/audio_note_entity.dart';
 import 'package:notable/entity/base_note_entity.dart';
+import 'package:notable/l10n/localization.dart';
 import 'package:notable/model/audio_note.dart';
 import 'package:notable/model/base_note.dart';
 import 'package:notable/storage/sound_storage.dart';
@@ -56,13 +57,15 @@ class _AddEditAudioNoteScreenContent extends StatelessWidget {
 
           return Scaffold(
               appBar: AppBar(
-                  title: Text("Audio"),
+                  title:
+                      Text(NotableLocalizations.of(context).audio_note_title),
                   actions: _defineMenuItems(context, audioNoteBloc)),
               body: _buildBody(context, audioNoteBloc, state),
               floatingActionButton: isNoteSaveable
                   ? FloatingActionButton(
                       onPressed: () => _saveNote(context, audioNoteBloc),
-                      tooltip: 'Save audio note',
+                      tooltip:
+                          NotableLocalizations.of(context).note_save_tooltip,
                       child: Icon(Icons.check),
                     )
                   : null);
@@ -84,7 +87,9 @@ class _AddEditAudioNoteScreenContent extends StatelessWidget {
                     style: Theme.of(context).textTheme.title,
                     textCapitalization: TextCapitalization.sentences,
                     decoration: InputDecoration(
-                        border: InputBorder.none, hintText: 'Title...'),
+                        border: InputBorder.none,
+                        hintText:
+                            NotableLocalizations.of(context).note_title_hint),
                     maxLines: 1),
                 AudioNotePage()
               ])));
@@ -103,7 +108,8 @@ class _AddEditAudioNoteScreenContent extends StatelessWidget {
                 itemBuilder: (context) => [
                       PopupMenuItem(
                         value: "delete",
-                        child: Text("Delete"),
+                        child: Text(NotableLocalizations.of(context)
+                            .note_delete_menu_item),
                       )
                     ]),
           ];

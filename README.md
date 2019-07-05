@@ -8,6 +8,16 @@ A simple note taking app written using Flutter.
 
 Run the command: `flutter packages pub run build_runner build`
 
+## Internationalization
+
+Add the new translation to the definitions in `lib/l10n/localization.dart`. 
+
+1. Generate the `intl_messages.arb` file: `flutter pub pub run intl_translation:extract_to_arb --output-dir=lib/l10n lib/l10n/localization.dart`
+1. Manually merge any changes from the `intl_messages.arb` file with the existing `.arb` localizations.
+1. Add the actual translations for the other supported languages.
+1. Delete the file `intl_messages.arb`.
+1. Generates the `messages.*.dart` files: `flutter pub pub run intl_translation:generate_from_arb lib/l10n/localization.dart lib/l10n/*.arb  --output-dir=lib/l10n`
+
 ## Acknowledgements
 
 Brought to you by the power of the [Chilicorn](http://spiceprogram.org/chilicorn-history/) and the [Futurice Open Source Program](http://spiceprogram.org/).

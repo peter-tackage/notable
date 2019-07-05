@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:notable/l10n/localization.dart';
 import 'package:notable/model/checklist.dart';
 
 class EditChecklistItem extends StatefulWidget {
@@ -42,10 +43,6 @@ class _EditChecklistItemState extends State<EditChecklistItem> {
                       widget.onCommit(newIsDone, _textController.text))),
           Expanded(
               child: TextFormField(
-//               textInputAction: state.value.isEmpty()
-//                   ? TextInputAction.next
-//                  : TextInputAction.done,
-            //   focusNode: focusNode,
             textCapitalization: TextCapitalization.sentences,
             controller: _textController,
             onEditingComplete: () =>
@@ -53,14 +50,14 @@ class _EditChecklistItemState extends State<EditChecklistItem> {
             onSaved: (text) => widget.onSaved(isDone, text),
             maxLines: 1,
             enabled: !isDone,
-
             style: TextStyle(
                 color: isDone ? Colors.grey : Colors.black,
                 decoration:
                     isDone ? TextDecoration.lineThrough : TextDecoration.none),
             autofocus: widget.isFocused,
-            decoration:
-                InputDecoration(border: InputBorder.none, hintText: 'Task...'),
+            decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: NotableLocalizations.of(context).checklist_item_hint),
           )),
         ]));
   }

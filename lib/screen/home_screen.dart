@@ -4,6 +4,7 @@ import 'package:notable/bloc/feed/feed_bloc.dart';
 import 'package:notable/bloc/feed/feed_events.dart';
 import 'package:notable/bloc/notes/notes.dart';
 import 'package:notable/entity/entity.dart';
+import 'package:notable/l10n/localization.dart';
 import 'package:notable/model/audio_note.dart';
 import 'package:notable/model/checklist.dart';
 import 'package:notable/model/drawing.dart';
@@ -51,22 +52,26 @@ class HomeScreen extends StatelessWidget {
       child: Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
         InkWell(
             child: IconButton(
-                tooltip: "Create audio clip",
+                tooltip:
+                    NotableLocalizations.of(context).audio_note_create_tooltip,
                 onPressed: () => _openAudioNoteEditor(context),
                 icon: Icon(Icons.mic))),
         InkWell(
             child: IconButton(
-                tooltip: "Create drawing",
+                tooltip: NotableLocalizations.of(context)
+                    .drawing_note_create_tooltip,
                 onPressed: () => _openDrawingNoteEditor(context),
                 icon: Icon(Icons.brush))),
         InkWell(
             child: IconButton(
-                tooltip: "Create note",
+                tooltip:
+                    NotableLocalizations.of(context).text_note_create_tooltip,
                 onPressed: () => _openTextNoteEditor(context),
                 icon: Icon(Icons.format_quote))),
         InkWell(
             child: IconButton(
-                tooltip: "Create checklist",
+                tooltip:
+                    NotableLocalizations.of(context).checklist_create_tooltip,
                 onPressed: () => _openChecklistEditor(context),
                 icon: Icon(Icons.format_list_bulleted)))
       ]),

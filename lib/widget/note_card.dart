@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:notable/l10n/localization.dart';
 import 'package:notable/model/base_note.dart';
 
 class NoteCard extends StatelessWidget {
@@ -21,7 +22,11 @@ class NoteCard extends StatelessWidget {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(isUntitled ? "Untitled" : note.title,
+                    Text(
+                        isUntitled
+                            ? NotableLocalizations.of(context)
+                                .note_untitled_placeholder
+                            : note.title,
                         style: Theme.of(context).textTheme.title.copyWith(
                             color: isUntitled ? Colors.grey : Colors.black)),
                     Divider(),

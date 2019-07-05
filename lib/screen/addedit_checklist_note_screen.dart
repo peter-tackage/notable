@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:notable/bloc/checklist/checklist.dart';
 import 'package:notable/bloc/notes/notes.dart';
 import 'package:notable/entity/entity.dart';
+import 'package:notable/l10n/localization.dart';
 import 'package:notable/model/checklist.dart';
 import 'package:notable/widget/edit_checklist_item.dart';
 
@@ -34,7 +35,8 @@ class _AddEditChecklistNoteScreenContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            title: Text("Checklist"), actions: _defineMenuItems(context)),
+            title: Text(NotableLocalizations.of(context).checklist_note_title),
+            actions: _defineMenuItems(context)),
         body: Padding(
             padding: EdgeInsets.only(top: 8, left: 8, right: 8),
             child: BlocBuilder(
@@ -51,7 +53,8 @@ class _AddEditChecklistNoteScreenContent extends StatelessWidget {
                               style: Theme.of(context).textTheme.title,
                               decoration: InputDecoration(
                                   border: InputBorder.none,
-                                  hintText: 'Title...'),
+                                  hintText: NotableLocalizations.of(context)
+                                      .note_title_hint),
                               maxLines: 1,
                               textCapitalization: TextCapitalization.sentences,
                               autofocus: false),
@@ -83,7 +86,7 @@ class _AddEditChecklistNoteScreenContent extends StatelessWidget {
                 })),
         floatingActionButton: FloatingActionButton(
           onPressed: () => _saveNote(context),
-          tooltip: 'Save checklist',
+          tooltip: NotableLocalizations.of(context).note_save_tooltip,
           child: Icon(Icons.check),
         ));
   }
@@ -98,7 +101,8 @@ class _AddEditChecklistNoteScreenContent extends StatelessWidget {
                 itemBuilder: (context) => [
                       PopupMenuItem(
                         value: "delete",
-                        child: Text("Delete"),
+                        child: Text(NotableLocalizations.of(context)
+                            .note_delete_menu_item),
                       )
                     ]),
           ];
@@ -140,7 +144,9 @@ class _AddEditChecklistNoteScreenContent extends StatelessWidget {
               isLastItem
                   ? FlatButton.icon(
                       icon: Icon(Icons.add, color: Colors.grey),
-                      label: Text("Add item",
+                      label: Text(
+                          NotableLocalizations.of(context)
+                              .checklist_add_item_label,
                           style: TextStyle(color: Colors.grey)),
                       onPressed: () => _checklistBlocOf(context)
                           .dispatch(AddEmptyChecklistItem()))

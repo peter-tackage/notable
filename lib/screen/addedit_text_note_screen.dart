@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:notable/bloc/notes/notes.dart';
 import 'package:notable/entity/entity.dart';
+import 'package:notable/l10n/localization.dart';
 import 'package:notable/model/label.dart';
 import 'package:notable/model/text_note.dart';
 
@@ -35,7 +36,7 @@ class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            title: Text("Note"),
+            title: Text(NotableLocalizations.of(context).text_note_title),
             actions: widget.id == null
                 ? null
                 : <Widget>[
@@ -44,7 +45,8 @@ class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
                         itemBuilder: (context) => [
                               PopupMenuItem(
                                 value: "delete",
-                                child: Text("Delete"),
+                                child: Text(NotableLocalizations.of(context)
+                                    .note_delete_menu_item),
                               )
                             ])
                   ]),
@@ -71,7 +73,8 @@ class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
                               textCapitalization: TextCapitalization.sentences,
                               decoration: InputDecoration(
                                   border: InputBorder.none,
-                                  hintText: 'Title...'),
+                                  hintText: NotableLocalizations.of(context)
+                                      .note_title_hint),
                               maxLines: 1),
                           Expanded(
                               child: Padding(
@@ -81,7 +84,9 @@ class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
                                       initialValue: _updatedText ?? _note.text,
                                       decoration: InputDecoration(
                                           border: InputBorder.none,
-                                          hintText: 'Enter your note...'),
+                                          hintText:
+                                              NotableLocalizations.of(context)
+                                                  .text_note_hint),
                                       maxLines: null,
                                       autofocus: _note.text.isEmpty,
                                       textCapitalization:
@@ -113,7 +118,7 @@ class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
                 })),
         floatingActionButton: FloatingActionButton(
           onPressed: _saveNote,
-          tooltip: 'Save note',
+          tooltip: NotableLocalizations.of(context).note_save_tooltip,
           child: Icon(Icons.check),
         ));
   }

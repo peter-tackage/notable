@@ -1,0 +1,130 @@
+{
+  "@@locale": "en",
+  "@@last_modified": "2019-07-05T15:32:35.782494",
+  "note_title_hint": "Title...",
+  "@note_title_hint": {
+    "description": "Hint for the note title text field",
+    "type": "text",
+    "placeholders": {}
+  },
+  "note_delete_menu_item": "Delete",
+  "@note_delete_menu_item": {
+    "description": "Delete note menu item label",
+    "type": "text",
+    "placeholders": {}
+  },
+  "note_save_tooltip": "Save",
+  "@note_save_tooltip": {
+    "description": "Save note button",
+    "type": "text",
+    "placeholders": {}
+  },
+  "note_untitled_placeholder": "Untitled",
+  "@note_untitled_placeholder": {
+    "description": "Placeholder title for untitled note",
+    "type": "text",
+    "placeholders": {}
+  },
+  "no_notes_msg": "You don't have any notes yet",
+  "@no_notes_msg": {
+    "description": "No notes message",
+    "type": "text",
+    "placeholders": {}
+  },
+  "text_note_create_tooltip": "Create note",
+  "@text_note_create_tooltip": {
+    "description": "Create Text note tooltip",
+    "type": "text",
+    "placeholders": {}
+  },
+  "text_note_title": "Note",
+  "@text_note_title": {
+    "description": "Text Note screen title",
+    "type": "text",
+    "placeholders": {}
+  },
+  "text_note_hint": "Enter your note...",
+  "@text_note_hint": {
+    "description": "Hint for the text note field",
+    "type": "text",
+    "placeholders": {}
+  },
+  "checklist_create_tooltip": "Create checklist",
+  "@checklist_create_tooltip": {
+    "description": "Create Checklist tooltip",
+    "type": "text",
+    "placeholders": {}
+  },
+  "checklist_note_title": "Checklist",
+  "@checklist_note_title": {
+    "description": "Checklist note screen title",
+    "type": "text",
+    "placeholders": {}
+  },
+  "checklist_item_hint": "Task...",
+  "@checklist_item_hint": {
+    "description": "Hint for the checklist item field",
+    "type": "text",
+    "placeholders": {}
+  },
+  "checklist_add_item_label": "Add item",
+  "@checklist_add_item_label": {
+    "description": "Label for the checklist add item widget",
+    "type": "text",
+    "placeholders": {}
+  },
+  "drawing_note_create_tooltip": "Create drawing",
+  "@drawing_note_create_tooltip": {
+    "description": "Create Drawing note tooltip",
+    "type": "text",
+    "placeholders": {}
+  },
+  "drawing_note_title": "Drawing",
+  "@drawing_note_title": {
+    "description": "Drawing note screen title",
+    "type": "text",
+    "placeholders": {}
+  },
+  "drawing_tool_brush_tooltip": "Brush",
+  "@drawing_tool_brush_tooltip": {
+    "description": "Drawing brush tool tooltip",
+    "type": "text",
+    "placeholders": {}
+  },
+  "drawing_tool_eraser_tooltip": "Eraser",
+  "@drawing_tool_eraser_tooltip": {
+    "description": "Drawing eraser tool tooltip",
+    "type": "text",
+    "placeholders": {}
+  },
+  "drawing_undo_action_tooltip": "Undo",
+  "@drawing_undo_action_tooltip": {
+    "description": "Drawing undo action tooltip",
+    "type": "text",
+    "placeholders": {}
+  },
+  "drawing_redo_action_tooltip": "Redo",
+  "@drawing_redo_action_tooltip": {
+    "description": "Drawing redo action tooltip",
+    "type": "text",
+    "placeholders": {}
+  },
+  "drawing_clear_tooltip": "Clear",
+  "@drawing_clear_tooltip": {
+    "description": "Drawing clear tooltip",
+    "type": "text",
+    "placeholders": {}
+  },
+  "audio_note_create_tooltip": "Create audio clip",
+  "@audio_note_create_tooltip": {
+    "description": "Create Audio note tooltip",
+    "type": "text",
+    "placeholders": {}
+  },
+  "audio_note_title": "Audio",
+  "@audio_note_title": {
+    "description": "Audio note screen title",
+    "type": "text",
+    "placeholders": {}
+  }
+}

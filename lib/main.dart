@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:notable/arch/simple_bloc_delegate.dart';
 import 'package:notable/bloc/notes/notes.dart';
 import 'package:notable/data/provider.dart';
@@ -12,6 +13,7 @@ import 'package:notable/entity/drawing_entity.dart';
 import 'package:notable/entity/drawing_entity_mapper.dart';
 import 'package:notable/entity/entity.dart';
 import 'package:notable/entity/note_entity_mapper.dart';
+import 'package:notable/l10n/localization.dart';
 import 'package:notable/model/audio_note.dart';
 import 'package:notable/model/audio_note_mapper.dart';
 import 'package:notable/model/checklist.dart';
@@ -45,6 +47,8 @@ class NotableApp extends StatelessWidget {
         ],
         child: MaterialApp(
           title: 'Notable',
+          localizationsDelegates: _localizationsDelegates(),
+          supportedLocales: _supportedLocales(),
           theme: ThemeData(
             primarySwatch: Colors.green,
           ),
@@ -94,4 +98,23 @@ class NotableApp extends StatelessWidget {
                   getDirectory: () => getApplicationDocumentsDirectory(),
                   entityMapper: AudioNoteEntityMapper()))),
           mapper: AudioNoteMapper());
+
+  //
+  //  Localization
+  //
+
+  List<Locale> _supportedLocales() {
+    return [
+      const Locale('en'),
+      const Locale('es'),
+    ];
+  }
+
+  List<LocalizationsDelegate> _localizationsDelegates() {
+    return [
+      const NotableLocalizationsDelegate(),
+      GlobalMaterialLocalizations.delegate,
+      GlobalWidgetsLocalizations.delegate,
+    ];
+  }
 }
