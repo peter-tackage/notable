@@ -85,7 +85,7 @@ abstract class BrushAction
       ..style = PaintingStyle.stroke
       ..strokeCap = toStrokeCap(this.penShape)
       ..strokeJoin = toStrokeJoin(this.penShape)
-      ..color = Color(this.color).withAlpha(alpha)
+      ..color = Color(this.color).withAlpha(this.alpha)
       ..isAntiAlias = true;
 
     _drawPoints(canvas, paint,

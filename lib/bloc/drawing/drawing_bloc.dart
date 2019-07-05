@@ -146,6 +146,7 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
         action = BrushAction((b) => b
           ..points = ListBuilder<OffsetValue>([event.offset])
           ..color = event.config.color
+          ..alpha = event.config.alpha
           ..penShape = event.config.penShape
           ..strokeWidth = event.config.strokeWidth);
       } else if (event.config.tool == Tool.Eraser) {
