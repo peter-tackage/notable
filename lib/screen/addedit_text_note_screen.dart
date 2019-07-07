@@ -1,7 +1,6 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:notable/bloc/notes/notes.dart';
 import 'package:notable/entity/entity.dart';
 import 'package:notable/l10n/localization.dart';
@@ -92,25 +91,6 @@ class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
                                       textCapitalization:
                                           TextCapitalization.sentences,
                                       keyboardType: TextInputType.multiline))),
-                          Divider(height: 0),
-                          Container(
-                              padding:
-                                  EdgeInsets.only(left: 4, top: 13, bottom: 13),
-                              child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    Text(
-                                      _note.updatedDate == null
-                                          ? "Unsaved"
-                                          : "Saved " +
-                                              DateFormat("HH:mm dd/MM/yyyy")
-                                                  .format(_note.updatedDate),
-                                      style: TextStyle(
-                                          color: Colors.grey,
-                                          fontStyle: FontStyle.italic),
-                                    )
-                                  ]))
                         ]));
                   } else {
                     return Center(child: CircularProgressIndicator());

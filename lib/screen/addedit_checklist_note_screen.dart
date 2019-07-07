@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:notable/bloc/checklist/checklist.dart';
 import 'package:notable/bloc/notes/notes.dart';
 import 'package:notable/entity/entity.dart';
@@ -60,25 +59,6 @@ class _AddEditChecklistNoteScreenContent extends StatelessWidget {
                               autofocus: false),
                           Expanded(
                               child: _buildChecklist(context, state.checklist)),
-                          Divider(height: 0),
-                          Container(
-                              padding: EdgeInsets.only(left: 4, right: 4),
-                              child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    Text(
-                                      state.checklist.updatedDate == null
-                                          ? "Unsaved"
-                                          : "Saved " +
-                                              DateFormat("HH:mm dd/MM/yyyy")
-                                                  .format(state
-                                                      .checklist.updatedDate),
-                                      style: TextStyle(
-                                          color: Colors.grey,
-                                          fontStyle: FontStyle.italic),
-                                    )
-                                  ]))
                         ]));
                   } else {
                     return Center(child: CircularProgressIndicator());
