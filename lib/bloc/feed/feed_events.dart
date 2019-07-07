@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-import 'package:notable/model/base_note.dart';
+import 'package:notable/bloc/notes/notes.dart';
 
 @immutable
 abstract class FeedEvent extends Equatable {
@@ -16,41 +16,11 @@ class LoadFeed extends FeedEvent {
 }
 
 @immutable
-class TextNotesLoaded extends FeedEvent {
-  final List<BaseNote> textNotes;
+class NoteStatesChanged extends FeedEvent {
+  final List<NotesState> noteStates;
 
-  TextNotesLoaded(this.textNotes) : super([textNotes]);
-
-  @override
-  String toString() => 'TextNotesLoaded';
-}
-
-@immutable
-class ChecklistsLoaded extends FeedEvent {
-  final List<BaseNote> checklists;
-
-  ChecklistsLoaded(this.checklists) : super([checklists]);
+  NoteStatesChanged(this.noteStates) : super([noteStates]);
 
   @override
-  String toString() => 'ChecklistsLoaded';
-}
-
-@immutable
-class DrawingsLoaded extends FeedEvent {
-  final List<BaseNote> drawings;
-
-  DrawingsLoaded(this.drawings) : super([drawings]);
-
-  @override
-  String toString() => 'DrawingsLoaded';
-}
-
-@immutable
-class AudioNotesLoaded extends FeedEvent {
-  final List<BaseNote> audioNotes;
-
-  AudioNotesLoaded(this.audioNotes) : super([audioNotes]);
-
-  @override
-  String toString() => 'AudioNotesLoaded';
+  String toString() => 'NoteStatesChanged';
 }
