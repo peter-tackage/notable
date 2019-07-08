@@ -73,7 +73,7 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
           .expand((loadNotes) => loadNotes.notes)
           .toList();
 
-      // Sort so more recent are at top
+      // Sort so most recent are at top
       allNotes.sort((a, b) => b.updatedDate.compareTo(a.updatedDate));
 
       yield FeedLoaded(allNotes);
