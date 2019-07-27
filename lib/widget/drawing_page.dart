@@ -19,16 +19,6 @@ class DrawingPage extends StatefulWidget {
 }
 
 class _DrawingPageState extends State<DrawingPage> {
-  DrawingBloc _drawingBloc;
-  DrawingConfigBloc _drawingConfigBloc;
-
-  @override
-  void initState() {
-    super.initState();
-    _drawingBloc = BlocProvider.of<DrawingBloc>(context);
-    _drawingConfigBloc = BlocProvider.of<DrawingConfigBloc>(context);
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DrawingConfigBloc, DrawingConfigState>(
@@ -58,14 +48,17 @@ class _DrawingPageState extends State<DrawingPage> {
     }
   }
 
+  DrawingBloc _drawingBlocOf(context) => BlocProvider.of<DrawingBloc>(context);
+
   _onToolDown(DragStartDetails details, DrawingConfig config) =>
-      _drawingBloc.dispatch(StartDrawing(
+      _drawingBlocOf(context).dispatch(StartDrawing(
           config, OffsetValue.from(_globalToLocal(details.globalPosition))));
 
-  _onToolMoved(DragUpdateDetails details) => _drawingBloc.dispatch(
+  _onToolMoved(DragUpdateDetails details) => _drawingBlocOf(context).dispatch(
       UpdateDrawing(OffsetValue.from(_globalToLocal(details.globalPosition))));
 
-  _onToolUp(DragEndDetails details) => _drawingBloc.dispatch(EndDrawing());
+  _onToolUp(DragEndDetails details) =>
+      _drawingBlocOf(context).dispatch(EndDrawing());
 
   Widget _buildLoadingIndicator() => Center(child: CircularProgressIndicator());
 

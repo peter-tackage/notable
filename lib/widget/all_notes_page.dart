@@ -30,6 +30,8 @@ class AllNotesPage extends StatelessWidget {
           return feedState.feed.isEmpty
               ? _buildEmptyNoteList(context)
               : _buildNoteList(context, feedState.feed);
+        } else {
+          throw Exception("Unsupported FeedState: $feedState");
         }
       },
     );
