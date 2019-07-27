@@ -25,7 +25,7 @@ class AddEditDrawingNoteScreen extends StatelessWidget {
     final notesBloc =
         BlocProvider.of<NotesBloc<Drawing, DrawingEntity>>(context);
 
-    return BlocProviderTree(blocProviders: [
+    return MultiBlocProvider(providers: [
       BlocProvider<DrawingBloc>(
           builder: (BuildContext context) =>
               DrawingBloc(notesBloc: notesBloc, id: id)),
@@ -58,34 +58,33 @@ class _AddEditDrawingNoteScreenContent extends StatelessWidget {
   }
 
   Widget _buildBody(context) {
-    return BlocBuilder(
-        bloc: _drawingBlocOf(context),
+    return BlocBuilder<DrawingBloc, DrawingState>(
         builder: (BuildContext context, DrawingState state) {
-          if (state is DrawingLoaded) {
-            return Stack(children: [
-              DrawingPage(),
-              Form(
-                  key: _formKey,
-                  child: Padding(
-                      padding: EdgeInsets.only(top: 8, left: 8, right: 8),
-                      child: TextFormField(
-                          onSaved: (value) =>
-                              _onSaveTitle(value, _drawingBlocOf(context)),
-                          initialValue: state.drawing.title,
-                          style: Theme.of(context).textTheme.title,
-                          decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: NotableLocalizations.of(context)
-                                  .note_title_hint),
-                          maxLines: 1,
-                          textCapitalization: TextCapitalization.sentences,
-                          autofocus: false)))
-            ]);
-          } else {
-            // FIXME This is duplicated in the DrawingPage
-            return Center(child: CircularProgressIndicator());
-          }
-        });
+      if (state is DrawingLoaded) {
+        return Stack(children: [
+          DrawingPage(),
+          Form(
+              key: _formKey,
+              child: Padding(
+                  padding: EdgeInsets.only(top: 8, left: 8, right: 8),
+                  child: TextFormField(
+                      onSaved: (value) =>
+                          _onSaveTitle(value, _drawingBlocOf(context)),
+                      initialValue: state.drawing.title,
+                      style: Theme.of(context).textTheme.title,
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText:
+                              NotableLocalizations.of(context).note_title_hint),
+                      maxLines: 1,
+                      textCapitalization: TextCapitalization.sentences,
+                      autofocus: false)))
+        ]);
+      } else {
+        // FIXME This is duplicated in the DrawingPage
+        return Center(child: CircularProgressIndicator());
+      }
+    });
   }
 
   DrawingBloc _drawingBlocOf(context) => BlocProvider.of<DrawingBloc>(context);
@@ -132,11 +131,10 @@ class _AddEditDrawingNoteScreenContent extends StatelessWidget {
   }
 
   Widget _buildBottomAppBar(context) {
-    return BlocBuilder<DrawingConfigEvent, DrawingConfigState>(
+    return BlocBuilder<DrawingConfigBloc, DrawingConfigState>(
         bloc: _drawingConfigBlocOf(context),
         builder: (BuildContext context, DrawingConfigState configState) =>
-            BlocBuilder<DrawingEvent, DrawingState>(
-                bloc: _drawingBlocOf(context),
+            BlocBuilder<DrawingBloc, DrawingState>(
                 builder: (BuildContext context, DrawingState drawingState) =>
                     BottomAppBar(
                         child: Material(

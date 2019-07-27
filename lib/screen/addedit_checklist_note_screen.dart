@@ -38,32 +38,31 @@ class _AddEditChecklistNoteScreenContent extends StatelessWidget {
             actions: _defineMenuItems(context)),
         body: Padding(
             padding: EdgeInsets.only(top: 8, left: 8, right: 8),
-            child: BlocBuilder(
-                bloc: _checklistBlocOf(context),
+            child: BlocBuilder<ChecklistBloc, ChecklistState>(
                 builder: (BuildContext context, ChecklistState state) {
-                  if (state is ChecklistLoaded) {
-                    return Form(
-                        key: _formKey,
-                        child: Column(children: <Widget>[
-                          TextFormField(
-                              onSaved: (newTitle) => _onSaveTitle(
-                                  newTitle, _checklistBlocOf(context)),
-                              initialValue: state.checklist.title,
-                              style: Theme.of(context).textTheme.title,
-                              decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: NotableLocalizations.of(context)
-                                      .note_title_hint),
-                              maxLines: 1,
-                              textCapitalization: TextCapitalization.sentences,
-                              autofocus: false),
-                          Expanded(
-                              child: _buildChecklist(context, state.checklist)),
-                        ]));
-                  } else {
-                    return Center(child: CircularProgressIndicator());
-                  }
-                })),
+              if (state is ChecklistLoaded) {
+                return Form(
+                    key: _formKey,
+                    child: Column(children: <Widget>[
+                      TextFormField(
+                          onSaved: (newTitle) =>
+                              _onSaveTitle(newTitle, _checklistBlocOf(context)),
+                          initialValue: state.checklist.title,
+                          style: Theme.of(context).textTheme.title,
+                          decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: NotableLocalizations.of(context)
+                                  .note_title_hint),
+                          maxLines: 1,
+                          textCapitalization: TextCapitalization.sentences,
+                          autofocus: false),
+                      Expanded(
+                          child: _buildChecklist(context, state.checklist)),
+                    ]));
+              } else {
+                return Center(child: CircularProgressIndicator());
+              }
+            })),
         floatingActionButton: FloatingActionButton(
           onPressed: () => _saveNote(context),
           tooltip: NotableLocalizations.of(context).note_save_tooltip,

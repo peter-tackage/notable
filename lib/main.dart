@@ -34,8 +34,8 @@ void main() {
 class NotableApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocProviderTree(
-        blocProviders: [
+    return MultiBlocProvider(
+        providers: [
           BlocProvider<NotesBloc<TextNote, NoteEntity>>(
               builder: _textNoteBlocBuilder),
           BlocProvider<NotesBloc<Checklist, ChecklistEntity>>(
@@ -103,14 +103,14 @@ class NotableApp extends StatelessWidget {
   //  Localization
   //
 
-  List<Locale> _supportedLocales() {
+  static List<Locale> _supportedLocales() {
     return [
       const Locale('en'),
       const Locale('es'),
     ];
   }
 
-  List<LocalizationsDelegate> _localizationsDelegates() {
+  static List<LocalizationsDelegate> _localizationsDelegates() {
     return [
       const NotableLocalizationsDelegate(),
       GlobalMaterialLocalizations.delegate,

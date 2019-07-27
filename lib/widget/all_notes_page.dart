@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notable/bloc/feed/feed_bloc.dart';
-import 'package:notable/bloc/feed/feed_events.dart';
 import 'package:notable/bloc/feed/feed_states.dart';
 import 'package:notable/l10n/localization.dart';
 import 'package:notable/model/audio_note.dart';
@@ -23,8 +22,7 @@ import 'checklist_card_item.dart';
 class AllNotesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<FeedEvent, FeedState>(
-      bloc: BlocProvider.of<FeedBloc>(context),
+    return BlocBuilder<FeedBloc, FeedState>(
       builder: (BuildContext context, FeedState feedState) {
         if (feedState is FeedLoading) {
           return _buildLoadingIndicator();

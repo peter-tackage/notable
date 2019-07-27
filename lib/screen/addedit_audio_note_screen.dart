@@ -48,28 +48,25 @@ class _AddEditAudioNoteScreenContent extends StatelessWidget {
   Widget build(BuildContext context) {
     AudioNoteBloc audioNoteBloc = BlocProvider.of<AudioNoteBloc>(context);
 
-    return BlocBuilder(
-        bloc: audioNoteBloc,
+    return BlocBuilder<AudioNoteBloc, AudioNoteState>(
         builder: (BuildContext context, AudioNoteState state) {
-          final isNoteSaveable = state is AudioNoteLoaded &&
-                  state.audioNote.filename != null ||
+      final isNoteSaveable =
+          state is AudioNoteLoaded && state.audioNote.filename != null ||
               state is AudioNotePlayback && state.audioNote.filename != null;
 
-          return Scaffold(
-              appBar: AppBar(
-                  title:
-                      Text(NotableLocalizations.of(context).audio_note_title),
-                  actions: _defineMenuItems(context, audioNoteBloc)),
-              body: _buildBody(context, audioNoteBloc, state),
-              floatingActionButton: isNoteSaveable
-                  ? FloatingActionButton(
-                      onPressed: () => _saveNote(context, audioNoteBloc),
-                      tooltip:
-                          NotableLocalizations.of(context).note_save_tooltip,
-                      child: Icon(Icons.check),
-                    )
-                  : null);
-        });
+      return Scaffold(
+          appBar: AppBar(
+              title: Text(NotableLocalizations.of(context).audio_note_title),
+              actions: _defineMenuItems(context, audioNoteBloc)),
+          body: _buildBody(context, audioNoteBloc, state),
+          floatingActionButton: isNoteSaveable
+              ? FloatingActionButton(
+                  onPressed: () => _saveNote(context, audioNoteBloc),
+                  tooltip: NotableLocalizations.of(context).note_save_tooltip,
+                  child: Icon(Icons.check),
+                )
+              : null);
+    });
   }
 
   Widget _buildBody(context, audioNoteBloc, state) {

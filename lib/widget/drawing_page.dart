@@ -7,7 +7,6 @@ import 'package:notable/bloc/drawing/drawing_bloc.dart';
 import 'package:notable/bloc/drawing/drawing_events.dart';
 import 'package:notable/bloc/drawing/drawing_states.dart';
 import 'package:notable/bloc/drawing_config/drawing_config_bloc.dart';
-import 'package:notable/bloc/drawing_config/drawing_config_events.dart';
 import 'package:notable/bloc/drawing_config/drawing_config_states.dart';
 import 'package:notable/model/drawing.dart';
 import 'package:notable/model/drawing_config.dart';
@@ -32,11 +31,9 @@ class _DrawingPageState extends State<DrawingPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<DrawingConfigEvent, DrawingConfigState>(
-        bloc: _drawingConfigBloc,
+    return BlocBuilder<DrawingConfigBloc, DrawingConfigState>(
         builder: (BuildContext context, DrawingConfigState configState) =>
-            BlocBuilder<DrawingEvent, DrawingState>(
-                bloc: BlocProvider.of<DrawingBloc>(context),
+            BlocBuilder<DrawingBloc, DrawingState>(
                 builder: (BuildContext context, DrawingState drawingState) =>
                     Container(
                         child: ConstrainedBox(
