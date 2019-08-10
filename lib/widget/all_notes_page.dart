@@ -37,9 +37,9 @@ class AllNotesPage extends StatelessWidget {
     );
   }
 
-  Widget _buildLoadingIndicator() => Center(child: CircularProgressIndicator());
+  static Widget _buildLoadingIndicator() => Center(child: CircularProgressIndicator());
 
-  Widget _buildNoteList(BuildContext context, List<BaseNote> checklists) =>
+  static Widget _buildNoteList(BuildContext context, List<BaseNote> checklists) =>
       Padding(
           padding: EdgeInsets.symmetric(horizontal: 12),
           child: ListView.builder(
@@ -48,7 +48,7 @@ class AllNotesPage extends StatelessWidget {
             itemCount: checklists.length,
           ));
 
-  Widget _buildItem(BaseNote note, int index, BuildContext context) {
+  static Widget _buildItem(BaseNote note, int index, BuildContext context) {
     if (note is TextNote) {
       return NoteCardItem(
           note: note, onTap: () => _openTextNote(context, note));
