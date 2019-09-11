@@ -1,7 +1,7 @@
 import 'package:notable/entity/entity.dart';
 import 'package:notable/storage/entity_mapper.dart';
 
-class NoteEntityMapper implements EntityMapper<NoteEntity> {
+class NoteEntityMapper implements EntityMapper<TextNoteEntity> {
   @override
-  NoteEntity toEntity(Map json) => NoteEntity.fromJson(json);
+  TextNoteEntity toEntity(Map json) => TextNoteEntity.fromJson(json);
 }

@@ -1,49 +1,52 @@
-import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notable/bloc/notes/notes.dart';
+import 'package:notable/bloc/text/text.dart';
 import 'package:notable/entity/entity.dart';
 import 'package:notable/l10n/localization.dart';
-import 'package:notable/model/label.dart';
 import 'package:notable/model/text_note.dart';
 
-class AddEditTextNoteScreen extends StatefulWidget {
+class AddEditTextNoteScreen extends StatelessWidget {
   final String id;
 
   AddEditTextNoteScreen({Key key, this.id}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _AddEditTextNoteScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider<TextNoteBloc>(
+        builder: _textNoteBlocBuilder,
+        child: _AddEditTextNoteScreenContent(id: id));
+  }
+
+  TextNoteBloc _textNoteBlocBuilder(context) => TextNoteBloc(
+      notesBloc: BlocProvider.of<NotesBloc<TextNote, TextNoteEntity>>(context),
+      id: id);
 }
 
-class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
+class _AddEditTextNoteScreenContent extends StatelessWidget {
   static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  static final _deleteItem = "delete";
 
-  NotesBloc _notesBloc;
+  final String id;
 
-  TextNote _note;
-  String _updatedTitle;
-  String _updatedText;
-
-  @override
-  void initState() {
-    super.initState();
-    _notesBloc = BlocProvider.of<NotesBloc<TextNote, NoteEntity>>(context);
-  }
+  _AddEditTextNoteScreenContent({Key key, this.id}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    TextNoteBloc textNoteBloc = BlocProvider.of<TextNoteBloc>(context);
+
     return Scaffold(
         appBar: AppBar(
             title: Text(NotableLocalizations.of(context).text_note_title),
-            actions: widget.id == null
+            actions: id == null
                 ? null
                 : <Widget>[
                     PopupMenuButton(
-                        onSelected: _handleMenuItemSelection,
+                        onSelected: (menuItem) => _handleMenuItemSelection(
+                            menuItem, context, textNoteBloc),
                         itemBuilder: (context) => [
                               PopupMenuItem(
-                                value: "delete",
+                                value: _deleteItem,
                                 child: Text(NotableLocalizations.of(context)
                                     .note_delete_menu_item),
                               )
@@ -51,23 +54,19 @@ class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
                   ]),
         body: Padding(
             padding: EdgeInsets.only(top: 8, left: 8, right: 8),
-            child: BlocBuilder(
-                bloc: _notesBloc,
-                builder: (BuildContext context, NotesState state) {
-                  if (state is NotesLoaded) {
-                    _note =
-                        state.notes.firstWhere((note) => note.id == widget.id,
-                            orElse: () => TextNote((b) => b
-                              ..title = ''
-                              ..labels = ListBuilder<Label>()
-                              ..text = ''));
+            child: BlocBuilder<TextNoteBloc, TextNoteState>(
+                bloc: textNoteBloc,
+                builder: (BuildContext context, TextNoteState state) {
+                  if (state is TextNoteLoaded) {
+                    TextNote note = state.textNote;
 
                     return Form(
                         key: _formKey,
                         child: Column(children: <Widget>[
                           TextFormField(
-                              onSaved: _titleChanged,
-                              initialValue: _updatedTitle ?? _note.title,
+                              onSaved: (newTitle) =>
+                                  _titleChanged(newTitle, textNoteBloc),
+                              initialValue: note.title,
                               style: Theme.of(context).textTheme.title,
                               textCapitalization: TextCapitalization.sentences,
                               decoration: InputDecoration(
@@ -79,15 +78,16 @@ class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
                               child: Padding(
                                   padding: EdgeInsets.only(left: 8, right: 8),
                                   child: TextFormField(
-                                      onSaved: _textContentChanged,
-                                      initialValue: _updatedText ?? _note.text,
+                                      onSaved: (newText) => _textContentChanged(
+                                          newText, textNoteBloc),
+                                      initialValue: note.text,
                                       decoration: InputDecoration(
                                           border: InputBorder.none,
                                           hintText:
                                               NotableLocalizations.of(context)
                                                   .text_note_hint),
                                       maxLines: null,
-                                      autofocus: _note.text.isEmpty,
+                                      autofocus: note.text.isEmpty,
                                       textCapitalization:
                                           TextCapitalization.sentences,
                                       keyboardType: TextInputType.multiline))),
@@ -97,7 +97,7 @@ class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
                   }
                 })),
         floatingActionButton: FloatingActionButton(
-          onPressed: _saveNote,
+          onPressed: () => _saveNote(context, textNoteBloc),
           tooltip: NotableLocalizations.of(context).note_save_tooltip,
           child: Icon(Icons.check),
         ));
@@ -107,31 +107,21 @@ class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
   // Update
   //
 
-  void _titleChanged(String newValue) => _updatedTitle = newValue;
+  void _titleChanged(newTitle, textNoteBloc) =>
+      textNoteBloc.dispatch(UpdateTextNoteTitle(newTitle));
 
-  void _textContentChanged(String newValue) => _updatedText = newValue;
+  void _textContentChanged(newText, textNoteBloc) =>
+      textNoteBloc.dispatch(UpdateTextNoteText(newText));
 
   //
   // Save
   //
 
-  _saveNote() {
+  _saveNote(context, textNoteBloc) {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
     }
-
-    // Create or update
-    if (widget.id == null) {
-      _notesBloc.dispatch(AddNote(TextNote((b) => b
-        ..title = _updatedTitle
-        ..labels = ListBuilder<Label>()
-        ..text = _updatedText)));
-    } else {
-      _notesBloc.dispatch(UpdateNote(_note.rebuild((b) => b
-        ..title = _updatedTitle
-        ..text = _updatedText)));
-    }
-
+    textNoteBloc.dispatch(SaveTextNote());
     Navigator.pop(context);
   }
 
@@ -139,15 +129,15 @@ class _AddEditTextNoteScreenState extends State<AddEditTextNoteScreen> {
   // Delete
   //
 
-  void _handleMenuItemSelection(value) {
-    if (value == "delete") {
-      _deleteNote();
+  void _handleMenuItemSelection(menuItem, context, textNoteBloc) {
+    if (menuItem == _deleteItem) {
+      _deleteNote(context, textNoteBloc);
     }
   }
 
-  void _deleteNote() {
-    if (widget.id != null) {
-      _notesBloc.dispatch(DeleteNote(widget.id));
+  void _deleteNote(context, textNoteBloc) {
+    if (id != null) {
+      textNoteBloc.dispatch(DeleteNote(id));
       Navigator.pop(context);
     }
   }

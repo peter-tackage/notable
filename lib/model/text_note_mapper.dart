@@ -4,14 +4,14 @@ import 'package:notable/entity/entity.dart';
 import 'package:notable/model/label.dart';
 import 'package:notable/model/text_note.dart';
 
-class TextNoteMapper implements Mapper<TextNote, NoteEntity> {
+class TextNoteMapper implements Mapper<TextNote, TextNoteEntity> {
   @override
-  toEntity(TextNote model) => NoteEntity(
+  toEntity(TextNote model) => TextNoteEntity(
       model.labels.map((l) => l.toEntity()).toList(), model.title, model.text,
       id: model.id, updatedDate: model.updatedDate);
 
   @override
-  toModel(NoteEntity entity) => TextNote((b) => b
+  toModel(TextNoteEntity entity) => TextNote((b) => b
     ..title = entity.title
     ..labels = ListBuilder(entity.labels.map(Label.fromEntity))
     ..text = entity.text

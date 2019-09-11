@@ -4,10 +4,8 @@ import 'package:flutter_sound/flutter_sound.dart';
 import 'package:notable/bloc/audio/audio.dart';
 import 'package:notable/bloc/notes/notes.dart';
 import 'package:notable/entity/audio_note_entity.dart';
-import 'package:notable/entity/base_note_entity.dart';
 import 'package:notable/l10n/localization.dart';
 import 'package:notable/model/audio_note.dart';
-import 'package:notable/model/base_note.dart';
 import 'package:notable/storage/sound_storage.dart';
 import 'package:notable/widget/audio_note_page.dart';
 import 'package:path_provider/path_provider.dart';
@@ -24,25 +22,24 @@ class AddEditAudioNoteScreen extends StatelessWidget {
         child: _AddEditAudioNoteScreenContent(id: id));
   }
 
-  AudioNoteBloc<BaseNote, BaseNoteEntity> _audioNoteBlocBuilder(context) =>
-      AudioNoteBloc(
-          notesBloc:
-              BlocProvider.of<NotesBloc<AudioNote, AudioNoteEntity>>(context),
-          id: id,
-          flutterSound: FlutterSound()
-            ..setDbLevelEnabled(true)
-            ..setDbPeakLevelUpdate(0.1),
-          soundStorage: SoundStorage(
-              getDirectory: () => getApplicationDocumentsDirectory(),
-              filenameGenerator: soundFilenameGenerator));
+  AudioNoteBloc _audioNoteBlocBuilder(context) => AudioNoteBloc(
+      notesBloc:
+          BlocProvider.of<NotesBloc<AudioNote, AudioNoteEntity>>(context),
+      id: id,
+      flutterSound: FlutterSound()
+        ..setDbLevelEnabled(true)
+        ..setDbPeakLevelUpdate(0.1),
+      soundStorage: SoundStorage(
+          getDirectory: () => getApplicationDocumentsDirectory(),
+          filenameGenerator: soundFilenameGenerator));
 }
 
 class _AddEditAudioNoteScreenContent extends StatelessWidget {
+  static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   final String id;
 
   _AddEditAudioNoteScreenContent({Key key, this.id}) : super(key: key);
-
-  static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +47,7 @@ class _AddEditAudioNoteScreenContent extends StatelessWidget {
 
     return BlocBuilder<AudioNoteBloc, AudioNoteState>(
         builder: (BuildContext context, AudioNoteState state) {
+      // FIXME - Feels like this interpretation should be part of the state, perhaps?
       final isNoteSaveable =
           state is AudioNoteLoaded && state.audioNote.filename != null ||
               state is AudioNotePlayback && state.audioNote.filename != null;

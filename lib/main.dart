@@ -36,7 +36,7 @@ class NotableApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
         providers: [
-          BlocProvider<NotesBloc<TextNote, NoteEntity>>(
+          BlocProvider<NotesBloc<TextNote, TextNoteEntity>>(
               builder: _textNoteBlocBuilder),
           BlocProvider<NotesBloc<Checklist, ChecklistEntity>>(
               builder: _checklistBlocBuilder),
@@ -60,9 +60,10 @@ class NotableApp extends StatelessWidget {
   // Bloc Builders
   //
 
-  NotesBloc<TextNote, NoteEntity> _textNoteBlocBuilder(BuildContext context) =>
-      NotesBloc<TextNote, NoteEntity>(
-          noteRepository: Repository<NoteEntity>(Provider<NoteEntity>(
+  NotesBloc<TextNote, TextNoteEntity> _textNoteBlocBuilder(
+          BuildContext context) =>
+      NotesBloc<TextNote, TextNoteEntity>(
+          noteRepository: Repository<TextNoteEntity>(Provider<TextNoteEntity>(
               storage: FileStorage(
                   tag: "textNotes",
                   getDirectory: () => getApplicationDocumentsDirectory(),

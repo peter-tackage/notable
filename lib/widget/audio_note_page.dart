@@ -214,7 +214,7 @@ class _AudioNotePageState extends State<AudioNotePage> {
 
   static String _toDuration(double time) {
     DateTime date =
-        new DateTime.fromMillisecondsSinceEpoch(time.toInt(), isUtc: true);
+        DateTime.fromMillisecondsSinceEpoch(time.toInt(), isUtc: true);
     return DateFormat('mm:ss', 'en_GB').format(date);
   }
 }
