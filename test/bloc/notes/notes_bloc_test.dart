@@ -9,18 +9,18 @@ import 'package:notable/model/text_note.dart';
 import 'package:notable/model/text_note_mapper.dart';
 import 'package:uuid/uuid.dart';
 
-class MockRepository extends Mock implements Repository<NoteEntity> {}
+class MockRepository extends Mock implements Repository<TextNoteEntity> {}
 
 void main() {
   MockRepository noteRepository;
-  NotesBloc<TextNote, NoteEntity> textNoteBloc =
-      NotesBloc<TextNote, NoteEntity>(
+  NotesBloc<TextNote, TextNoteEntity> textNoteBloc =
+      NotesBloc<TextNote, TextNoteEntity>(
           noteRepository: noteRepository, mapper: TextNoteMapper());
 
   setUp(() {
     // No value in mocking the Mapper, use the real one.
     noteRepository = MockRepository();
-    textNoteBloc = NotesBloc<TextNote, NoteEntity>(
+    textNoteBloc = NotesBloc<TextNote, TextNoteEntity>(
         noteRepository: noteRepository, mapper: TextNoteMapper());
   });
 
@@ -41,7 +41,7 @@ void main() {
     final id = Uuid().v1().toString();
     final datetime = DateTime.now();
 
-    NoteEntity noteEntity = NoteEntity(List<LabelEntity>(), title, text,
+    TextNoteEntity noteEntity = TextNoteEntity(List<LabelEntity>(), title, text,
         id: id, updatedDate: datetime);
     when(noteRepository.getAll()).thenAnswer((_) => Future.value([noteEntity]));
 
@@ -75,7 +75,7 @@ void main() {
     final id = Uuid().v1().toString();
     final datetime = DateTime.now();
 
-    NoteEntity noteEntity = NoteEntity(List<LabelEntity>(), title, text,
+    TextNoteEntity noteEntity = TextNoteEntity(List<LabelEntity>(), title, text,
         id: id, updatedDate: datetime);
     when(noteRepository.getAll()).thenAnswer((_) => Future.value([noteEntity]));
 

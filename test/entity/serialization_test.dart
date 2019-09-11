@@ -6,7 +6,7 @@ import 'package:notable/entity/entity.dart';
 void main() {
   test('note entity serializes', () {
     final now = DateTime.now();
-    NoteEntity noteEntity = NoteEntity(
+    TextNoteEntity noteEntity = TextNoteEntity(
         <LabelEntity>[LabelEntity("label1", "blue")], "a title", "some text",
         id: "uuid-field", updatedDate: now);
 
@@ -18,10 +18,11 @@ void main() {
 
   test('note entity list serializes', () {
     final now = DateTime.now();
-    NoteEntity noteEntity1 = NoteEntity(<LabelEntity>[], "a title", "some text",
+    TextNoteEntity noteEntity1 = TextNoteEntity(
+        <LabelEntity>[], "a title", "some text",
         id: "uuid-field", updatedDate: now);
 
-    List<NoteEntity> noteEntities = [noteEntity1];
+    List<TextNoteEntity> noteEntities = [noteEntity1];
 
     final json = jsonEncode(noteEntities);
 
@@ -36,7 +37,7 @@ void main() {
         "{\"id\":\"uuidValue\",\"updatedDate\":\"${now.toIso8601String()}\",\"title\":\"a title\",\"labels\":[{\"name\":\"label1\",\"color\":\"blue\"}],\"text\":\"some text\"}";
     final json = jsonDecode(jsonString);
 
-    NoteEntity noteEntity = NoteEntity.fromJson(json);
+    TextNoteEntity noteEntity = TextNoteEntity.fromJson(json);
 
     expect(noteEntity.id, "uuidValue");
   });

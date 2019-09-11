@@ -22,7 +22,7 @@ class SaveAudioNote extends AudioNoteEvent {
   SaveAudioNote() : super([]);
 
   @override
-  String toString() => 'SaveDrawing';
+  String toString() => 'SaveAudioNote';
 }
 
 @immutable
@@ -48,7 +48,7 @@ class UpdateAudioNoteTitle extends AudioNoteEvent {
   UpdateAudioNoteTitle(this.title) : super([title]);
 
   @override
-  String toString() => 'UpdateDrawingTitle: $title';
+  String toString() => 'UpdateAudioNoteTitle: $title';
 }
 
 @immutable

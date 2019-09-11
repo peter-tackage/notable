@@ -35,7 +35,7 @@ class HomeScreen extends StatelessWidget {
   FeedBloc _feedBlocBuilder(context) {
     return FeedBloc(
         textNotesBloc:
-            BlocProvider.of<NotesBloc<TextNote, NoteEntity>>(context),
+            BlocProvider.of<NotesBloc<TextNote, TextNoteEntity>>(context),
         checklistNotesBloc:
             BlocProvider.of<NotesBloc<Checklist, ChecklistEntity>>(context),
         drawingNotesBloc:

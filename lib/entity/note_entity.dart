@@ -6,15 +6,15 @@ import 'label_entity.dart';
 part 'note_entity.g.dart';
 
 @JsonSerializable(nullable: false)
-class NoteEntity extends BaseNoteEntity {
+class TextNoteEntity extends BaseNoteEntity {
   final String text;
 
-  NoteEntity(List<LabelEntity> labels, String title, this.text,
+  TextNoteEntity(List<LabelEntity> labels, String title, this.text,
       {String id, DateTime updatedDate})
       : super(title, labels, id: id, updatedDate: updatedDate);
 
-  factory NoteEntity.fromJson(Map<String, dynamic> json) =>
-      _$NoteEntityFromJson(json);
+  factory TextNoteEntity.fromJson(Map<String, dynamic> json) =>
+      _$TextNoteEntityFromJson(json);
 
-  Map<String, dynamic> toJson() => _$NoteEntityToJson(this);
+  Map<String, dynamic> toJson() => _$TextNoteEntityToJson(this);
 }

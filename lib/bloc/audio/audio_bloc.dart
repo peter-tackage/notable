@@ -7,18 +7,15 @@ import 'package:meta/meta.dart';
 import 'package:notable/bloc/audio/audio_events.dart';
 import 'package:notable/bloc/notes/notes.dart';
 import 'package:notable/entity/audio_note_entity.dart';
-import 'package:notable/entity/base_note_entity.dart';
 import 'package:notable/model/audio_note.dart';
 import 'package:notable/model/audio_playback.dart';
 import 'package:notable/model/audio_recording.dart';
-import 'package:notable/model/base_note.dart';
 import 'package:notable/model/label.dart';
 import 'package:notable/storage/sound_storage.dart';
 
 import 'audio_states.dart';
 
-class AudioNoteBloc<M extends BaseNote, E extends BaseNoteEntity>
-    extends Bloc<AudioNoteEvent, AudioNoteState> {
+class AudioNoteBloc extends Bloc<AudioNoteEvent, AudioNoteState> {
   final NotesBloc<AudioNote, AudioNoteEntity> notesBloc;
   final String id;
   final FlutterSound flutterSound;

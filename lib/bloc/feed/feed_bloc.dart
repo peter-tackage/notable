@@ -16,7 +16,7 @@ import 'package:notable/model/text_note.dart';
 import 'package:stream_transform/stream_transform.dart';
 
 class FeedBloc extends Bloc<FeedEvent, FeedState> {
-  final NotesBloc<TextNote, NoteEntity> textNotesBloc;
+  final NotesBloc<TextNote, TextNoteEntity> textNotesBloc;
   final NotesBloc<Checklist, ChecklistEntity> checklistNotesBloc;
   final NotesBloc<Drawing, DrawingEntity> drawingNotesBloc;
   final NotesBloc<AudioNote, AudioNoteEntity> audioNotesBloc;
