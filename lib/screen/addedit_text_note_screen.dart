@@ -25,6 +25,7 @@ class AddEditTextNoteScreen extends StatelessWidget {
 
 class _AddEditTextNoteScreenContent extends StatelessWidget {
   static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  static final _deleteItem = "delete";
 
   final String id;
 
@@ -45,7 +46,7 @@ class _AddEditTextNoteScreenContent extends StatelessWidget {
                             menuItem, context, textNoteBloc),
                         itemBuilder: (context) => [
                               PopupMenuItem(
-                                value: "delete",
+                                value: _deleteItem,
                                 child: Text(NotableLocalizations.of(context)
                                     .note_delete_menu_item),
                               )
@@ -96,7 +97,7 @@ class _AddEditTextNoteScreenContent extends StatelessWidget {
                   }
                 })),
         floatingActionButton: FloatingActionButton(
-          onPressed: _saveNote(context),
+          onPressed: () => _saveNote(context, textNoteBloc),
           tooltip: NotableLocalizations.of(context).note_save_tooltip,
           child: Icon(Icons.check),
         ));
@@ -116,10 +117,11 @@ class _AddEditTextNoteScreenContent extends StatelessWidget {
   // Save
   //
 
-  _saveNote(context) {
+  _saveNote(context, textNoteBloc) {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
     }
+    textNoteBloc.dispatch(SaveTextNote());
     Navigator.pop(context);
   }
 
@@ -128,7 +130,7 @@ class _AddEditTextNoteScreenContent extends StatelessWidget {
   //
 
   void _handleMenuItemSelection(menuItem, context, textNoteBloc) {
-    if (menuItem == "delete") {
+    if (menuItem == _deleteItem) {
       _deleteNote(context, textNoteBloc);
     }
   }
