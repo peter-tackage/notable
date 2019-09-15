@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+// Class currently unused, but might still be a good idea.
 class CircularAudioMonitor extends StatefulWidget {
   final double peakDb;
   final double level;
