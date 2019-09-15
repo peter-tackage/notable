@@ -14,6 +14,7 @@ import 'package:notable/l10n/localization.dart';
 import 'package:notable/model/drawing.dart';
 import 'package:notable/model/drawing_config.dart';
 import 'package:notable/widget/drawing_page.dart';
+import 'package:notable/widget/palette_panel.dart';
 
 class AddEditDrawingNoteScreen extends StatelessWidget {
   final String id;
@@ -61,30 +62,32 @@ class _AddEditDrawingNoteScreenContent extends StatelessWidget {
     return BlocBuilder<DrawingBloc, DrawingState>(
         builder: (BuildContext context, DrawingState state) {
       if (state is DrawingLoaded) {
-        return Stack(children: [
-          DrawingPage(),
-          Form(
-              key: _formKey,
-              child: Padding(
-                  padding: EdgeInsets.only(top: 8, left: 8, right: 8),
-                  child: TextFormField(
-                      onSaved: (value) =>
-                          _onSaveTitle(value, _drawingBlocOf(context)),
-                      initialValue: state.drawing.title,
-                      style: Theme.of(context).textTheme.title,
-                      decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText:
-                              NotableLocalizations.of(context).note_title_hint),
-                      maxLines: 1,
-                      textCapitalization: TextCapitalization.sentences,
-                      autofocus: false)))
-        ]);
+        return Stack(children: [_buildDrawing(), _buildTitle(context, state)]);
       } else {
         // FIXME This is duplicated in the DrawingPage
         return Center(child: CircularProgressIndicator());
       }
     });
+  }
+
+  DrawingPage _buildDrawing() => DrawingPage();
+
+  Form _buildTitle(BuildContext context, DrawingLoaded state) {
+    return Form(
+        key: _formKey,
+        child: Padding(
+            padding: EdgeInsets.only(top: 8, left: 8, right: 8),
+            child: TextFormField(
+                onSaved: (value) =>
+                    _onSaveTitle(value, _drawingBlocOf(context)),
+                initialValue: state.drawing.title,
+                style: Theme.of(context).textTheme.title,
+                decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: NotableLocalizations.of(context).note_title_hint),
+                maxLines: 1,
+                textCapitalization: TextCapitalization.sentences,
+                autofocus: false)));
   }
 
   DrawingBloc _drawingBlocOf(context) => BlocProvider.of<DrawingBloc>(context);
@@ -136,14 +139,24 @@ class _AddEditDrawingNoteScreenContent extends StatelessWidget {
         builder: (BuildContext context, DrawingConfigState configState) =>
             BlocBuilder<DrawingBloc, DrawingState>(
                 builder: (BuildContext context, DrawingState drawingState) =>
-                    BottomAppBar(
-                        child: Material(
-                            color: Colors.grey[200],
-                            child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: _buildBottomBarItems(
-                                    configState, context, drawingState))))));
+                    AnimatedContainer(
+                        duration: Duration(milliseconds: 500),
+                        child: _buildControlPanel(
+                            configState, context, drawingState))));
+  }
+
+  Widget _buildControlPanel(DrawingConfigState configState,
+      BuildContext context, DrawingState drawingState) {
+    return Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+      PalettePanel(),
+      BottomAppBar(
+          child: Material(
+              color: Colors.grey[200],
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: _buildBottomBarItems(
+                      configState, context, drawingState))))
+    ]);
   }
 
   // TODO Shouldn't we restrict the state here to only be for DrawingConfigLoaded??
@@ -153,6 +166,8 @@ class _AddEditDrawingNoteScreenContent extends StatelessWidget {
         configState.drawingConfig.tool == Tool.Brush;
     final isEraserSelected = configState is DrawingConfigLoaded &&
         configState.drawingConfig.tool == Tool.Eraser;
+
+    final disabledGrey = Colors.grey[600];
 
     return <Widget>[
       InkWell(
@@ -169,18 +184,12 @@ class _AddEditDrawingNoteScreenContent extends StatelessWidget {
                           value, _drawingConfigBlocOf(context)),
                       icon: Icon(Icons.line_weight))))),
       InkWell(
-          child: DropdownButtonHideUnderline(
-              child: ButtonTheme(
-                  alignedDropdown: true,
-                  child: DropdownButton(
-                      isDense: true,
-                      items: _buildColorMenuItems(),
-                      value: configState is DrawingConfigLoaded
-                          ? configState.drawingConfig.color
-                          : null,
-                      onChanged: (value) =>
-                          _setToolColor(value, _drawingConfigBlocOf(context)),
-                      icon: Icon(Icons.palette))))),
+          child: ButtonTheme(
+              child: FlatButton(
+                  onPressed: () {
+                    // TODO Expand the panel to show palette
+                  },
+                  child: null))),
       SizedBox(height: 30.0, width: 2, child: VerticalDivider()),
       InkWell(
           child: Container(
@@ -189,7 +198,7 @@ class _AddEditDrawingNoteScreenContent extends StatelessWidget {
                       .drawing_tool_brush_tooltip,
                   onPressed: () => _selectBrush(_drawingConfigBlocOf(context)),
                   icon: Icon(Icons.gesture,
-                      color: isBrushSelected ? null : Colors.grey[600],
+                      color: isBrushSelected ? null : disabledGrey,
                       size: isBrushSelected ? 32.0 : null)))),
       InkWell(
           child: IconButton(
@@ -199,7 +208,7 @@ class _AddEditDrawingNoteScreenContent extends StatelessWidget {
               icon: Transform.rotate(
                   angle: pi,
                   child: Icon(Icons.create,
-                      color: isEraserSelected ? null : Colors.grey[600],
+                      color: isEraserSelected ? null : disabledGrey,
                       size: isEraserSelected ? 32.0 : null)))),
       SizedBox(height: 30.0, width: 2, child: VerticalDivider()),
       InkWell(
@@ -231,6 +240,7 @@ class _AddEditDrawingNoteScreenContent extends StatelessWidget {
     ];
   }
 
+  // TODO Maybe this callback would be better passed down, instead of the BLOC?
   _setToolColor(color, drawingConfigBloc) =>
       drawingConfigBloc.dispatch(SelectDrawingToolColor(color));
 
@@ -251,15 +261,6 @@ class _AddEditDrawingNoteScreenContent extends StatelessWidget {
   _selectEraser(drawingConfigBloc) =>
       drawingConfigBloc.dispatch(SelectDrawingTool(Tool.Eraser));
 
-  List<DropdownMenuItem<int>> _buildColorMenuItems() {
-    return availableColors
-        .map((color) => DropdownMenuItem(
-            value: color.value,
-            child: Container(
-                color: color, child: SizedBox(width: 15, height: 15))))
-        .toList();
-  }
-
   List<DropdownMenuItem<_ToolStyle>> _buildToolStyleMenuItems() {
     return availableToolStyles
         .map((toolStyle) => DropdownMenuItem(
@@ -279,22 +280,6 @@ class _AddEditDrawingNoteScreenContent extends StatelessWidget {
 
   _onSaveTitle(String newTitle, drawingBloc) =>
       drawingBloc.dispatch(UpdateDrawingTitle(newTitle));
-
-// TODO Wire this up with some ingenious UI concept.
-//  List<Widget> _buildAlphaMenuItem(
-//      int alpha, DrawingConfigBloc drawingConfigBloc) {
-//    return [
-//      Slider(
-//          value: alpha.toDouble(),
-//          min: 0,
-//          max: 255,
-//          onChanged: (value) => _setToolAlpha(value, drawingConfigBloc))
-//    ];
-//  }
-//
-//  _setToolAlpha(alpha, DrawingConfigBloc drawingConfigBloc) {
-//    drawingConfigBloc.dispatch(SelectDrawingToolAlpha(alpha));
-//  }
 }
 
 class _ToolStyle {
@@ -322,10 +307,4 @@ final availableToolStyles = <_ToolStyle>[
   _ToolStyle(PenShape.Round, 20),
   _ToolStyle(PenShape.Round, 10),
   _ToolStyle(PenShape.Round, 5)
-];
-
-final List<Color> availableColors = [
-  ...Colors.primaries, // ignore: sdk_version_ui_as_code
-  Colors.black,
-  Colors.white
 ];
