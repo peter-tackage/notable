@@ -29,9 +29,13 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
       @required this.drawingNotesBloc,
       @required this.audioNotesBloc}) {
     // Await all the notes, combined into a single event.
-    combinedNotesSubscription = textNotesBloc.state
-        .combineLatestAll([checklistNotesBloc.state, drawingNotesBloc.state, audioNotesBloc.state])
-        .listen((noteStates) => dispatch(NoteStatesChanged(noteStates)));
+    combinedNotesSubscription = subscribeAllNotes();
+  }
+
+  StreamSubscription<List<NotesState>> subscribeAllNotes() {
+    return textNotesBloc.state
+      .combineLatestAll([checklistNotesBloc.state, drawingNotesBloc.state, audioNotesBloc.state])
+      .listen((noteStates) => dispatch(NoteStatesChanged(noteStates)));
   }
 
   @override
