@@ -16,18 +16,18 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc: 0.20.0
-  built_value: 6.6.0
-  built_collection: ^4.2.2
+  built_value: 7.0.0
+  built_collection: ^4.3.0
   equatable: 0.2.2
   uuid: 2.0.1
   path_provider: ^1.1.0
   json_serializable: ^3.0.0
-  intl: ^0.15.8
+  intl: ^0.16.0
   flutter_sound: ^1.4.1
   mockito: ^4.1.0
   flutter_localizations:
     sdk: flutter
-  intl_translation: 0.17.5
+  intl_translation: 0.17.7
   stream_transform: ^0.0.19
 
   # The following adds the Cupertino Icons font to your application.
@@ -38,7 +38,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   build_runner: ^1.0.0
-  built_value_generator: ^6.6.0
+  built_value_generator: ^7.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec

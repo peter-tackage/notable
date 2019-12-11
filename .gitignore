@@ -13,3 +13,6 @@ build/
 # generated dart files
 *.g.dart
 
+.flutter-plugins-dependencies
+Flutter.podspec
+flutter_export_environment.sh
