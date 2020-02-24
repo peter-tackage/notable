@@ -157,10 +157,10 @@ class AudioNoteBloc extends Bloc<AudioNoteEvent, AudioNoteState> {
 
   Stream<AudioNoteState> _mapStartAudioRecordingEventToState(
       AudioNoteState currentState, StartAudioRecordingRequest event) async* {
-    assert(flutterSound.isPlaying == false);
-    assert(flutterSound.isRecording == false);
+    assert(flutterSound.audioState != t_AUDIO_STATE.IS_PLAYING);
+    assert(flutterSound.audioState != t_AUDIO_STATE.IS_RECORDING);
 
-    // IMPORTANT: You're not allowed to record saved notes, only unsaved notes.
+    // IMPORTANT: You're not allowed to record on saved notes, only unsaved notes.
     if (currentState is AudioNoteLoaded && currentState.audioNote.id == null) {
       // Cancel existing
       await _recorderSubscription?.cancel();
@@ -171,7 +171,7 @@ class AudioNoteBloc extends Bloc<AudioNoteEvent, AudioNoteState> {
           await soundStorage.generateFilename();
 
       // Start new recording to a newly generated filename
-      await flutterSound.startRecorder(filename);
+      await flutterSound.startRecorder(uri: filename);
 
       // Initial event
       yield AudioNoteRecording(
