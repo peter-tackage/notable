@@ -5,8 +5,8 @@ import 'package:notable/model/base_note.dart';
 
 class NoteCard extends StatelessWidget {
   final BaseNote note;
-  final Function onTap;
   final Widget child;
+  final Function onTap;
 
   NoteCard({@required this.note, @required this.child, this.onTap});
 
@@ -32,7 +32,7 @@ class NoteCard extends StatelessWidget {
                     Divider(),
                     ConstrainedBox(
                         constraints: BoxConstraints(maxHeight: 250),
-                        child: child),
+                        child: child)
                   ])),
           onTap: onTap,
         ));

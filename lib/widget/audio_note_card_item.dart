@@ -5,15 +5,15 @@ import 'package:notable/model/audio_note.dart';
 import 'note_card.dart';
 
 class AudioNoteCardItem extends StatelessWidget {
-  final AudioNote note;
+  final AudioNote audioNote;
   final Function onTap;
 
-  AudioNoteCardItem({@required this.note, @required this.onTap});
+  AudioNoteCardItem({@required this.audioNote, @required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return NoteCard(
-      note: note,
+      note: audioNote,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: SizedBox.shrink(),
