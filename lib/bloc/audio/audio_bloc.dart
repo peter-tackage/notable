@@ -332,9 +332,11 @@ class AudioNoteBloc extends Bloc<AudioNoteEvent, AudioNoteState> {
   }
 
   void _stopAudioEngine() async {
-    if (flutterSound.audioState == t_AUDIO_STATE.IS_PLAYING)
+    if (flutterSound.audioState == t_AUDIO_STATE.IS_PLAYING) {
       await flutterSound.stopPlayer();
-    if (flutterSound.audioState == t_AUDIO_STATE.IS_RECORDING)
+    }
+    if (flutterSound.audioState == t_AUDIO_STATE.IS_RECORDING) {
       await flutterSound.stopRecorder();
+    }
   }
 }
