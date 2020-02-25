@@ -23,7 +23,7 @@ dependencies:
   path_provider: ^1.1.0
   json_serializable: ^3.0.0
   intl: ^0.16.0
-  flutter_sound: ^1.4.1
+  flutter_sound: ^2.0.4
   mockito: ^4.1.0
   flutter_localizations:
     sdk: flutter
