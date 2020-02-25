@@ -196,8 +196,8 @@ class AudioNoteBloc extends Bloc<AudioNoteEvent, AudioNoteState> {
 
   Stream<AudioNoteState> _mapStopAudioRecordingEventToState(
       AudioNoteState currentState, StopAudioRecordingRequest event) async* {
-    assert(flutterSound.isPlaying == false);
-    assert(flutterSound.isRecording == true);
+    assert(flutterSound.audioState != t_AUDIO_STATE.IS_PLAYING);
+    assert(flutterSound.audioState == t_AUDIO_STATE.IS_RECORDING);
 
     if (currentState is AudioNoteRecording) {
       await _recorderSubscription?.cancel();
@@ -251,7 +251,7 @@ class AudioNoteBloc extends Bloc<AudioNoteEvent, AudioNoteState> {
         e == null
             ? dispatch(StopAudioPlaybackRequest())
             : dispatch(AudioPlaybackProgressChanged(
-                flutterSound.isPlaying, e?.currentPosition));
+                flutterSound.audioState == t_AUDIO_STATE.IS_PLAYING, e?.currentPosition));
       });
 
       yield AudioNotePlayback(
@@ -267,7 +267,7 @@ class AudioNoteBloc extends Bloc<AudioNoteEvent, AudioNoteState> {
       AudioNoteState currentState, StopAudioPlaybackRequest event) async* {
     if (currentState is AudioNotePlayback) {
       // When the audio clip reaches EOF, we don't need to tell the player to stop.
-      if (flutterSound.isPlaying) {
+      if (flutterSound.audioState == t_AUDIO_STATE.IS_PLAYING) {
         await flutterSound.stopPlayer();
       }
 
@@ -328,7 +328,7 @@ class AudioNoteBloc extends Bloc<AudioNoteEvent, AudioNoteState> {
   }
 
   void _stopAudioEngine() async {
-    if (flutterSound.isPlaying) await flutterSound.stopPlayer();
-    if (flutterSound.isRecording) await flutterSound.stopRecorder();
+    if (flutterSound.audioState == t_AUDIO_STATE.IS_PLAYING) await flutterSound.stopPlayer();
+    if (flutterSound.audioState == t_AUDIO_STATE.IS_RECORDING) await flutterSound.stopRecorder();
   }
 }
