@@ -25,15 +25,19 @@ class SoundStorage {
 
   SoundStorage({@required this.getDirectory, @required this.filenameGenerator});
 
-  Future<String> generateFilename() async {
+  Future<String> toFilePath(String filename) async {
     final dir = await getDirectory();
-    final filename = filenameGenerator();
     return "${dir.path}${Platform.pathSeparator}$filename";
   }
 
+  String generateFilename() {
+    return filenameGenerator();
+  }
+
   Future<FileSystemEntity> delete(String filename) async {
-    print("Deleting sound file: $filename");
-    final file = File(filename);
+    final filePath = await toFilePath(filename);
+    print("Deleting sound file: $filePath");
+    final file = File(filePath);
     return file.delete();
   }
 }
