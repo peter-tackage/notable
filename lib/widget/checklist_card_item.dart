@@ -29,10 +29,10 @@ class ChecklistNoteCardItem extends StatelessWidget {
           activeColor: Colors.green[100],
           onChanged: (__) => onTap()), // don't actually toggle the state.
       Expanded(
-          child: item.isDone
-              ? Text(item.task,
-                  style: TextStyle(decoration: TextDecoration.lineThrough))
-              : Text(item.task))
+          child: Text(item.task,
+    style: TextStyle(
+              color: item.isDone ? Colors.grey : Colors.black,
+              decoration: item.isDone ? TextDecoration.lineThrough : TextDecoration.none)))
     ]);
   }
 }

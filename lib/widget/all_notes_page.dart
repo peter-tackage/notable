@@ -28,7 +28,7 @@ class AllNotesPage extends StatelessWidget {
           return _buildLoadingIndicator();
         } else if (feedState is FeedLoaded) {
           return feedState.feed.isEmpty
-              ? _buildEmptyNoteList(context)
+              ? _buildNoNotesWidget(context)
               : _buildNoteList(context, feedState.feed);
         } else {
           throw Exception("Unsupported FeedState: $feedState");
@@ -39,13 +39,13 @@ class AllNotesPage extends StatelessWidget {
 
   static Widget _buildLoadingIndicator() => Center(child: CircularProgressIndicator());
 
-  static Widget _buildNoteList(BuildContext context, List<BaseNote> checklists) =>
+  static Widget _buildNoteList(BuildContext context, List<BaseNote> notes) =>
       Padding(
           padding: EdgeInsets.symmetric(horizontal: 12),
           child: ListView.builder(
             itemBuilder: (BuildContext context, int index) =>
-                _buildItem(checklists[index], index, context),
-            itemCount: checklists.length,
+                _buildItem(notes[index], index, context),
+            itemCount: notes.length,
           ));
 
   static Widget _buildItem(BaseNote note, int index, BuildContext context) {
@@ -60,7 +60,7 @@ class AllNotesPage extends StatelessWidget {
           drawing: note, onTap: () => _openDrawing(context, note));
     } else if (note is AudioNote) {
       return AudioNoteCardItem(
-          note: note, onTap: () => _openAudioNote(context, note));
+          audioNote: note, onTap: () => _openAudioNote(context, note));
     } else {
       throw Exception("Unsupported Note type: $note");
     }
@@ -92,7 +92,7 @@ class AllNotesPage extends StatelessWidget {
             builder: (context) => AddEditAudioNoteScreen(id: audioNote.id)),
       );
 
-  static Widget _buildEmptyNoteList(BuildContext context) => Center(
+  static Widget _buildNoNotesWidget(BuildContext context) => Center(
           child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
