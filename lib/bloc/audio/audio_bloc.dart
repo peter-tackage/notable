@@ -167,11 +167,13 @@ class AudioNoteBloc extends Bloc<AudioNoteEvent, AudioNoteState> {
       await _dbPeakSubscription?.cancel();
 
       // First time for an unsaved note, we need to set the filename.
-      final filename = currentState.audioNote.filename ??
-          await soundStorage.generateFilename();
+      // We don't want the full path as that can change; only the filename.
+      final filename =
+          currentState.audioNote.filename ?? soundStorage.generateFilename();
+      final filePath = await soundStorage.toFilePath(filename);
 
       // Start new recording to a newly generated filename
-      await flutterSound.startRecorder(uri: filename);
+      await flutterSound.startRecorder(uri: filePath);
 
       // Initial event
       yield AudioNoteRecording(
@@ -243,7 +245,8 @@ class AudioNoteBloc extends Bloc<AudioNoteEvent, AudioNoteState> {
       AudioNoteState currentState, StartAudioPlaybackRequest event) async* {
     if (currentState is AudioNoteLoaded) {
       await _playbackSubscription?.cancel();
-      await flutterSound.startPlayer(currentState.audioNote.filename);
+      await flutterSound.startPlayer(
+          await soundStorage.toFilePath(currentState.audioNote.filename));
       await flutterSound.setVolume(1.0);
 
       _playbackSubscription = flutterSound.onPlayerStateChanged.listen((e) {
@@ -251,7 +254,8 @@ class AudioNoteBloc extends Bloc<AudioNoteEvent, AudioNoteState> {
         e == null
             ? dispatch(StopAudioPlaybackRequest())
             : dispatch(AudioPlaybackProgressChanged(
-                flutterSound.audioState == t_AUDIO_STATE.IS_PLAYING, e?.currentPosition));
+                flutterSound.audioState == t_AUDIO_STATE.IS_PLAYING,
+                e?.currentPosition));
       });
 
       yield AudioNotePlayback(
@@ -328,7 +332,9 @@ class AudioNoteBloc extends Bloc<AudioNoteEvent, AudioNoteState> {
   }
 
   void _stopAudioEngine() async {
-    if (flutterSound.audioState == t_AUDIO_STATE.IS_PLAYING) await flutterSound.stopPlayer();
-    if (flutterSound.audioState == t_AUDIO_STATE.IS_RECORDING) await flutterSound.stopRecorder();
+    if (flutterSound.audioState == t_AUDIO_STATE.IS_PLAYING)
+      await flutterSound.stopPlayer();
+    if (flutterSound.audioState == t_AUDIO_STATE.IS_RECORDING)
+      await flutterSound.stopRecorder();
   }
 }
