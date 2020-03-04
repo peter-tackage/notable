@@ -151,7 +151,7 @@ class AudioNoteBloc extends Bloc<AudioNoteEvent, AudioNoteState> {
   Stream<AudioNoteState> _mapClearAudioNoteEventToState(
       AudioNoteState currentState, ClearAudioNote event) async* {
     if (currentState is BaseAudioNoteLoaded) {
-      // TODO yield - delete the actual recording (not the note)
+      await soundStorage.delete(currentState.audioNote.filename);
     }
   }
 

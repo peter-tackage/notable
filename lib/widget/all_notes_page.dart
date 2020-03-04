@@ -40,13 +40,11 @@ class AllNotesPage extends StatelessWidget {
   static Widget _buildLoadingIndicator() => Center(child: CircularProgressIndicator());
 
   static Widget _buildNoteList(BuildContext context, List<BaseNote> notes) =>
-      Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12),
-          child: ListView.builder(
+           ListView.builder(
             itemBuilder: (BuildContext context, int index) =>
                 _buildItem(notes[index], index, context),
             itemCount: notes.length,
-          ));
+          );
 
   static Widget _buildItem(BaseNote note, int index, BuildContext context) {
     if (note is TextNote) {

@@ -75,8 +75,6 @@ class _AddEditTextNoteScreenContent extends StatelessWidget {
                                       .note_title_hint),
                               maxLines: 1),
                           Expanded(
-                              child: Padding(
-                                  padding: EdgeInsets.only(left: 8, right: 8),
                                   child: TextFormField(
                                       onSaved: (newText) => _textContentChanged(
                                           newText, textNoteBloc),
@@ -90,7 +88,7 @@ class _AddEditTextNoteScreenContent extends StatelessWidget {
                                       autofocus: note.text.isEmpty,
                                       textCapitalization:
                                           TextCapitalization.sentences,
-                                      keyboardType: TextInputType.multiline))),
+                                      keyboardType: TextInputType.multiline)),
                         ]));
                   } else {
                     return Center(child: CircularProgressIndicator());
