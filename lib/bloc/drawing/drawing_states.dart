@@ -5,22 +5,23 @@ import 'package:notable/model/drawing.dart';
 
 @immutable
 abstract class DrawingState extends Equatable {
-  DrawingState([List props = const []]) : super(props);
+  const DrawingState();
+
+  @override
+  List<Object> get props => [];
 }
 
 @immutable
-class DrawingLoading extends DrawingState {
-  DrawingLoading() : super([]);
-
-  @override
-  String toString() => 'DrawingLoading';
-}
+class DrawingLoading extends DrawingState { }
 
 @immutable
 class DrawingLoaded extends DrawingState {
   final Drawing drawing;
 
-  DrawingLoaded({@required this.drawing}) : super([drawing]);
+  const DrawingLoaded({@required this.drawing});
+
+  @override
+  List<Object> get props => [drawing];
 
   @override
   String toString() => 'DrawingLoaded { id: ${drawing.id} }';

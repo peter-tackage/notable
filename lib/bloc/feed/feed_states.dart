@@ -4,22 +4,23 @@ import 'package:notable/model/base_note.dart';
 
 @immutable
 abstract class FeedState extends Equatable {
-  FeedState([List props = const []]) : super(props);
+  const FeedState();
+
+  @override
+  List<Object> get props => [];
 }
 
 @immutable
-class FeedLoading extends FeedState {
-  FeedLoading() : super([]);
-
-  @override
-  String toString() => 'FeedLoading';
-}
+class FeedLoading extends FeedState { }
 
 @immutable
 class FeedLoaded extends FeedState {
   final List<BaseNote> feed;
 
-  FeedLoaded(this.feed) : super([feed]);
+  const FeedLoaded(this.feed);
+
+  @override
+  List<Object> get props => [feed];
 
   @override
   String toString() => 'FeedLoaded { feed: ${feed.length} }';

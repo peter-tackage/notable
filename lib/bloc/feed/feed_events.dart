@@ -4,22 +4,23 @@ import 'package:notable/bloc/notes/notes.dart';
 
 @immutable
 abstract class FeedEvent extends Equatable {
-  FeedEvent([List props = const []]) : super(props);
+  const FeedEvent();
+
+  @override
+  List<Object> get props => [];
 }
 
 @immutable
-class LoadFeed extends FeedEvent {
-  LoadFeed() : super([]);
-
-  @override
-  String toString() => 'LoadFeed';
-}
+class LoadFeed extends FeedEvent { }
 
 @immutable
 class NoteStatesChanged extends FeedEvent {
   final List<NotesState> noteStates;
 
-  NoteStatesChanged(this.noteStates) : super([noteStates]);
+  const NoteStatesChanged(this.noteStates);
+
+  @override
+  List<Object> get props => [noteStates];
 
   @override
   String toString() => 'NoteStatesChanged';

@@ -5,65 +5,49 @@ import 'package:notable/model/drawing_config.dart';
 
 @immutable
 abstract class DrawingEvent extends Equatable {
-  DrawingEvent([List props = const []]) : super(props);
+  const DrawingEvent();
+
+  @override
+  List<Object> get props => [];
 }
 
 @immutable
 class LoadDrawing extends DrawingEvent {
   final Drawing drawing;
 
-  LoadDrawing(this.drawing) : super([drawing]);
+  const LoadDrawing(this.drawing);
+
+  @override
+  List<Object> get props => [drawing];
 
   @override
   String toString() => 'LoadDrawing: {id: ${drawing.id}}';
 }
 
 @immutable
-class SaveDrawing extends DrawingEvent {
-  SaveDrawing() : super([]);
-
-  @override
-  String toString() => 'SaveDrawing';
-}
+class SaveDrawing extends DrawingEvent { }
 
 @immutable
-class DeleteDrawing extends DrawingEvent {
-  DeleteDrawing() : super([]);
-
-  @override
-  String toString() => 'DeleteDrawing';
-}
+class DeleteDrawing extends DrawingEvent { }
 
 @immutable
-class ClearDrawing extends DrawingEvent {
-  ClearDrawing() : super([]);
-
-  @override
-  String toString() => 'ClearDrawing';
-}
+class ClearDrawing extends DrawingEvent { }
 
 @immutable
-class Undo extends DrawingEvent {
-  Undo() : super([]);
-
-  @override
-  String toString() => 'UndoAction';
-}
+class Undo extends DrawingEvent { }
 
 @immutable
-class Redo extends DrawingEvent {
-  Redo() : super([]);
-
-  @override
-  String toString() => 'RedoAction';
-}
+class Redo extends DrawingEvent { }
 
 @immutable
 class StartDrawing extends DrawingEvent {
   final DrawingConfig config;
   final OffsetValue offset;
 
-  StartDrawing(this.config, this.offset) : super([config, offset]);
+  const StartDrawing(this.config, this.offset);
+
+  @override
+  List<Object> get props => [config, offset];
 
   @override
   String toString() => 'StartDrawing: $offset';
@@ -73,25 +57,26 @@ class StartDrawing extends DrawingEvent {
 class UpdateDrawing extends DrawingEvent {
   final OffsetValue offset;
 
-  UpdateDrawing(this.offset) : super([offset]);
+  const UpdateDrawing(this.offset);
+
+  @override
+  List<Object> get props => [offset];
 
   @override
   String toString() => 'UpdateDrawing: $offset';
 }
 
 @immutable
-class EndDrawing extends DrawingEvent {
-  EndDrawing() : super([]);
-
-  @override
-  String toString() => 'EndDrawing';
-}
+class EndDrawing extends DrawingEvent { }
 
 @immutable
 class UpdateDrawingTitle extends DrawingEvent {
   final String title;
 
-  UpdateDrawingTitle(this.title) : super([title]);
+  const UpdateDrawingTitle(this.title);
+
+  @override
+  List<Object> get props => [title];
 
   @override
   String toString() => 'UpdateDrawingTitle: $title';

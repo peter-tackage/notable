@@ -4,22 +4,23 @@ import 'package:notable/model/drawing_config.dart';
 
 @immutable
 abstract class DrawingConfigEvent extends Equatable {
-  DrawingConfigEvent([List props = const []]) : super(props);
+  const DrawingConfigEvent();
+
+  @override
+  List<Object> get props => [];
 }
 
 @immutable
-class LoadDrawingConfig extends DrawingConfigEvent {
-  LoadDrawingConfig() : super([]);
-
-  @override
-  String toString() => 'LoadDrawingConfig';
-}
+class LoadDrawingConfig extends DrawingConfigEvent { }
 
 @immutable
 class SelectDrawingTool extends DrawingConfigEvent {
   final Tool tool;
 
-  SelectDrawingTool(this.tool) : super([tool]);
+  const SelectDrawingTool(this.tool);
+
+  @override
+  List<Object> get props => [tool];
 
   @override
   String toString() => 'SelectDrawingTool: { tool : $tool }';
@@ -29,7 +30,10 @@ class SelectDrawingTool extends DrawingConfigEvent {
 class SelectDrawingToolColor extends DrawingConfigEvent {
   final int color;
 
-  SelectDrawingToolColor(this.color) : super([color]);
+  const SelectDrawingToolColor(this.color);
+
+  @override
+  List<Object> get props => [color];
 
   @override
   String toString() => 'SelectDrawingToolColor: { color: $color }';
@@ -39,7 +43,10 @@ class SelectDrawingToolColor extends DrawingConfigEvent {
 class SelectDrawingToolAlpha extends DrawingConfigEvent {
   final int alpha;
 
-  SelectDrawingToolAlpha(this.alpha) : super([alpha]);
+  const SelectDrawingToolAlpha(this.alpha);
+
+  @override
+  List<Object> get props => [alpha];
 
   @override
   String toString() => 'SelectDrawingToolAlpha: { alpha : $alpha }';
@@ -50,8 +57,10 @@ class SelectToolStyle extends DrawingConfigEvent {
   final PenShape penShape;
   final double strokeWidth;
 
-  SelectToolStyle(this.penShape, this.strokeWidth)
-      : super([penShape, strokeWidth]);
+  const SelectToolStyle(this.penShape, this.strokeWidth);
+
+  @override
+  List<Object> get props => [penShape, strokeWidth];
 
   @override
   String toString() =>

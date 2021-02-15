@@ -4,22 +4,23 @@ import 'package:notable/model/base_note.dart';
 
 @immutable
 abstract class NotesEvent extends Equatable {
-  NotesEvent([List props = const []]) : super(props);
+  const NotesEvent();
+
+  @override
+  List<Object> get props => [];
 }
 
 @immutable
-class LoadNotes extends NotesEvent {
-  LoadNotes() : super();
-
-  @override
-  String toString() => 'LoadNotes';
-}
+class LoadNotes extends NotesEvent { }
 
 @immutable
 class AddNote extends NotesEvent {
   final BaseNote note;
 
-  AddNote(this.note) : super([note]);
+  const AddNote(this.note);
+
+  @override
+  List<Object> get props => [note];
 
   @override
   String toString() => 'AddNote: $note';
@@ -29,7 +30,10 @@ class AddNote extends NotesEvent {
 class UpdateNote extends NotesEvent {
   final BaseNote note;
 
-  UpdateNote(this.note) : super([note]);
+  const UpdateNote(this.note);
+
+  @override
+  List<Object> get props => [note];
 
   @override
   String toString() => 'UpdateEvent: $note';
@@ -39,7 +43,10 @@ class UpdateNote extends NotesEvent {
 class DeleteNote extends NotesEvent {
   final String id;
 
-  DeleteNote(this.id) : super([id]);
+  const DeleteNote(this.id);
+
+  @override
+  List<Object> get props => [id];
 
   @override
   String toString() => 'DeleteNote: $id';

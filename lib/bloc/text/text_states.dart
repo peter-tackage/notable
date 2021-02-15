@@ -4,20 +4,23 @@ import 'package:notable/model/text_note.dart';
 
 @immutable
 abstract class TextNoteState extends Equatable {
-  TextNoteState([List props = const []]) : super(props);
+  const TextNoteState();
+
+  @override
+  List<Object> get props => [];
 }
 
 @immutable
-class TextNoteLoading extends TextNoteState {
-  @override
-  String toString() => 'TextNoteLoading';
-}
+class TextNoteLoading extends TextNoteState { }
 
 @immutable
 class TextNoteLoaded extends TextNoteState {
   final TextNote textNote;
 
-  TextNoteLoaded(this.textNote) : super([textNote]);
+  const TextNoteLoaded(this.textNote);
+
+  @override
+  List<Object> get props => [textNote];
 
   @override
   String toString() => 'TextNoteLoaded { textNote: $textNote }';

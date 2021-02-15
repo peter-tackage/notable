@@ -4,22 +4,23 @@ import 'package:notable/model/checklist.dart';
 
 @immutable
 abstract class ChecklistState extends Equatable {
-  ChecklistState([List props = const []]) : super(props);
+  const ChecklistState();
+
+  @override
+  List<Object> get props => [];
 }
 
 @immutable
-class ChecklistLoading extends ChecklistState {
-  ChecklistLoading() : super([]);
-
-  @override
-  String toString() => 'ChecklistLoading';
-}
+class ChecklistLoading extends ChecklistState {}
 
 @immutable
 class ChecklistLoaded extends ChecklistState {
   final Checklist checklist;
 
-  ChecklistLoaded(this.checklist) : super([checklist]);
+  const ChecklistLoaded(this.checklist);
+
+  @override
+  List<Object> get props => [checklist];
 
   @override
   String toString() =>

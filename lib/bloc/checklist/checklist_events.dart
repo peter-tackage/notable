@@ -4,40 +4,39 @@ import 'package:notable/model/checklist.dart';
 
 @immutable
 abstract class ChecklistEvent extends Equatable {
-  ChecklistEvent([List props = const []]) : super(props);
+  const ChecklistEvent();
+
+  @override
+  List<Object> get props => [];
 }
 
 @immutable
 class LoadChecklist extends ChecklistEvent {
   final Checklist checklist;
 
-  LoadChecklist(this.checklist) : super([checklist]);
+  const LoadChecklist(this.checklist);
+
+  @override
+  List<Object> get props => [checklist];
 
   @override
   String toString() => 'LoadChecklist: {id: ${checklist.id}}';
 }
 
 @immutable
-class SaveChecklist extends ChecklistEvent {
-  SaveChecklist() : super([]);
-
-  @override
-  String toString() => 'SaveChecklist';
-}
+class SaveChecklist extends ChecklistEvent { }
 
 @immutable
-class DeleteChecklist extends ChecklistEvent {
-  DeleteChecklist() : super([]);
-
-  @override
-  String toString() => 'DeleteChecklist';
-}
+class DeleteChecklist extends ChecklistEvent { }
 
 @immutable
 class UpdateChecklistTitle extends ChecklistEvent {
   final String title;
 
-  UpdateChecklistTitle(this.title) : super([title]);
+  const UpdateChecklistTitle(this.title);
+
+  @override
+  List<Object> get props => [title];
 
   @override
   String toString() => 'UpdateChecklistTitle: $title';
@@ -48,7 +47,10 @@ class SetChecklistItem extends ChecklistEvent {
   final int index;
   final ChecklistItem item;
 
-  SetChecklistItem(this.index, this.item) : super([index, item]);
+  const SetChecklistItem(this.index, this.item);
+
+  @override
+  List<Object> get props => [index, item];
 
   @override
   String toString() => 'SetChecklistItem: $item';
@@ -58,16 +60,14 @@ class SetChecklistItem extends ChecklistEvent {
 class RemoveChecklistItem extends ChecklistEvent {
   final int index;
 
-  RemoveChecklistItem(this.index) : super([index]);
+  const RemoveChecklistItem(this.index);
+
+  @override
+  List<Object> get props => [index];
 
   @override
   String toString() => 'RemoveChecklistItem: $index';
 }
 
 @immutable
-class AddEmptyChecklistItem extends ChecklistEvent {
-  AddEmptyChecklistItem() : super([]);
-
-  @override
-  String toString() => 'AddEmptyChecklistItem';
-}
+class AddEmptyChecklistItem extends ChecklistEvent { }
