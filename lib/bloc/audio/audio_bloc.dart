@@ -34,7 +34,7 @@ class AudioNoteBloc extends Bloc<AudioNoteEvent, AudioNoteState> {
       : super(AudioNoteLoading()) {
     _audioNotesSubscription = notesBloc.listen((state) {
       if (state is NotesLoaded) {
-        add(LoadAudioNote(state.notes.firstWhere((note) => note.id == this.id,
+        add(LoadAudioNote(state.notes.firstWhere((note) => note.id == id,
             orElse: () => AudioNote((b) => b
               ..filename = null
               ..lengthMillis = 0
