@@ -17,41 +17,37 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
 
   StreamSubscription checklistsSubscription;
 
-  ChecklistBloc({@required this.notesBloc, @required this.id}) {
-    checklistsSubscription = notesBloc.state.listen((state) {
+  ChecklistBloc({@required this.notesBloc, @required this.id})
+      : super(ChecklistLoading()) {
+    checklistsSubscription = notesBloc.listen((state) {
       if (state is NotesLoaded) {
         // FIXME Editing entries with no items renders as empty
         // FIXME This dispatches too often
-        dispatch(LoadChecklist(
-            state.notes.firstWhere((note) => note.id == this.id,
-                    orElse: () => Checklist((b) => b
-                      ..title = ''
-                      ..labels = ListBuilder<Label>()
-                      ..items = ListBuilder([ChecklistItem.empty()])))
-                as Checklist));
+        add(LoadChecklist(state.notes.firstWhere((note) => note.id == id,
+            orElse: () => Checklist((b) => b
+              ..title = ''
+              ..labels = ListBuilder<Label>()
+              ..items = ListBuilder([ChecklistItem.empty()]))) as Checklist));
       }
     });
   }
 
   @override
-  ChecklistState get initialState => ChecklistLoading();
-
-  @override
   Stream<ChecklistState> mapEventToState(ChecklistEvent event) async* {
     if (event is LoadChecklist) {
-      yield* _mapLoadChecklistEventToState(currentState, event);
+      yield* _mapLoadChecklistEventToState(state, event);
     } else if (event is SaveChecklist) {
-      yield* _mapSaveChecklistEventToState(currentState, event);
+      yield* _mapSaveChecklistEventToState(state, event);
     } else if (event is DeleteChecklist) {
-      yield* _mapDeleteChecklistEventToState(currentState, event);
+      yield* _mapDeleteChecklistEventToState(state, event);
     } else if (event is SetChecklistItem) {
-      yield* _mapAddChecklistItemEventToState(currentState, event);
+      yield* _mapAddChecklistItemEventToState(state, event);
     } else if (event is AddEmptyChecklistItem) {
-      yield* _mapAddEmptyChecklistItemEventToState(currentState, event);
+      yield* _mapAddEmptyChecklistItemEventToState(state, event);
     } else if (event is UpdateChecklistTitle) {
-      yield* _mapUpdateChecklistTitleEventToState(currentState, event);
+      yield* _mapUpdateChecklistTitleEventToState(state, event);
     } else if (event is RemoveChecklistItem) {
-      yield* _mapRemoveChecklistItemEventToState(currentState, event);
+      yield* _mapRemoveChecklistItemEventToState(state, event);
     }
   }
 
@@ -60,7 +56,7 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
     if (event is LoadChecklist) {
       // We apply the item sorting here so that the insertion order of the items
       // is not altered by toggling the done flag.
-      List<ChecklistItem> items = List.from(event.checklist.items);
+      var items = List<ChecklistItem>.from(event.checklist.items);
       items.sort(itemComparator);
 
       yield ChecklistLoaded(
@@ -79,13 +75,13 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
       ChecklistState currentState, ChecklistEvent event) async* {
     if (event is SaveChecklist) {
       if (currentState is ChecklistLoaded) {
-        Checklist checklist = currentState.checklist
+        var checklist = currentState.checklist
             .rebuild((b) => b..items.removeWhere((item) => item.isEmpty));
 
         if (id == null) {
-          notesBloc.dispatch(AddNote(checklist));
+          notesBloc.add(AddNote(checklist));
         } else {
-          notesBloc.dispatch(UpdateNote(checklist));
+          notesBloc.add(UpdateNote(checklist));
         }
       }
     }
@@ -96,7 +92,7 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
     if (event is DeleteChecklist) {
       // Delete the note and return all the notes
       if (id != null) {
-        notesBloc.dispatch(DeleteNote(id));
+        notesBloc.add(DeleteNote(id));
       }
     }
   }
@@ -106,7 +102,7 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
     if (event is SetChecklistItem) {
       // Add the item to existing note
       if (currentState is ChecklistLoaded) {
-        List<ChecklistItem> items = List.from(currentState.checklist.items);
+        var items = List<ChecklistItem>.from(currentState.checklist.items);
         items[event.index] = event.item;
         items.sort(itemComparator);
 
@@ -121,7 +117,7 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
     if (event is RemoveChecklistItem) {
       // Add the item to existing note
       if (currentState is ChecklistLoaded) {
-        List<ChecklistItem> items = List.from(currentState.checklist.items);
+        var items = List<ChecklistItem>.from(currentState.checklist.items);
         items.removeAt(event.index);
         items.sort(itemComparator);
 
@@ -136,7 +132,7 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
     if (event is AddEmptyChecklistItem) {
       // Add the item to existing note
       if (currentState is ChecklistLoaded) {
-        List<ChecklistItem> items = List.from(currentState.checklist.items);
+        var items = List<ChecklistItem>.from(currentState.checklist.items);
         items.add(ChecklistItem.empty());
         yield ChecklistLoaded(
             currentState.checklist.rebuild((b) => b.items.replace(items)));
@@ -155,8 +151,8 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
   }
 
   @override
-  void dispose() {
-    super.dispose();
+  Future<Function> close() {
     checklistsSubscription.cancel();
+    return super.close();
   }
 }

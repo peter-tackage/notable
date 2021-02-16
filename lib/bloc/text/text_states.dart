@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
 import 'package:notable/model/text_note.dart';
 
 abstract class TextNoteState extends Equatable {
@@ -9,7 +8,7 @@ abstract class TextNoteState extends Equatable {
   List<Object> get props => [];
 }
 
-class TextNoteLoading extends TextNoteState { }
+class TextNoteLoading extends TextNoteState {}
 
 class TextNoteLoaded extends TextNoteState {
   final TextNote textNote;

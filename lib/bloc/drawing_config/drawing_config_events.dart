@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
 import 'package:notable/model/drawing_config.dart';
 
 abstract class DrawingConfigEvent extends Equatable {
@@ -9,7 +8,7 @@ abstract class DrawingConfigEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class LoadDrawingConfig extends DrawingConfigEvent { }
+class LoadDrawingConfig extends DrawingConfigEvent {}
 
 class SelectDrawingTool extends DrawingConfigEvent {
   final Tool tool;

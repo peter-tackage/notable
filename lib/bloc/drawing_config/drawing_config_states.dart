@@ -1,10 +1,9 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
 import 'package:notable/model/drawing_config.dart';
 
 abstract class DrawingConfigState extends Equatable {
   const DrawingConfigState();
+
   @override
   List<Object> get props => [];
 }

@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
 import 'package:notable/model/text_note.dart';
 
 abstract class TextNoteEvent extends Equatable {
@@ -21,9 +20,9 @@ class LoadTextNote extends TextNoteEvent {
   String toString() => 'LoadTextNote: {id: ${textNote.id}';
 }
 
-class SaveTextNote extends TextNoteEvent { }
+class SaveTextNote extends TextNoteEvent {}
 
-class DeleteTextNote extends TextNoteEvent { }
+class DeleteTextNote extends TextNoteEvent {}
 
 class UpdateTextNoteTitle extends TextNoteEvent {
   final String title;

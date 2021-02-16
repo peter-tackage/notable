@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
 import 'package:notable/model/drawing.dart';
 import 'package:notable/model/drawing_config.dart';
 
@@ -22,15 +21,15 @@ class LoadDrawing extends DrawingEvent {
   String toString() => 'LoadDrawing: {id: ${drawing.id}}';
 }
 
-class SaveDrawing extends DrawingEvent { }
+class SaveDrawing extends DrawingEvent {}
 
-class DeleteDrawing extends DrawingEvent { }
+class DeleteDrawing extends DrawingEvent {}
 
-class ClearDrawing extends DrawingEvent { }
+class ClearDrawing extends DrawingEvent {}
 
-class Undo extends DrawingEvent { }
+class Undo extends DrawingEvent {}
 
-class Redo extends DrawingEvent { }
+class Redo extends DrawingEvent {}
 
 class StartDrawing extends DrawingEvent {
   final DrawingConfig config;
@@ -57,7 +56,7 @@ class UpdateDrawing extends DrawingEvent {
   String toString() => 'UpdateDrawing: $offset';
 }
 
-class EndDrawing extends DrawingEvent { }
+class EndDrawing extends DrawingEvent {}
 
 class UpdateDrawingTitle extends DrawingEvent {
   final String title;
