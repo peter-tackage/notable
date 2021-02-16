@@ -3,7 +3,6 @@ import 'package:meta/meta.dart';
 import 'package:notable/model/drawing.dart';
 import 'package:notable/model/drawing_config.dart';
 
-@immutable
 abstract class DrawingEvent extends Equatable {
   const DrawingEvent();
 
@@ -11,7 +10,6 @@ abstract class DrawingEvent extends Equatable {
   List<Object> get props => [];
 }
 
-@immutable
 class LoadDrawing extends DrawingEvent {
   final Drawing drawing;
 
@@ -24,22 +22,16 @@ class LoadDrawing extends DrawingEvent {
   String toString() => 'LoadDrawing: {id: ${drawing.id}}';
 }
 
-@immutable
 class SaveDrawing extends DrawingEvent { }
 
-@immutable
 class DeleteDrawing extends DrawingEvent { }
 
-@immutable
 class ClearDrawing extends DrawingEvent { }
 
-@immutable
 class Undo extends DrawingEvent { }
 
-@immutable
 class Redo extends DrawingEvent { }
 
-@immutable
 class StartDrawing extends DrawingEvent {
   final DrawingConfig config;
   final OffsetValue offset;
@@ -53,7 +45,6 @@ class StartDrawing extends DrawingEvent {
   String toString() => 'StartDrawing: $offset';
 }
 
-@immutable
 class UpdateDrawing extends DrawingEvent {
   final OffsetValue offset;
 
@@ -66,10 +57,8 @@ class UpdateDrawing extends DrawingEvent {
   String toString() => 'UpdateDrawing: $offset';
 }
 
-@immutable
 class EndDrawing extends DrawingEvent { }
 
-@immutable
 class UpdateDrawingTitle extends DrawingEvent {
   final String title;
 

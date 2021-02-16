@@ -4,7 +4,6 @@ import 'package:notable/model/audio_note.dart';
 import 'package:notable/model/audio_playback.dart';
 import 'package:notable/model/audio_recording.dart';
 
-@immutable
 abstract class AudioNoteState extends Equatable {
   const AudioNoteState();
 
@@ -12,11 +11,9 @@ abstract class AudioNoteState extends Equatable {
   List<Object> get props => [];
 }
 
-@immutable
 class AudioNoteLoading extends AudioNoteState {}
 
 // The idea here is for BaseAudioNoteLoaded to be a bit like a sealed class.
-@immutable
 abstract class BaseAudioNoteLoaded extends AudioNoteState {
   final AudioNote audioNote;
 
@@ -26,7 +23,6 @@ abstract class BaseAudioNoteLoaded extends AudioNoteState {
   List<Object> get props => [audioNote];
 }
 
-@immutable
 class AudioNoteLoaded extends BaseAudioNoteLoaded {
   const AudioNoteLoaded(audioNote) : super(audioNote);
 
@@ -34,7 +30,6 @@ class AudioNoteLoaded extends BaseAudioNoteLoaded {
   String toString() => 'AudioNoteLoaded { notes: $audioNote }';
 }
 
-@immutable
 class AudioNotePlayback extends BaseAudioNoteLoaded {
   final AudioPlayback audioPlayback;
 
@@ -49,7 +44,6 @@ class AudioNotePlayback extends BaseAudioNoteLoaded {
   }
 }
 
-@immutable
 class AudioNoteRecording extends BaseAudioNoteLoaded {
   final AudioRecording audioRecording;
 

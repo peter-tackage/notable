@@ -2,7 +2,6 @@ import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:notable/bloc/notes/notes.dart';
 
-@immutable
 abstract class FeedEvent extends Equatable {
   const FeedEvent();
 
@@ -10,10 +9,8 @@ abstract class FeedEvent extends Equatable {
   List<Object> get props => [];
 }
 
-@immutable
 class LoadFeed extends FeedEvent { }
 
-@immutable
 class NoteStatesChanged extends FeedEvent {
   final List<NotesState> noteStates;
 

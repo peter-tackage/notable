@@ -2,7 +2,6 @@ import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:notable/model/audio_note.dart';
 
-@immutable
 abstract class AudioNoteEvent extends Equatable {
   const AudioNoteEvent();
 
@@ -10,7 +9,6 @@ abstract class AudioNoteEvent extends Equatable {
   List<Object> get props => [];
 }
 
-@immutable
 class LoadAudioNote extends AudioNoteEvent {
   final AudioNote audioNote;
 
@@ -23,16 +21,12 @@ class LoadAudioNote extends AudioNoteEvent {
   String toString() => 'LoadAudioNote: {id: ${audioNote.id}';
 }
 
-@immutable
 class SaveAudioNote extends AudioNoteEvent { }
 
-@immutable
 class DeleteAudioNote extends AudioNoteEvent { }
 
-@immutable
 class ClearAudioNote extends AudioNoteEvent { }
 
-@immutable
 class UpdateAudioNoteTitle extends AudioNoteEvent {
   final String title;
 
@@ -45,25 +39,18 @@ class UpdateAudioNoteTitle extends AudioNoteEvent {
   String toString() => 'UpdateAudioNoteTitle: $title';
 }
 
-@immutable
 class StartAudioRecordingRequest extends AudioNoteEvent { }
 
-@immutable
 class StopAudioRecordingRequest extends AudioNoteEvent { }
 
-@immutable
 class StartAudioPlaybackRequest extends AudioNoteEvent { }
 
-@immutable
 class PauseAudioPlaybackRequest extends AudioNoteEvent { }
 
-@immutable
 class ResumeAudioPlaybackRequest extends AudioNoteEvent { }
 
-@immutable
 class StopAudioPlaybackRequest extends AudioNoteEvent { }
 
-@immutable
 class AudioRecordingProgressChanged extends AudioNoteEvent {
   final bool isRecording;
   final double progress;
@@ -78,7 +65,6 @@ class AudioRecordingProgressChanged extends AudioNoteEvent {
       'AudioRecordingProgressChanged: { isRecording: $isRecording, progress: $progress}';
 }
 
-@immutable
 class AudioRecordingLevelChanged extends AudioNoteEvent {
   final double level;
 
@@ -91,7 +77,6 @@ class AudioRecordingLevelChanged extends AudioNoteEvent {
   String toString() => 'AudioRecordingLevelChanged: { level: $level }';
 }
 
-@immutable
 class AudioPlaybackProgressChanged extends AudioNoteEvent {
   final bool isPlaying;
   final double progress;

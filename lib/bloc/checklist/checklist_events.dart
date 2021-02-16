@@ -2,7 +2,6 @@ import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:notable/model/checklist.dart';
 
-@immutable
 abstract class ChecklistEvent extends Equatable {
   const ChecklistEvent();
 
@@ -10,7 +9,6 @@ abstract class ChecklistEvent extends Equatable {
   List<Object> get props => [];
 }
 
-@immutable
 class LoadChecklist extends ChecklistEvent {
   final Checklist checklist;
 
@@ -23,13 +21,10 @@ class LoadChecklist extends ChecklistEvent {
   String toString() => 'LoadChecklist: {id: ${checklist.id}}';
 }
 
-@immutable
 class SaveChecklist extends ChecklistEvent { }
 
-@immutable
 class DeleteChecklist extends ChecklistEvent { }
 
-@immutable
 class UpdateChecklistTitle extends ChecklistEvent {
   final String title;
 
@@ -42,7 +37,6 @@ class UpdateChecklistTitle extends ChecklistEvent {
   String toString() => 'UpdateChecklistTitle: $title';
 }
 
-@immutable
 class SetChecklistItem extends ChecklistEvent {
   final int index;
   final ChecklistItem item;
@@ -56,7 +50,6 @@ class SetChecklistItem extends ChecklistEvent {
   String toString() => 'SetChecklistItem: $item';
 }
 
-@immutable
 class RemoveChecklistItem extends ChecklistEvent {
   final int index;
 
@@ -69,5 +62,4 @@ class RemoveChecklistItem extends ChecklistEvent {
   String toString() => 'RemoveChecklistItem: $index';
 }
 
-@immutable
 class AddEmptyChecklistItem extends ChecklistEvent { }

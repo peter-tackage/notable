@@ -2,7 +2,6 @@ import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:notable/model/base_note.dart';
 
-@immutable
 abstract class NotesEvent extends Equatable {
   const NotesEvent();
 
@@ -10,10 +9,8 @@ abstract class NotesEvent extends Equatable {
   List<Object> get props => [];
 }
 
-@immutable
 class LoadNotes extends NotesEvent { }
 
-@immutable
 class AddNote extends NotesEvent {
   final BaseNote note;
 
@@ -26,7 +23,6 @@ class AddNote extends NotesEvent {
   String toString() => 'AddNote: $note';
 }
 
-@immutable
 class UpdateNote extends NotesEvent {
   final BaseNote note;
 
@@ -39,7 +35,6 @@ class UpdateNote extends NotesEvent {
   String toString() => 'UpdateEvent: $note';
 }
 
-@immutable
 class DeleteNote extends NotesEvent {
   final String id;
 

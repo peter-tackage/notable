@@ -2,7 +2,6 @@ import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:notable/model/checklist.dart';
 
-@immutable
 abstract class ChecklistState extends Equatable {
   const ChecklistState();
 
@@ -10,10 +9,8 @@ abstract class ChecklistState extends Equatable {
   List<Object> get props => [];
 }
 
-@immutable
 class ChecklistLoading extends ChecklistState {}
 
-@immutable
 class ChecklistLoaded extends ChecklistState {
   final Checklist checklist;
 

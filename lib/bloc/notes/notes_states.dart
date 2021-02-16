@@ -2,7 +2,6 @@ import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:notable/model/base_note.dart';
 
-@immutable
 abstract class NotesState extends Equatable {
   const NotesState();
 

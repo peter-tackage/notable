@@ -2,7 +2,6 @@ import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:notable/model/drawing_config.dart';
 
-@immutable
 abstract class DrawingConfigEvent extends Equatable {
   const DrawingConfigEvent();
 
@@ -10,10 +9,8 @@ abstract class DrawingConfigEvent extends Equatable {
   List<Object> get props => [];
 }
 
-@immutable
 class LoadDrawingConfig extends DrawingConfigEvent { }
 
-@immutable
 class SelectDrawingTool extends DrawingConfigEvent {
   final Tool tool;
 
@@ -26,7 +23,6 @@ class SelectDrawingTool extends DrawingConfigEvent {
   String toString() => 'SelectDrawingTool: { tool : $tool }';
 }
 
-@immutable
 class SelectDrawingToolColor extends DrawingConfigEvent {
   final int color;
 
@@ -39,7 +35,6 @@ class SelectDrawingToolColor extends DrawingConfigEvent {
   String toString() => 'SelectDrawingToolColor: { color: $color }';
 }
 
-@immutable
 class SelectDrawingToolAlpha extends DrawingConfigEvent {
   final int alpha;
 
@@ -52,7 +47,6 @@ class SelectDrawingToolAlpha extends DrawingConfigEvent {
   String toString() => 'SelectDrawingToolAlpha: { alpha : $alpha }';
 }
 
-@immutable
 class SelectToolStyle extends DrawingConfigEvent {
   final PenShape penShape;
   final double strokeWidth;
