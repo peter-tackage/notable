@@ -12,7 +12,7 @@ class NoteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isUntitled = note.title == null || note.title.isEmpty;
+    var isUntitled = note.title == null || note.title.isEmpty;
     return Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         elevation: 4,
@@ -27,7 +27,7 @@ class NoteCard extends StatelessWidget {
                             ? NotableLocalizations.of(context)
                                 .note_untitled_placeholder
                             : note.title,
-                        style: Theme.of(context).textTheme.title.copyWith(
+                        style: Theme.of(context).textTheme.headline6.copyWith(
                             color: isUntitled ? Colors.grey : Colors.black)),
                     Divider(),
                     ConstrainedBox(

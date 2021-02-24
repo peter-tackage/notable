@@ -248,21 +248,21 @@ packages:
       name: flutter_sound
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.4.8+2"
+    version: "7.7.0+1"
   flutter_sound_platform_interface:
     dependency: transitive
     description:
       name: flutter_sound_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.4.8+2"
+    version: "7.7.0+1"
   flutter_sound_web:
     dependency: transitive
     description:
       name: flutter_sound_web
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.4.8+2"
+    version: "7.7.0+1"
   flutter_spinkit:
     dependency: transitive
     description:

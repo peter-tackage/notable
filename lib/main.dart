@@ -27,7 +27,7 @@ import 'package:notable/storage/file_storage.dart';
 import 'package:path_provider/path_provider.dart';
 
 void main() {
-  BlocSupervisor.delegate = SimpleBlocDelegate();
+  Bloc.observer = SimpleBlocDelegate();
   runApp(NotableApp());
 }
 
@@ -37,13 +37,13 @@ class NotableApp extends StatelessWidget {
     return MultiBlocProvider(
         providers: [
           BlocProvider<NotesBloc<TextNote, TextNoteEntity>>(
-              builder: _textNoteBlocBuilder),
+              create: _textNoteBlocBuilder),
           BlocProvider<NotesBloc<Checklist, ChecklistEntity>>(
-              builder: _checklistBlocBuilder),
+              create: _checklistBlocBuilder),
           BlocProvider<NotesBloc<Drawing, DrawingEntity>>(
-              builder: _drawingsBlocBuilder),
+              create: _drawingsBlocBuilder),
           BlocProvider<NotesBloc<AudioNote, AudioNoteEntity>>(
-              builder: _audioNotesBlocBuilder)
+              create: _audioNotesBlocBuilder)
         ],
         child: MaterialApp(
           title: 'Notable',

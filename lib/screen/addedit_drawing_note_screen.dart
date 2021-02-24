@@ -27,10 +27,10 @@ class AddEditDrawingNoteScreen extends StatelessWidget {
 
     return MultiBlocProvider(providers: [
       BlocProvider<DrawingBloc>(
-          builder: (BuildContext context) =>
+          create: (BuildContext context) =>
               DrawingBloc(notesBloc: notesBloc, id: id)),
       BlocProvider<DrawingConfigBloc>(
-          builder: (BuildContext context) => DrawingConfigBloc())
+          create: (BuildContext context) => DrawingConfigBloc())
     ], child: _AddEditDrawingNoteScreenContent(id: id));
   }
 }
@@ -71,7 +71,7 @@ class _AddEditDrawingNoteScreenContent extends StatelessWidget {
                       onSaved: (value) =>
                           _onSaveTitle(value, _drawingBlocOf(context)),
                       initialValue: state.drawing.title,
-                      style: Theme.of(context).textTheme.title,
+                      style: Theme.of(context).textTheme.headline6,
                       decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText:
@@ -92,29 +92,29 @@ class _AddEditDrawingNoteScreenContent extends StatelessWidget {
   DrawingConfigBloc _drawingConfigBlocOf(context) =>
       BlocProvider.of<DrawingConfigBloc>(context);
 
-  _saveDrawing(context) {
+  void _saveDrawing(context) {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
     }
 
-    _drawingBlocOf(context).dispatch(SaveDrawing());
+    _drawingBlocOf(context).add(SaveDrawing());
     Navigator.pop(context);
   }
 
-  _handleMenuItemSelection(menuItem, context) {
-    if (menuItem == "delete") {
+  void _handleMenuItemSelection(menuItem, context) {
+    if (menuItem == 'delete') {
       _deleteNote(context);
     }
   }
 
-  _deleteNote(context) {
+  void _deleteNote(context) {
     if (id != null) {
-      _drawingBlocOf(context).dispatch(DeleteDrawing());
+      _drawingBlocOf(context).add(DeleteDrawing());
       Navigator.pop(context);
     }
   }
 
-  _createMenuItems(context) {
+   List<Widget> _createMenuItems(context) {
     return id == null
         ? null
         : <Widget>[
@@ -122,7 +122,7 @@ class _AddEditDrawingNoteScreenContent extends StatelessWidget {
                 onSelected: (value) => _handleMenuItemSelection(value, context),
                 itemBuilder: (context) => [
                       PopupMenuItem(
-                        value: "delete",
+                        value: 'delete',
                         child: Text(NotableLocalizations.of(context)
                             .note_delete_menu_item),
                       )
@@ -132,7 +132,7 @@ class _AddEditDrawingNoteScreenContent extends StatelessWidget {
 
   Widget _buildBottomAppBar(context) {
     return BlocBuilder<DrawingConfigBloc, DrawingConfigState>(
-        bloc: _drawingConfigBlocOf(context),
+        cubit: _drawingConfigBlocOf(context),
         builder: (BuildContext context, DrawingConfigState configState) =>
             BlocBuilder<DrawingBloc, DrawingState>(
                 builder: (BuildContext context, DrawingState drawingState) =>
@@ -231,25 +231,25 @@ class _AddEditDrawingNoteScreenContent extends StatelessWidget {
     ];
   }
 
-  _setToolColor(color, drawingConfigBloc) =>
-      drawingConfigBloc.dispatch(SelectDrawingToolColor(color));
+  void _setToolColor(color, drawingConfigBloc) =>
+      drawingConfigBloc.add(SelectDrawingToolColor(color));
 
-  _undo(drawingBloc) => drawingBloc.dispatch(Undo());
+  void _undo(drawingBloc) => drawingBloc.add(Undo());
 
-  _redo(drawingBloc) => drawingBloc.dispatch(Redo());
+  void _redo(drawingBloc) => drawingBloc.add(Redo());
 
-  _clear(drawingBloc) => drawingBloc.dispatch(ClearDrawing());
+  void _clear(drawingBloc) => drawingBloc.add(ClearDrawing());
 
-  _selectBrush(drawingConfigBloc) =>
-      drawingConfigBloc.dispatch(SelectDrawingTool(Tool.Brush));
+  void _selectBrush(drawingConfigBloc) =>
+      drawingConfigBloc.add(SelectDrawingTool(Tool.Brush));
 
-  _selectToolStyle(_ToolStyle toolStyle, drawingConfigBloc) {
+  void _selectToolStyle(_ToolStyle toolStyle, drawingConfigBloc) {
     drawingConfigBloc
-        .dispatch(SelectToolStyle(toolStyle.penShape, toolStyle.strokeWidth));
+        .add(SelectToolStyle(toolStyle.penShape, toolStyle.strokeWidth));
   }
 
-  _selectEraser(drawingConfigBloc) =>
-      drawingConfigBloc.dispatch(SelectDrawingTool(Tool.Eraser));
+  void _selectEraser(drawingConfigBloc) =>
+      drawingConfigBloc.add(SelectDrawingTool(Tool.Eraser));
 
   List<DropdownMenuItem<int>> _buildColorMenuItems() {
     return availableColors
@@ -277,8 +277,8 @@ class _AddEditDrawingNoteScreenContent extends StatelessWidget {
           ? BoxDecoration(shape: BoxShape.rectangle, color: Colors.black)
           : BoxDecoration(shape: BoxShape.circle, color: Colors.black);
 
-  _onSaveTitle(String newTitle, drawingBloc) =>
-      drawingBloc.dispatch(UpdateDrawingTitle(newTitle));
+  void _onSaveTitle(String newTitle, drawingBloc) =>
+      drawingBloc.add(UpdateDrawingTitle(newTitle));
 
 // TODO Wire this up with some ingenious UI concept.
 //  List<Widget> _buildAlphaMenuItem(
@@ -293,7 +293,7 @@ class _AddEditDrawingNoteScreenContent extends StatelessWidget {
 //  }
 //
 //  _setToolAlpha(alpha, DrawingConfigBloc drawingConfigBloc) {
-//    drawingConfigBloc.dispatch(SelectDrawingToolAlpha(alpha));
+//    drawingConfigBloc.add(SelectDrawingToolAlpha(alpha));
 //  }
 }
 

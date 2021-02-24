@@ -7,12 +7,12 @@ import 'package:notable/l10n/messages_all.dart';
 class NotableLocalizations {
   /// Initialize localization systems and messages
   static Future<NotableLocalizations> load(Locale locale) async {
-    final String localeName =
+    final localeName =
         locale.countryCode == null || locale.countryCode.isEmpty
             ? locale.languageCode
             : locale.toString();
 
-    final String canonicalLocaleName = Intl.canonicalizedLocale(localeName);
+    final canonicalLocaleName = Intl.canonicalizedLocale(localeName);
     await initializeMessages(canonicalLocaleName);
 
     Intl.defaultLocale = canonicalLocaleName;

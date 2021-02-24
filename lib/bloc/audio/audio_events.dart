@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
 import 'package:notable/model/audio_note.dart';
 
 abstract class AudioNoteEvent extends Equatable {
@@ -53,7 +52,7 @@ class StopAudioPlaybackRequest extends AudioNoteEvent { }
 
 class AudioRecordingProgressChanged extends AudioNoteEvent {
   final bool isRecording;
-  final double progress;
+  final int progress;
 
   const AudioRecordingProgressChanged(this.isRecording, this.progress);
 
@@ -79,7 +78,7 @@ class AudioRecordingLevelChanged extends AudioNoteEvent {
 
 class AudioPlaybackProgressChanged extends AudioNoteEvent {
   final bool isPlaying;
-  final double progress;
+  final int progress;
 
   const AudioPlaybackProgressChanged(this.isPlaying, this.progress);
 

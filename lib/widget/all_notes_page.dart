@@ -60,30 +60,30 @@ class AllNotesPage extends StatelessWidget {
       return AudioNoteCardItem(
           audioNote: note, onTap: () => _openAudioNote(context, note));
     } else {
-      throw Exception("Unsupported Note type: $note");
+      throw Exception('Unsupported Note type: $note');
     }
   }
 
-  static _openTextNote(BuildContext context, TextNote note) => Navigator.push(
+  static Future _openTextNote(BuildContext context, TextNote note) => Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => AddEditTextNoteScreen(id: note.id)),
       );
 
-  static _openChecklist(BuildContext context, Checklist checklist) =>
+  static Future _openChecklist(BuildContext context, Checklist checklist) =>
       Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => AddEditChecklistNoteScreen(id: checklist.id)),
       );
 
-  static _openDrawing(BuildContext context, Drawing drawing) => Navigator.push(
+  static Future _openDrawing(BuildContext context, Drawing drawing) => Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => AddEditDrawingNoteScreen(id: drawing.id)),
       );
 
-  static _openAudioNote(BuildContext context, AudioNote audioNote) =>
+  static Future _openAudioNote(BuildContext context, AudioNote audioNote) =>
       Navigator.push(
         context,
         MaterialPageRoute(

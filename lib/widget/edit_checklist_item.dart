@@ -30,7 +30,7 @@ class _EditChecklistItemState extends State<EditChecklistItem> {
 
   @override
   Widget build(BuildContext context) {
-    bool isDone = widget.initialValue.isDone;
+    var isDone = widget.initialValue.isDone;
 
     return Padding(
         padding: EdgeInsets.all(0),

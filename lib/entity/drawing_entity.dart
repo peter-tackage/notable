@@ -7,8 +7,8 @@ part 'drawing_entity.g.dart';
 
 // TODO I might be better off suppling these through a factory or named ctor, rather than
 // duplicating the String value of the enum.
-const String brushTool = "Tool.Brush";
-const String eraserTool = "Tool.Eraser";
+const String brushTool = 'Tool.Brush';
+const String eraserTool = 'Tool.Eraser';
 
 @JsonSerializable()
 class DrawingEntity extends BaseNoteEntity {

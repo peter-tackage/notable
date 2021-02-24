@@ -27,7 +27,7 @@ class HomeScreen extends StatelessWidget {
         title: Text(title),
       ),
       body: BlocProvider<FeedBloc>(
-          builder: _feedBlocBuilder, child: AllNotesPage()),
+          create: _feedBlocBuilder, child: AllNotesPage()),
       bottomNavigationBar: _buildBottomAppBar(context),
     );
   }
@@ -42,7 +42,7 @@ class HomeScreen extends StatelessWidget {
             BlocProvider.of<NotesBloc<Drawing, DrawingEntity>>(context),
         audioNotesBloc:
             BlocProvider.of<NotesBloc<AudioNote, AudioNoteEntity>>(context))
-      ..dispatch(LoadFeed());
+      ..add(LoadFeed());
   }
 
   Widget _buildBottomAppBar(context) {

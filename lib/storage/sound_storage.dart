@@ -27,7 +27,7 @@ class SoundStorage {
 
   Future<String> toFilePath(String filename) async {
     final dir = await getDirectory();
-    return "${dir.path}${Platform.pathSeparator}$filename";
+    return '${dir.path}${Platform.pathSeparator}$filename';
   }
 
   String generateFilename() {

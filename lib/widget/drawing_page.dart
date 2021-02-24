@@ -51,14 +51,14 @@ class _DrawingPageState extends State<DrawingPage> {
   DrawingBloc _drawingBlocOf(context) => BlocProvider.of<DrawingBloc>(context);
 
   _onToolDown(DragStartDetails details, DrawingConfig config) =>
-      _drawingBlocOf(context).dispatch(StartDrawing(
+      _drawingBlocOf(context).add(StartDrawing(
           config, OffsetValue.from(_globalToLocal(details.globalPosition))));
 
-  _onToolMoved(DragUpdateDetails details) => _drawingBlocOf(context).dispatch(
+  _onToolMoved(DragUpdateDetails details) => _drawingBlocOf(context).add(
       UpdateDrawing(OffsetValue.from(_globalToLocal(details.globalPosition))));
 
   _onToolUp(DragEndDetails details) =>
-      _drawingBlocOf(context).dispatch(EndDrawing());
+      _drawingBlocOf(context).add(EndDrawing());
 
   Widget _buildLoadingIndicator() => Center(child: CircularProgressIndicator());
 

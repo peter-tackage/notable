@@ -13,7 +13,7 @@ class MockRepository extends Mock implements Repository<TextNoteEntity> {}
 
 void main() {
   MockRepository noteRepository;
-  NotesBloc<TextNote, TextNoteEntity> textNoteBloc =
+  var textNoteBloc =
       NotesBloc<TextNote, TextNoteEntity>(
           noteRepository: noteRepository, mapper: TextNoteMapper());
 
@@ -25,7 +25,7 @@ void main() {
   });
 
   test('initial state is NoteLoading', () {
-    Stream<NotesState> stateStream = textNoteBloc.state;
+    Stream<NotesState> stateStream = textNoteBloc;
 
     expect(
         stateStream,
@@ -36,17 +36,17 @@ void main() {
 
   test('LoadNotes triggers NotesLoading, NotesLoaded with value', () {
     // given
-    final title = "The note title";
-    final text = "The note text";
+    final title = 'The note title';
+    final text = 'The note text';
     final id = Uuid().v1().toString();
     final datetime = DateTime.now();
 
-    TextNoteEntity noteEntity = TextNoteEntity(List<LabelEntity>(), title, text,
+    var noteEntity = TextNoteEntity(<LabelEntity>[], title, text,
         id: id, updatedDate: datetime);
     when(noteRepository.getAll()).thenAnswer((_) => Future.value([noteEntity]));
 
     // when
-    textNoteBloc.dispatch(LoadNotes());
+    textNoteBloc.add(LoadNotes());
 
     // then
     expect(
@@ -68,8 +68,8 @@ void main() {
     // given
 
     // This will be the returned "saved" entity from the repository
-    final title = "The note title";
-    final text = "The note text";
+    final title = 'The note title';
+    final text = 'The note text';
 
     // These properties are actually defined by the (real) repository.
     final id = Uuid().v1().toString();
@@ -79,12 +79,12 @@ void main() {
         id: id, updatedDate: datetime);
     when(noteRepository.getAll()).thenAnswer((_) => Future.value([noteEntity]));
 
-    TextNote textNote = TextNote((b) => b
+    var textNote = TextNote((b) => b
       ..title = title
       ..text = text);
 
     // when
-    textNoteBloc.dispatch(AddNote(textNote));
+    textNoteBloc.add(AddNote(textNote));
 
     // then
     expect(

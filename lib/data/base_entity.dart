@@ -9,14 +9,14 @@ abstract class BaseEntity {
 
   @mustCallSuper
   BaseEntity onPersist() {
-    this.id = Uuid().v1().toString();
-    this.updatedDate = DateTime.now();
+    id = Uuid().v1().toString();
+    updatedDate = DateTime.now();
     return this;
   }
 
   @mustCallSuper
   BaseEntity onUpdate() {
-    this.updatedDate = DateTime.now();
+    updatedDate = DateTime.now();
     return this;
   }
 

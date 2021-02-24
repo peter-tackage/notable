@@ -15,7 +15,7 @@ class AddEditChecklistNoteScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<ChecklistBloc>(
-        builder: (BuildContext context) => ChecklistBloc(
+        create: (BuildContext context) => ChecklistBloc(
             notesBloc:
                 BlocProvider.of<NotesBloc<Checklist, ChecklistEntity>>(context),
             id: id),
@@ -48,7 +48,7 @@ class _AddEditChecklistNoteScreenContent extends StatelessWidget {
                           onSaved: (newTitle) =>
                               _onSaveTitle(newTitle, _checklistBlocOf(context)),
                           initialValue: state.checklist.title,
-                          style: Theme.of(context).textTheme.title,
+                          style: Theme.of(context).textTheme.headline6,
                           decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: NotableLocalizations.of(context)
@@ -79,7 +79,7 @@ class _AddEditChecklistNoteScreenContent extends StatelessWidget {
                     _handleMenuItemSelection(menuItem, context),
                 itemBuilder: (context) => [
                       PopupMenuItem(
-                        value: "delete",
+                        value: 'delete',
                         child: Text(NotableLocalizations.of(context)
                             .note_delete_menu_item),
                       )
@@ -98,8 +98,8 @@ class _AddEditChecklistNoteScreenContent extends StatelessWidget {
       itemBuilder: (BuildContext context, int index) {
         ChecklistItem item = checklist.items[index];
         int lastIndex = checklist.items.length - 1;
-        bool isLastItem = index == lastIndex;
-        bool isFocused = isLastItem && item.task.isEmpty;
+        var isLastItem = index == lastIndex;
+        var isFocused = isLastItem && item.task.isEmpty;
         return Column(
             key: Key(item.id),
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -128,7 +128,7 @@ class _AddEditChecklistNoteScreenContent extends StatelessWidget {
                               .checklist_add_item_label,
                           style: TextStyle(color: Colors.grey)),
                       onPressed: () => _checklistBlocOf(context)
-                          .dispatch(AddEmptyChecklistItem()))
+                          .add(AddEmptyChecklistItem()))
                   : SizedBox.shrink()
             ]);
       },
@@ -142,7 +142,7 @@ class _AddEditChecklistNoteScreenContent extends StatelessWidget {
     _setItem(index, item, _checklistBlocOf(context));
 
     if (isLastItem && item.task.isNotEmpty) {
-      _checklistBlocOf(context).dispatch(AddEmptyChecklistItem());
+      _checklistBlocOf(context).add(AddEmptyChecklistItem());
     } else {
       // TODO Focus next
     }
@@ -152,13 +152,13 @@ class _AddEditChecklistNoteScreenContent extends StatelessWidget {
   // Save
   //
 
-  _saveNote(context) {
+  void _saveNote(context) {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
     }
 
     // Create or update handled elsewhere.
-    _checklistBlocOf(context).dispatch(SaveChecklist());
+    _checklistBlocOf(context).add(SaveChecklist());
 
     Navigator.pop(context);
   }
@@ -167,24 +167,24 @@ class _AddEditChecklistNoteScreenContent extends StatelessWidget {
   // Delete
   //
 
-  _handleMenuItemSelection(menuItem, context) {
-    if (menuItem == "delete") {
+  void _handleMenuItemSelection(menuItem, context) {
+    if (menuItem == 'delete') {
       _deleteNote(context);
     }
   }
 
-  _deleteNote(context) {
+  void _deleteNote(context) {
     if (id != null) {
-      _checklistBlocOf(context).dispatch(DeleteChecklist());
+      _checklistBlocOf(context).add(DeleteChecklist());
       Navigator.pop(context);
     }
   }
 
-  _onSaveTitle(newTitle, checklistBloc) {
-    checklistBloc.dispatch(UpdateChecklistTitle(newTitle));
+  void _onSaveTitle(newTitle, checklistBloc) {
+    checklistBloc.add(UpdateChecklistTitle(newTitle));
   }
 
-  _setItem(int index, ChecklistItem item, checklistBloc) {
-    checklistBloc.dispatch(SetChecklistItem(index, item));
+  void _setItem(int index, ChecklistItem item, checklistBloc) {
+    checklistBloc.add(SetChecklistItem(index, item));
   }
 }

@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
 import 'package:notable/model/audio_note.dart';
 import 'package:notable/model/audio_playback.dart';
 import 'package:notable/model/audio_recording.dart';
