@@ -15,19 +15,24 @@ class TextNoteBloc extends Bloc<TextNoteEvent, TextNoteState> {
   final NotesBloc<TextNote, TextNoteEntity> notesBloc;
   final String id;
 
-  StreamSubscription _textNotesSubscription;
-
   TextNoteBloc({@required this.notesBloc, @required this.id})
-      : super(TextNoteLoading()) {
-    _textNotesSubscription = notesBloc.listen((state) {
-      if (state is NotesLoaded) {
-        add(LoadTextNote(state.notes.firstWhere((note) => note.id == id,
-            orElse: () => TextNote((b) => b
-              ..title = ''
-              ..text = ''
-              ..labels = ListBuilder<Label>())) as TextNote));
-      }
-    });
+      : super(_initialState(notesBloc, id));
+  
+  static TextNoteState _initialState(
+      NotesBloc<TextNote, TextNoteEntity> notesBloc, String id) {
+    if (id == null) {
+      return
+        TextNoteLoaded(TextNote((b) =>
+        b
+          ..title = ''
+          ..text = ''
+          ..labels = ListBuilder<Label>()));
+    } else if (notesBloc.state is NotesLoaded) {
+      return TextNoteLoaded((notesBloc.state as NotesLoaded).notes
+          .firstWhere((note) => note.id == id));
+    } else {
+      return TextNoteLoading();
+    }
   }
 
   @override
@@ -45,19 +50,13 @@ class TextNoteBloc extends Bloc<TextNoteEvent, TextNoteState> {
     }
   }
 
-  @override
-  Future<Function> close() {
-    _textNotesSubscription.cancel();
-    return super.close();
-  }
-
-  Stream<TextNoteState> _mapLoadTextNoteEventToState(
-      TextNoteState currentState, LoadTextNote event) async* {
+  Stream<TextNoteState> _mapLoadTextNoteEventToState(TextNoteState currentState,
+      LoadTextNote event) async* {
     yield TextNoteLoaded(event.textNote);
   }
 
-  Stream<TextNoteState> _mapSaveTextNoteEventToState(
-      TextNoteState currentState, TextNoteEvent event) async* {
+  Stream<TextNoteState> _mapSaveTextNoteEventToState(TextNoteState currentState,
+      TextNoteEvent event) async* {
     if (currentState is TextNoteLoaded) {
       _saveTextNote(currentState.textNote);
     }
@@ -83,7 +82,7 @@ class TextNoteBloc extends Bloc<TextNoteEvent, TextNoteState> {
       TextNoteState currentState, UpdateTextNoteTitle event) async* {
     if (currentState is TextNoteLoaded) {
       var updatedTextNote =
-          currentState.textNote.rebuild((b) => b..title = event.title);
+      currentState.textNote.rebuild((b) => b..title = event.title);
       yield TextNoteLoaded(updatedTextNote);
     }
   }
@@ -92,7 +91,7 @@ class TextNoteBloc extends Bloc<TextNoteEvent, TextNoteState> {
       TextNoteState currentState, UpdateTextNoteText event) async* {
     if (currentState is TextNoteLoaded) {
       var updatedTextNote =
-          currentState.textNote.rebuild((b) => b..text = event.text);
+      currentState.textNote.rebuild((b) => b..text = event.text);
       yield TextNoteLoaded(updatedTextNote);
     }
   }
