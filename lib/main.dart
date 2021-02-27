@@ -65,7 +65,7 @@ class NotableApp extends StatelessWidget {
       NotesBloc<TextNote, TextNoteEntity>(
           noteRepository: Repository<TextNoteEntity>(Provider<TextNoteEntity>(
               storage: FileStorage(
-                  tag: "textNotes",
+                  tag: 'textNotes',
                   getDirectory: () => getApplicationDocumentsDirectory(),
                   entityMapper: NoteEntityMapper()))),
           mapper: TextNoteMapper());
@@ -75,7 +75,7 @@ class NotableApp extends StatelessWidget {
       NotesBloc<Checklist, ChecklistEntity>(
           noteRepository: Repository<ChecklistEntity>(Provider<ChecklistEntity>(
               storage: FileStorage(
-                  tag: "checklists",
+                  tag: 'checklists',
                   getDirectory: () => getApplicationDocumentsDirectory(),
                   entityMapper: ChecklistEntityMapper()))),
           mapper: ChecklistMapper());
@@ -85,7 +85,7 @@ class NotableApp extends StatelessWidget {
       NotesBloc<Drawing, DrawingEntity>(
           noteRepository: Repository<DrawingEntity>(Provider<DrawingEntity>(
               storage: FileStorage(
-                  tag: "drawings",
+                  tag: 'drawings',
                   getDirectory: () => getApplicationDocumentsDirectory(),
                   entityMapper: DrawingEntityMapper()))),
           mapper: DrawingMapper());
@@ -95,7 +95,7 @@ class NotableApp extends StatelessWidget {
       NotesBloc<AudioNote, AudioNoteEntity>(
           noteRepository: Repository<AudioNoteEntity>(Provider<AudioNoteEntity>(
               storage: FileStorage(
-                  tag: "audio",
+                  tag: 'audio',
                   getDirectory: () => getApplicationDocumentsDirectory(),
                   entityMapper: AudioNoteEntityMapper()))),
           mapper: AudioNoteMapper());

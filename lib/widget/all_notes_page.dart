@@ -31,7 +31,7 @@ class AllNotesPage extends StatelessWidget {
               ? _buildNoNotesWidget(context)
               : _buildNoteList(context, feedState.feed);
         } else {
-          throw Exception("Unsupported FeedState: $feedState");
+          throw Exception('Unsupported FeedState: $feedState');
         }
       },
     );

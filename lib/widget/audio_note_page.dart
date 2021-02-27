@@ -54,7 +54,7 @@ class _AudioNotePageState extends State<AudioNotePage> {
       Padding(
           padding: EdgeInsets.symmetric(vertical: 24),
           child: Text(_timerTextOf(state),
-              style: Theme.of(context).textTheme.display1)),
+              style: Theme.of(context).textTheme.headline4)),
       isRecordingFeatureAvailable
           ? Padding(
               padding: EdgeInsets.symmetric(vertical: 24),

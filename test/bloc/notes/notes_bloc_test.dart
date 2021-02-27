@@ -75,7 +75,7 @@ void main() {
     final id = Uuid().v1().toString();
     final datetime = DateTime.now();
 
-    TextNoteEntity noteEntity = TextNoteEntity(List<LabelEntity>(), title, text,
+    var noteEntity = TextNoteEntity(<LabelEntity>[], title, text,
         id: id, updatedDate: datetime);
     when(noteRepository.getAll()).thenAnswer((_) => Future.value([noteEntity]));
 

@@ -31,17 +31,17 @@ class FileStorage<E extends BaseEntity> implements EntityStorage<E> {
 
   @override
   Future<List<E>> readAll() async {
-    File file = await _getLocalFile();
+    var file = await _getLocalFile();
     print(file.toString());
 
     if (await file.exists()) {
       final string = await file.readAsString();
       final json = jsonDecode(string);
-      List<E> entities = List.from(
+      var entities = List<E>.from(
           json.map((entityJson) => entityMapper.toEntity(entityJson)));
       return entities;
     } else {
-      return List<E>();
+      return <E>[];
     }
   }
 
@@ -50,6 +50,7 @@ class FileStorage<E extends BaseEntity> implements EntityStorage<E> {
     return File('${dir.path}${Platform.pathSeparator}Notable__$tag.json');
   }
 
+  @override
   Future<FileSystemEntity> clean() async {
     final file = await _getLocalFile();
     return file.delete();
