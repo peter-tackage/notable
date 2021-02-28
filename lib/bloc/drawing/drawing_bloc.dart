@@ -20,17 +20,28 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
   StreamSubscription drawingsSubscription;
 
   DrawingBloc({@required this.notesBloc, @required this.id})
-      : super(DrawingLoading()) {
+      : super(_initialState(notesBloc, id)) {
     drawingsSubscription = notesBloc.listen((state) {
       if (state is NotesLoaded) {
-        add(LoadDrawing(state.notes.firstWhere((note) => note.id == id,
-            orElse: () => Drawing((b) => b
-              ..title = ''
-              ..labels = ListBuilder<Label>()
-              ..actions = ListBuilder<DrawingAction>()
-              ..currentIndex = -1)) as Drawing));
+        add(LoadDrawing(state.notes.findForId(id)));
       }
     });
+  }
+
+  static DrawingState _initialState(
+      NotesBloc<Drawing, DrawingEntity> notesBloc, String id) {
+    if (id == null) {
+      return DrawingLoaded(Drawing((b) => b
+        ..title = ''
+        ..labels = ListBuilder<Label>()
+        ..actions = ListBuilder<DrawingAction>()
+        ..currentIndex = -1));
+    } else if (notesBloc.state is NotesLoaded) {
+      return DrawingLoaded(
+          (notesBloc.state as NotesLoaded).notes.findForId(id));
+    } else {
+      return DrawingLoading();
+    }
   }
 
   @override
@@ -66,7 +77,7 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
 
   Stream<DrawingState> _mapLoadDrawingEventToState(
       DrawingState currentState, LoadDrawing event) async* {
-    yield DrawingLoaded(drawing: event.drawing);
+    yield DrawingLoaded(event.drawing);
   }
 
   Stream<DrawingState> _mapSaveDrawingEventToState(
@@ -92,10 +103,9 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
       DrawingState currentState, ClearDrawing event) async* {
     if (currentState is DrawingLoaded) {
       // Move the index so that it's still undo-able.
-      yield DrawingLoaded(
-          drawing: currentState.drawing.rebuild((b) => b
-            ..actions = ListBuilder()
-            ..currentIndex = -1));
+      yield DrawingLoaded(currentState.drawing.rebuild((b) => b
+        ..actions = ListBuilder()
+        ..currentIndex = -1));
     }
   }
 
@@ -104,8 +114,7 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
     if (currentState is DrawingLoaded) {
       var movedIndex = currentState.drawing.currentIndex - 1;
       yield DrawingLoaded(
-          drawing: currentState.drawing
-              .rebuild((b) => b..currentIndex = movedIndex));
+          currentState.drawing.rebuild((b) => b..currentIndex = movedIndex));
     }
   }
 
@@ -115,8 +124,7 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
       var movedIndex = currentState.drawing.currentIndex + 1;
 
       yield DrawingLoaded(
-          drawing: currentState.drawing
-              .rebuild((b) => b..currentIndex = movedIndex));
+          currentState.drawing.rebuild((b) => b..currentIndex = movedIndex));
     }
   }
 
@@ -155,10 +163,9 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
       actions = [...actions, action]; // ignore: sdk_version_ui_as_code
       currentIndex = actions.length - 1;
 
-      yield DrawingLoaded(
-          drawing: currentState.drawing.rebuild((b) => b
-            ..actions = ListBuilder(actions)
-            ..currentIndex = currentIndex));
+      yield DrawingLoaded(currentState.drawing.rebuild((b) => b
+        ..actions = ListBuilder(actions)
+        ..currentIndex = currentIndex));
     }
   }
 
@@ -170,7 +177,7 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
       if (currentAction is BrushAction || currentAction is EraserAction) {
         var updatedDrawing = _updateDrawingWithStrokeDrawingActionEvent(
             currentAction, event, currentState);
-        yield DrawingLoaded(drawing: updatedDrawing);
+        yield DrawingLoaded(updatedDrawing);
       } else {
         throw Exception('Unsupported action type: $currentAction');
       }
@@ -207,7 +214,7 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
     if (currentState is DrawingLoaded) {
       var updatedDrawing =
           currentState.drawing.rebuild((b) => b..title = event.title);
-      yield DrawingLoaded(drawing: updatedDrawing);
+      yield DrawingLoaded(updatedDrawing);
     }
   }
 }

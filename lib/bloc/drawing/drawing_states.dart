@@ -15,7 +15,7 @@ class DrawingLoading extends DrawingState { }
 class DrawingLoaded extends DrawingState {
   final Drawing drawing;
 
-  const DrawingLoaded({@required this.drawing});
+  const DrawingLoaded(this.drawing);
 
   @override
   List<Object> get props => [drawing];
