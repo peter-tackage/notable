@@ -14,7 +14,7 @@ abstract class AudioPlayback
 
   AudioPlayback._();
 
-  factory AudioPlayback([updates(AudioPlaybackBuilder b)]) = _$AudioPlayback;
+  factory AudioPlayback([Function(AudioPlaybackBuilder b) updates]) = _$AudioPlayback;
 }
 
 enum PlaybackState { Playing, Paused }

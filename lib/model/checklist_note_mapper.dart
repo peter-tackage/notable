@@ -6,7 +6,7 @@ import 'package:notable/model/label.dart';
 
 class ChecklistMapper implements Mapper<Checklist, ChecklistEntity> {
   @override
-  toEntity(Checklist model) => ChecklistEntity(
+  ChecklistEntity toEntity(Checklist model) => ChecklistEntity(
       model.labels.map((l) => l.toEntity()).toList(),
       model.title,
       model.items
@@ -16,7 +16,7 @@ class ChecklistMapper implements Mapper<Checklist, ChecklistEntity> {
       updatedDate: model.updatedDate);
 
   @override
-  toModel(ChecklistEntity entity) => Checklist((b) => b
+  Checklist toModel(ChecklistEntity entity) => Checklist((b) => b
     ..title = entity.title
     ..labels = ListBuilder(entity.labels.map(Label.fromEntity))
     ..items = ListBuilder(entity.items.map((item) => ChecklistItem((bi) => bi

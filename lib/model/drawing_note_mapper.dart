@@ -7,7 +7,7 @@ import 'package:notable/model/label.dart';
 
 class DrawingMapper implements Mapper<Drawing, DrawingEntity> {
   @override
-  toEntity(Drawing model) => DrawingEntity(
+  DrawingEntity toEntity(Drawing model) => DrawingEntity(
       model.labels.map((label) => label.toEntity()).toList(),
       model.title,
       model.displayedActions.map(_mapActionToEntity).toList(),
@@ -34,12 +34,12 @@ class DrawingMapper implements Mapper<Drawing, DrawingEntity> {
           action.strokeWidth);
     } else {
       throw Exception(
-          "Cannot map to entity - unsupported drawing action: $action");
+          'Cannot map to entity - unsupported drawing action: $action');
     }
   }
 
   @override
-  toModel(DrawingEntity entity) => Drawing((b) => b
+  Drawing toModel(DrawingEntity entity) => Drawing((b) => b
     ..title = entity.title
     ..labels = ListBuilder(entity.labels.map(Label.fromEntity))
     ..actions = ListBuilder(entity.actions.map(_mapActionEntityToModel))
@@ -56,7 +56,7 @@ class DrawingMapper implements Mapper<Drawing, DrawingEntity> {
           actionEntity as EraserDrawingActionEntity);
     } else {
       throw Exception(
-          "Cannot map entity to model - unsupported drawing action tool: ${actionEntity.tool}");
+          'Cannot map entity to model - unsupported drawing action tool: ${actionEntity.tool}');
     }
   }
 

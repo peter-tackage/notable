@@ -6,7 +6,7 @@ import 'package:notable/model/label.dart';
 
 class AudioNoteMapper implements Mapper<AudioNote, AudioNoteEntity> {
   @override
-  toEntity(AudioNote model) => AudioNoteEntity(
+  AudioNoteEntity toEntity(AudioNote model) => AudioNoteEntity(
       model.labels.map((l) => l.toEntity()).toList(),
       model.title,
       model.filename,
@@ -15,7 +15,7 @@ class AudioNoteMapper implements Mapper<AudioNote, AudioNoteEntity> {
       updatedDate: model.updatedDate);
 
   @override
-  toModel(AudioNoteEntity entity) => AudioNote((b) => b
+  AudioNote toModel(AudioNoteEntity entity) => AudioNote((b) => b
     ..title = entity.title
     ..labels = ListBuilder(entity.labels.map(Label.fromEntity))
     ..filename = entity.filename

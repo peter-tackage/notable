@@ -14,7 +14,7 @@ abstract class Checklist
 
   Checklist._();
 
-  factory Checklist([updates(ChecklistBuilder b)]) = _$Checklist;
+  factory Checklist([Function(ChecklistBuilder b) updates]) = _$Checklist;
 }
 
 @immutable
@@ -35,7 +35,7 @@ abstract class ChecklistItem
 
   ChecklistItem._();
 
-  factory ChecklistItem([updates(ChecklistItemBuilder b)]) = _$ChecklistItem;
+  factory ChecklistItem([Function(ChecklistItemBuilder b) updates]) = _$ChecklistItem;
 }
 
 enum Sorting { CREATION, DONE }

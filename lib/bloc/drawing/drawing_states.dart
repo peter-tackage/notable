@@ -1,6 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
 import 'package:notable/model/drawing.dart';
 
 abstract class DrawingState extends Equatable {
@@ -10,7 +8,7 @@ abstract class DrawingState extends Equatable {
   List<Object> get props => [];
 }
 
-class DrawingLoading extends DrawingState { }
+class DrawingLoading extends DrawingState {}
 
 class DrawingLoaded extends DrawingState {
   final Drawing drawing;
@@ -23,4 +21,3 @@ class DrawingLoaded extends DrawingState {
   @override
   String toString() => 'DrawingLoaded { id: ${drawing.id} }';
 }
-

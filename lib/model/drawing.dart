@@ -33,14 +33,14 @@ abstract class Drawing implements BaseNote, Built<Drawing, DrawingBuilder> {
 
   Drawing._();
 
-  factory Drawing([updates(DrawingBuilder b)]) = _$Drawing;
+  factory Drawing([Function(DrawingBuilder b) updates]) = _$Drawing;
 
   List<DrawingAction> _selectDisplayed() =>
       actions.sublist(0, currentIndex + 1).toList();
 
-  _canUndo() => currentIndex >= 0;
+  bool _canUndo() => currentIndex >= 0;
 
-  _canRedo() => actions.isNotEmpty && currentIndex < actions.length - 1;
+  bool _canRedo() => actions.isNotEmpty && currentIndex < actions.length - 1;
 }
 
 @BuiltValue(instantiable: false)
@@ -80,12 +80,12 @@ abstract class BrushAction
     implements StrokeDrawingAction, Built<BrushAction, BrushActionBuilder> {
   @override
   void draw(Canvas canvas) {
-    Paint paint = Paint()
-      ..strokeWidth = this.strokeWidth
+    var paint = Paint()
+      ..strokeWidth = strokeWidth
       ..style = PaintingStyle.stroke
-      ..strokeCap = toStrokeCap(this.penShape)
-      ..strokeJoin = toStrokeJoin(this.penShape)
-      ..color = Color(this.color).withAlpha(this.alpha)
+      ..strokeCap = toStrokeCap(penShape)
+      ..strokeJoin = toStrokeJoin(penShape)
+      ..color = Color(color).withAlpha(alpha)
       ..isAntiAlias = true;
 
     _drawPoints(canvas, paint,
@@ -93,7 +93,7 @@ abstract class BrushAction
   }
 
   @override
-  String toString() => "BrushAction: ${points.length}";
+  String toString() => 'BrushAction: ${points.length}';
 
   //
   // We include these operations for instantiable child classes with properties.
@@ -101,7 +101,7 @@ abstract class BrushAction
 
   BrushAction._();
 
-  factory BrushAction([updates(BrushActionBuilder b)]) = _$BrushAction;
+  factory BrushAction([Function(BrushActionBuilder b) updates]) = _$BrushAction;
 }
 
 @immutable
@@ -109,12 +109,12 @@ abstract class EraserAction
     implements StrokeDrawingAction, Built<EraserAction, EraserActionBuilder> {
   @override
   void draw(Canvas canvas) {
-    Paint paint = Paint()
+    var paint = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = this.strokeWidth
+      ..strokeWidth = strokeWidth
       ..style = PaintingStyle.stroke
-      ..strokeCap = toStrokeCap(this.penShape)
-      ..strokeJoin = toStrokeJoin(this.penShape)
+      ..strokeCap = toStrokeCap(penShape)
+      ..strokeJoin = toStrokeJoin(penShape)
       ..isAntiAlias = true
       ..blendMode = BlendMode.clear;
 
@@ -124,7 +124,7 @@ abstract class EraserAction
 
   EraserAction._();
 
-  factory EraserAction([updates(EraserActionBuilder b)]) = _$EraserAction;
+  factory EraserAction([Function(EraserActionBuilder b) updates]) = _$EraserAction;
 }
 
 //
@@ -140,7 +140,7 @@ abstract class OffsetValue implements Built<OffsetValue, OffsetValueBuilder> {
 
   OffsetValue._();
 
-  factory OffsetValue([updates(OffsetValueBuilder b)]) = _$OffsetValue;
+  factory OffsetValue([Function(OffsetValueBuilder b) updates]) = _$OffsetValue;
 
   static OffsetValue from(Offset offset) => OffsetValue((b) => b
     ..dx = offset.dx
@@ -152,9 +152,9 @@ abstract class OffsetValue implements Built<OffsetValue, OffsetValueBuilder> {
 //
 
 void _drawPoints(Canvas canvas, Paint paint, List<Offset> points) {
-  Path path = Path();
-  for (int index = 0; index <= points.length - 1; index++) {
-    Offset point = points[index];
+  var path = Path();
+  for (var index = 0; index <= points.length - 1; index++) {
+    var point = points[index];
     if (index == 0) {
       path.moveTo(point.dx, point.dy);
     }
@@ -170,7 +170,7 @@ StrokeJoin toStrokeJoin(PenShape penShape) {
     case PenShape.Round:
       return StrokeJoin.round;
     default:
-      throw Exception("Unsupported PenShape: $penShape");
+      throw Exception('Unsupported PenShape: $penShape');
   }
 }
 
@@ -181,6 +181,6 @@ StrokeCap toStrokeCap(PenShape penShape) {
     case PenShape.Round:
       return StrokeCap.round;
     default:
-      throw Exception("Unsupported PenShape: $penShape");
+      throw Exception('Unsupported PenShape: $penShape');
   }
 }

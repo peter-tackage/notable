@@ -101,7 +101,7 @@ class _AddEditAudioNoteScreenContent extends StatelessWidget {
                     _handleMenuItemSelection(value, context, audioNoteBloc),
                 itemBuilder: (context) => [
                       PopupMenuItem(
-                        value: "delete",
+                        value: 'delete',
                         child: Text(NotableLocalizations.of(context)
                             .note_delete_menu_item),
                       )

@@ -12,7 +12,7 @@ abstract class Label implements Built<Label, LabelBuilder> {
 
   Label._();
 
-  factory Label([updates(LabelBuilder b)]) = _$Label;
+  factory Label([Function(LabelBuilder b) updates]) = _$Label;
 
   //
   // Mappers

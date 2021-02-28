@@ -45,7 +45,7 @@ class _AudioMonitorPainter extends CustomPainter {
     final dbPerSegment = _peakDb / segmentCount;
 
     for (var segment = 0; segment <= segmentCount; segment++) {
-      final double dxLeft = (segment * (segmentWidth + gap)).floorToDouble();
+      final double dxLeft = (segment * (segmentWidth + gap)).floorToDouble(); // ignore: omit_local_variable_types
       var maxSegmentDb = (segment) * dbPerSegment;
 
       var rect = Rect.fromPoints(
