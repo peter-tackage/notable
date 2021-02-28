@@ -72,3 +72,9 @@ class NotesBloc<M extends BaseNote, E extends BaseNoteEntity>
   List _toModels(List<BaseNoteEntity> notes) =>
       notes.map((e) => mapper.toModel(e)).toList();
 }
+
+extension Lookup<T extends BaseNote> on List<T> {
+  T findForId(String id) {
+    return firstWhere((note) => note.id == id);
+  }
+}
