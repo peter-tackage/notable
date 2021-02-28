@@ -58,7 +58,7 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
   }
 
   @override
-  Future<Function> close() {
+  Future<void> close() {
     combinedNotesSubscription.cancel();
     return super.close();
   }

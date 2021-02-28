@@ -162,7 +162,7 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
   }
 
   @override
-  Future<Function> close() {
+  Future<void> close() {
     checklistsSubscription.cancel();
     return super.close();
   }

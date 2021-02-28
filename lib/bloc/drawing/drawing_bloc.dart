@@ -70,7 +70,7 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
   }
 
   @override
-  Future<Function> close() {
+  Future<void> close() {
     drawingsSubscription.cancel();
     return super.close();
   }

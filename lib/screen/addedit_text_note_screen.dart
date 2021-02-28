@@ -135,7 +135,7 @@ class _AddEditTextNoteScreenContent extends StatelessWidget {
 
   void _deleteNote(context, textNoteBloc) {
     if (id != null) {
-      textNoteBloc.add(DeleteNote(id));
+      textNoteBloc.add(DeleteTextNote());
       Navigator.pop(context);
     }
   }
