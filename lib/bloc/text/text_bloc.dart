@@ -20,10 +20,8 @@ class TextNoteBloc extends Bloc<TextNoteEvent, TextNoteState> {
   TextNoteBloc({@required this.notesBloc, @required this.id})
       : super(_initialState(notesBloc, id)) {
     _textNotesSubscription = notesBloc.listen((state) {
-      if (notesBloc.state is NotesLoaded) {
-        add(LoadTextNote((notesBloc.state as NotesLoaded)
-            .notes
-            .firstWhere((note) => note.id == id)));
+      if (state is NotesLoaded) {
+        add(LoadTextNote(state.notes.findForId(id)));
       }
     });
   }
@@ -42,9 +40,8 @@ class TextNoteBloc extends Bloc<TextNoteEvent, TextNoteState> {
         ..text = ''
         ..labels = ListBuilder<Label>()));
     } else if (notesBloc.state is NotesLoaded) {
-      return TextNoteLoaded((notesBloc.state as NotesLoaded)
-          .notes
-          .firstWhere((note) => note.id == id));
+      return TextNoteLoaded(
+          (notesBloc.state as NotesLoaded).notes.findForId(id));
     } else {
       return TextNoteLoading();
     }
