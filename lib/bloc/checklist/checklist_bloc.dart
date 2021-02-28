@@ -18,18 +18,29 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
   StreamSubscription checklistsSubscription;
 
   ChecklistBloc({@required this.notesBloc, @required this.id})
-      : super(ChecklistLoading()) {
+      : super(_initialState(notesBloc, id)) {
     checklistsSubscription = notesBloc.listen((state) {
       if (state is NotesLoaded) {
         // FIXME Editing entries with no items renders as empty
         // FIXME This dispatches too often
-        add(LoadChecklist(state.notes.firstWhere((note) => note.id == id,
-            orElse: () => Checklist((b) => b
-              ..title = ''
-              ..labels = ListBuilder<Label>()
-              ..items = ListBuilder([ChecklistItem.empty()]))) as Checklist));
+        add(LoadChecklist(state.notes.findForId(id)));
       }
     });
+  }
+
+  static ChecklistState _initialState(
+      NotesBloc<Checklist, ChecklistEntity> notesBloc, String id) {
+    if (id == null) {
+      return ChecklistLoaded(Checklist((b) => b
+        ..title = ''
+        ..labels = ListBuilder<Label>()
+        ..items = ListBuilder([ChecklistItem.empty()])));
+    } else if (notesBloc.state is NotesLoaded) {
+      return ChecklistLoaded(
+          (notesBloc.state as NotesLoaded).notes.findForId(id));
+    } else {
+      return ChecklistLoading();
+    }
   }
 
   @override
