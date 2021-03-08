@@ -349,7 +349,7 @@ packages:
       name: intl_translation
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.17.10+1"
+    version: "0.17.10"
   io:
     dependency: transitive
     description:
