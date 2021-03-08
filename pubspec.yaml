@@ -22,7 +22,7 @@ dependencies:
   uuid: 2.2.2
   path_provider: ^1.1.0
   json_serializable: ^3.5.0
-  intl: ^0.16.0
+  intl: 0.17.0
 #  flutter_sound: ^6.4.8+2
   flutter_sound: ^7.7.0+1
   mockito: ^4.1.3
