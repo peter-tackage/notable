@@ -8,6 +8,7 @@ import 'package:notable/model/label.dart';
 import 'package:notable/model/text_note.dart';
 import 'package:notable/model/text_note_mapper.dart';
 import 'package:test/test.dart';
+import 'package:uuid/uuid.dart';
 
 class MockRepository extends Mock implements Repository<TextNoteEntity> {}
 
@@ -19,10 +20,6 @@ void main() {
         noteRepository: MockRepository(), mapper: TextNoteMapper());
     expect(textNoteBloc.state, isA<NotesLoading>());
   });
-
-  // test('initial state is NoteLoading', () {
-  //
-  //   noteRepository = MockRepository();
 
   blocTest<NotesBloc<TextNote, TextNoteEntity>, NotesState>(
     'emits [NotesLoading] on LoadNotes',
@@ -71,40 +68,43 @@ void main() {
     ],
   );
 
-  // test('AddNote triggers NotesLoading, NotesLoaded with value', () {
-  //   // given
-  //   // This will be the returned "saved" entity from the repository
-  //   final title = 'The note title';
-  //   final text = 'The note text';
-  //
-  //   // These properties are actually defined by the (real) repository.
-  //   final id = Uuid().v1().toString();
-  //   final datetime = DateTime.now();
-  //
-  //   var noteEntity = TextNoteEntity(<LabelEntity>[], title, text,
-  //       id: id, updatedDate: datetime);
-  //   when(noteRepository.getAll()).thenAnswer((_) => Future.value([noteEntity]));
-  //
-  //   var textNote = TextNote((b) => b
-  //     ..title = title
-  //     ..text = text);
-  //
-  //   // when
-  //   textNoteBloc.add(AddNote(textNote));
-  //
-  //   // then
-  //   expect(
-  //       textNoteBloc.state,
-  //       emitsInOrder([
-  //         isA<NotesLoading>(),
-  //         equals(NotesLoaded([
-  //           TextNote((b) => b
-  //             ..title = title
-  //             ..labels = ListBuilder<Label>()
-  //             ..text = text
-  //             ..id = id
-  //             ..updatedDate = datetime)
-  //         ]))
-  //       ]));
-  // });
+  test('AddNote triggers NotesLoading, NotesLoaded with value', () {
+    // given
+    final noteRepository = MockRepository();
+    final notesBloc = NotesBloc<TextNote, TextNoteEntity>(
+        noteRepository: noteRepository, mapper: TextNoteMapper());
+
+    // This will be the returned "saved" entity from the repository
+    final title = 'The note title';
+    final text = 'The note text';
+
+    // These properties are actually defined by the (real) repository.
+    final id = Uuid().v1().toString();
+    final datetime = DateTime.now();
+
+    var noteEntity = TextNoteEntity(<LabelEntity>[], title, text,
+        id: id, updatedDate: datetime);
+    when(noteRepository.getAll()).thenAnswer((_) => Future.value([noteEntity]));
+
+    var textNote = TextNote((b) => b
+      ..title = title
+      ..text = text);
+
+    // when
+    notesBloc.add(AddNote(textNote));
+
+    // then
+    expect(
+        notesBloc,
+        emitsInOrder([
+          equals(NotesLoaded([
+            TextNote((b) => b
+              ..title = title
+              ..labels = ListBuilder<Label>()
+              ..text = text
+              ..id = id
+              ..updatedDate = datetime)
+          ]))
+        ]));
+  });
 }
