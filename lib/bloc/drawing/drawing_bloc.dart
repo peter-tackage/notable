@@ -22,7 +22,7 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
   DrawingBloc({@required this.notesBloc, @required this.id})
       : super(_initialState(notesBloc, id)) {
     drawingsSubscription = notesBloc.listen((state) {
-      if (state is NotesLoaded) {
+      if (state is NotesLoaded && id != null) {
         add(LoadDrawing(state.notes.findForId(id)));
       }
     });

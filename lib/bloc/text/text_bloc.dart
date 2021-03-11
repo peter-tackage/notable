@@ -20,7 +20,7 @@ class TextNoteBloc extends Bloc<TextNoteEvent, TextNoteState> {
   TextNoteBloc({@required this.notesBloc, @required this.id})
       : super(_initialState(notesBloc, id)) {
     _textNotesSubscription = notesBloc.listen((state) {
-      if (state is NotesLoaded) {
+      if (state is NotesLoaded && id != null) {
         add(LoadTextNote(state.notes.findForId(id)));
       }
     });

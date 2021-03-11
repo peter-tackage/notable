@@ -20,9 +20,7 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
   ChecklistBloc({@required this.notesBloc, @required this.id})
       : super(_initialState(notesBloc, id)) {
     checklistsSubscription = notesBloc.listen((state) {
-      if (state is NotesLoaded) {
-        // FIXME Editing entries with no items renders as empty
-        // FIXME This dispatches too often
+      if (state is NotesLoaded  && id != null) {
         add(LoadChecklist(state.notes.findForId(id)));
       }
     });

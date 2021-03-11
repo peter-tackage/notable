@@ -35,7 +35,7 @@ class AudioNoteBloc extends Bloc<AudioNoteEvent, AudioNoteState> {
       @required this.soundStorage})
       : super(_initialState(notesBloc, id)) {
     _audioNotesSubscription = notesBloc.listen((state) {
-      if (state is NotesLoaded) {
+      if (state is NotesLoaded  && id != null) {
         add(LoadAudioNote(state.notes.findForId(id)));
       }
     });
