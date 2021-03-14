@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notable/bloc/notes/notes.dart';
 import 'package:notable/bloc/text/text.dart';
 import 'package:notable/entity/entity.dart';
-import 'package:notable/l10n/localization.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:notable/model/text_note.dart';
 
 class AddEditTextNoteScreen extends StatelessWidget {
@@ -37,7 +37,7 @@ class _AddEditTextNoteScreenContent extends StatelessWidget {
 
     return Scaffold(
         appBar: AppBar(
-            title: Text(NotableLocalizations.of(context).text_note_title),
+            title: Text(AppLocalizations.of(context).text_note_title),
             actions: id == null
                 ? null
                 : <Widget>[
@@ -47,7 +47,7 @@ class _AddEditTextNoteScreenContent extends StatelessWidget {
                         itemBuilder: (context) => [
                               PopupMenuItem(
                                 value: _deleteItem,
-                                child: Text(NotableLocalizations.of(context)
+                                child: Text(AppLocalizations.of(context)
                                     .note_delete_menu_item),
                               )
                             ])
@@ -71,7 +71,7 @@ class _AddEditTextNoteScreenContent extends StatelessWidget {
                               textCapitalization: TextCapitalization.sentences,
                               decoration: InputDecoration(
                                   border: InputBorder.none,
-                                  hintText: NotableLocalizations.of(context)
+                                  hintText: AppLocalizations.of(context)
                                       .note_title_hint),
                               maxLines: 1),
                           Expanded(
@@ -82,7 +82,7 @@ class _AddEditTextNoteScreenContent extends StatelessWidget {
                                       decoration: InputDecoration(
                                           border: InputBorder.none,
                                           hintText:
-                                              NotableLocalizations.of(context)
+                                              AppLocalizations.of(context)
                                                   .text_note_hint),
                                       maxLines: null,
                                       autofocus: note.text.isEmpty,
@@ -96,7 +96,7 @@ class _AddEditTextNoteScreenContent extends StatelessWidget {
                 })),
         floatingActionButton: FloatingActionButton(
           onPressed: () => _saveNote(context, textNoteBloc),
-          tooltip: NotableLocalizations.of(context).note_save_tooltip,
+          tooltip: AppLocalizations.of(context).note_save_tooltip,
           child: Icon(Icons.check),
         ));
   }

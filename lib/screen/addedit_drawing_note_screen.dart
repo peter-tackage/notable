@@ -10,7 +10,7 @@ import 'package:notable/bloc/drawing_config/drawing_config_events.dart';
 import 'package:notable/bloc/drawing_config/drawing_config_states.dart';
 import 'package:notable/bloc/notes/notes.dart';
 import 'package:notable/entity/drawing_entity.dart';
-import 'package:notable/l10n/localization.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:notable/model/drawing.dart';
 import 'package:notable/model/drawing_config.dart';
 import 'package:notable/widget/drawing_page.dart';
@@ -46,13 +46,13 @@ class _AddEditDrawingNoteScreenContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            title: Text(NotableLocalizations.of(context).drawing_note_title),
+            title: Text(AppLocalizations.of(context).drawing_note_title),
             actions: _createMenuItems(context)),
         body: _buildBody(context),
         bottomNavigationBar: _buildBottomAppBar(context),
         floatingActionButton: FloatingActionButton(
           onPressed: () => _saveDrawing(context),
-          tooltip: NotableLocalizations.of(context).note_save_tooltip,
+          tooltip: AppLocalizations.of(context).note_save_tooltip,
           child: Icon(Icons.check),
         ));
   }
@@ -75,7 +75,7 @@ class _AddEditDrawingNoteScreenContent extends StatelessWidget {
                       decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText:
-                              NotableLocalizations.of(context).note_title_hint),
+                              AppLocalizations.of(context).note_title_hint),
                       maxLines: 1,
                       textCapitalization: TextCapitalization.sentences,
                       autofocus: false)))
@@ -123,7 +123,7 @@ class _AddEditDrawingNoteScreenContent extends StatelessWidget {
                 itemBuilder: (context) => [
                       PopupMenuItem(
                         value: 'delete',
-                        child: Text(NotableLocalizations.of(context)
+                        child: Text(AppLocalizations.of(context)
                             .note_delete_menu_item),
                       )
                     ])
@@ -185,7 +185,7 @@ class _AddEditDrawingNoteScreenContent extends StatelessWidget {
       InkWell(
           child: Container(
               child: IconButton(
-                  tooltip: NotableLocalizations.of(context)
+                  tooltip: AppLocalizations.of(context)
                       .drawing_tool_brush_tooltip,
                   onPressed: () => _selectBrush(_drawingConfigBlocOf(context)),
                   icon: Icon(Icons.gesture,
@@ -194,7 +194,7 @@ class _AddEditDrawingNoteScreenContent extends StatelessWidget {
       InkWell(
           child: IconButton(
               tooltip:
-                  NotableLocalizations.of(context).drawing_tool_eraser_tooltip,
+                  AppLocalizations.of(context).drawing_tool_eraser_tooltip,
               onPressed: () => _selectEraser(_drawingConfigBlocOf(context)),
               icon: Transform.rotate(
                   angle: pi,
@@ -205,7 +205,7 @@ class _AddEditDrawingNoteScreenContent extends StatelessWidget {
       InkWell(
           child: IconButton(
               tooltip:
-                  NotableLocalizations.of(context).drawing_undo_action_tooltip,
+                  AppLocalizations.of(context).drawing_undo_action_tooltip,
               onPressed:
                   drawingState is DrawingLoaded && drawingState.drawing.canUndo
                       ? () => _undo(_drawingBlocOf(context))
@@ -214,7 +214,7 @@ class _AddEditDrawingNoteScreenContent extends StatelessWidget {
       InkWell(
           child: IconButton(
               tooltip:
-                  NotableLocalizations.of(context).drawing_redo_action_tooltip,
+                  AppLocalizations.of(context).drawing_redo_action_tooltip,
               onPressed:
                   drawingState is DrawingLoaded && drawingState.drawing.canRedo
                       ? () => _redo(_drawingBlocOf(context))
@@ -222,7 +222,7 @@ class _AddEditDrawingNoteScreenContent extends StatelessWidget {
               icon: Icon(Icons.redo))),
       InkWell(
           child: IconButton(
-              tooltip: NotableLocalizations.of(context).drawing_clear_tooltip,
+              tooltip: AppLocalizations.of(context).drawing_clear_tooltip,
               onPressed:
                   drawingState is DrawingLoaded && drawingState.drawing.canUndo
                       ? () => _clear(_drawingBlocOf(context))

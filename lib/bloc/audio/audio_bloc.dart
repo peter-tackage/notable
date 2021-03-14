@@ -34,6 +34,10 @@ class AudioNoteBloc extends Bloc<AudioNoteEvent, AudioNoteState> {
       @required this.flutterSoundRecorder,
       @required this.soundStorage})
       : super(_initialState(notesBloc, id)) {
+
+    flutterSoundPlayer.openAudioSession();
+    flutterSoundRecorder.openAudioSession();
+
     _audioNotesSubscription = notesBloc.listen((state) {
       if (state is NotesLoaded  && id != null) {
         add(LoadAudioNote(state.notes.findForId(id)));
@@ -262,6 +266,7 @@ class AudioNoteBloc extends Bloc<AudioNoteEvent, AudioNoteState> {
 
       _playbackSubscription = flutterSoundPlayer.onProgress.listen((e) {
         // null indicates that playback has stopped (EOF).
+        print("################# $e");
         e == null
             ? add(StopAudioPlaybackRequest())
             : add(AudioPlaybackProgressChanged(
@@ -348,5 +353,8 @@ class AudioNoteBloc extends Bloc<AudioNoteEvent, AudioNoteState> {
     if (flutterSoundRecorder.isRecording) {
       await flutterSoundRecorder.stopRecorder();
     }
+
+    await flutterSoundPlayer.closeAudioSession();
+    await flutterSoundRecorder.closeAudioSession();
   }
 }

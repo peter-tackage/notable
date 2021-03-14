@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:notable/bloc/audio/audio.dart';
 import 'package:notable/bloc/notes/notes.dart';
 import 'package:notable/entity/audio_note_entity.dart';
-import 'package:notable/l10n/localization.dart';
 import 'package:notable/model/audio_note.dart';
 import 'package:notable/storage/sound_storage.dart';
 import 'package:notable/widget/audio_note_page.dart';
@@ -53,13 +53,13 @@ class _AddEditAudioNoteScreenContent extends StatelessWidget {
 
       return Scaffold(
           appBar: AppBar(
-              title: Text(NotableLocalizations.of(context).audio_note_title),
+              title: Text(AppLocalizations.of(context).audio_note_title),
               actions: _defineMenuItems(context, audioNoteBloc)),
           body: _buildBody(context, audioNoteBloc, state),
           floatingActionButton: isNoteSaveable
               ? FloatingActionButton(
                   onPressed: () => _saveNote(context, audioNoteBloc),
-                  tooltip: NotableLocalizations.of(context).note_save_tooltip,
+                  tooltip: AppLocalizations.of(context).note_save_tooltip,
                   child: Icon(Icons.check),
                 )
               : null);
@@ -82,8 +82,7 @@ class _AddEditAudioNoteScreenContent extends StatelessWidget {
                     textCapitalization: TextCapitalization.sentences,
                     decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText:
-                            NotableLocalizations.of(context).note_title_hint),
+                        hintText: AppLocalizations.of(context).note_title_hint),
                     maxLines: 1),
                 AudioNotePage()
               ])));
@@ -102,8 +101,8 @@ class _AddEditAudioNoteScreenContent extends StatelessWidget {
                 itemBuilder: (context) => [
                       PopupMenuItem(
                         value: 'delete',
-                        child: Text(NotableLocalizations.of(context)
-                            .note_delete_menu_item),
+                        child: Text(
+                            AppLocalizations.of(context).note_delete_menu_item),
                       )
                     ]),
           ];

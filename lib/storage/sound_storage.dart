@@ -38,6 +38,7 @@ class SoundStorage {
     final filePath = await toFilePath(filename);
     print('Deleting sound file: $filePath');
     final file = File(filePath);
+
     return file.delete();
   }
 }

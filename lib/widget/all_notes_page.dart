@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notable/bloc/feed/feed_bloc.dart';
 import 'package:notable/bloc/feed/feed_states.dart';
-import 'package:notable/l10n/localization.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:notable/model/audio_note.dart';
 import 'package:notable/model/base_note.dart';
 import 'package:notable/model/checklist.dart';
@@ -100,7 +100,7 @@ class AllNotesPage extends StatelessWidget {
               size: 100.0,
               color: Colors.blueGrey[200],
             ),
-            Text(NotableLocalizations.of(context).no_notes_msg,
+            Text(AppLocalizations.of(context).no_notes_msg,
                 style: TextStyle(color: Colors.blueGrey))
           ]));
 }

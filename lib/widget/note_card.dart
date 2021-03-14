@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:notable/l10n/localization.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:notable/model/base_note.dart';
 
 class NoteCard extends StatelessWidget {
@@ -24,7 +24,7 @@ class NoteCard extends StatelessWidget {
                   children: <Widget>[
                     Text(
                         isUntitled
-                            ? NotableLocalizations.of(context)
+                            ? AppLocalizations.of(context)
                                 .note_untitled_placeholder
                             : note.title,
                         style: Theme.of(context).textTheme.headline6.copyWith(

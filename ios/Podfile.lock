@@ -28,7 +28,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/path_provider/ios"
 
 SPEC CHECKSUMS:
-  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
   flutter_sound: 59e9c51c4c99929802126173ebd2a455e6da4156
   mobile-ffmpeg-full: f17c82219b4ff9e4018b5e21f88b78c28a3475db
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
@@ -36,4 +36,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: e5ee00144d04e7b168ba7ea28a9753540e444f3d
 
-COCOAPODS: 1.8.4
+COCOAPODS: 1.10.1
