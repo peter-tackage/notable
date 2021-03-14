@@ -26,7 +26,7 @@ class _AudioNotePageState extends State<AudioNotePage> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder(
-        bloc: _audioNoteBloc,
+        cubit: _audioNoteBloc,
         builder: (BuildContext context, AudioNoteState state) {
           if (state is BaseAudioNoteLoaded) {
             return _buildAudioNote(context, state);
@@ -37,16 +37,14 @@ class _AudioNotePageState extends State<AudioNotePage> {
         });
   }
 
-  _buildAudioNote(BuildContext context, AudioNoteState state) {
-    bool isRecordingFeatureAvailable =
+  Widget _buildAudioNote(BuildContext context, AudioNoteState state) {
+    var isRecordingFeatureAvailable =
         state is BaseAudioNoteLoaded && state.audioNote.id == null;
-    bool isRecordingButtonEnabled = state is AudioNotePlayback == false;
-
-    bool isPlaybackButtonEnabled =
+    var isRecordingButtonEnabled = state is AudioNotePlayback == false;
+    var isPlaybackButtonEnabled =
         state is AudioNoteLoaded && state.audioNote.filename != null ||
             state is AudioNotePlayback;
-
-    bool isRewindButtonEnabled =
+    var isRewindButtonEnabled =
         state is AudioNoteLoaded && state.audioNote.filename != null ||
             state is AudioNotePlayback;
 
@@ -56,7 +54,7 @@ class _AudioNotePageState extends State<AudioNotePage> {
       Padding(
           padding: EdgeInsets.symmetric(vertical: 24),
           child: Text(_timerTextOf(state),
-              style: Theme.of(context).textTheme.display1)),
+              style: Theme.of(context).textTheme.headline4)),
       isRecordingFeatureAvailable
           ? Padding(
               padding: EdgeInsets.symmetric(vertical: 24),
@@ -172,28 +170,28 @@ class _AudioNotePageState extends State<AudioNotePage> {
     }
   }
 
-  _rewindAction() => _audioNoteBloc.dispatch(StopAudioPlaybackRequest());
+  void _rewindAction() => _audioNoteBloc.add(StopAudioPlaybackRequest());
 
   // TODO Could these be changed to toggle commands instead?
 
   void _recordAction(AudioNoteState state) {
     if (state is AudioNoteRecording &&
         state.audioRecording.recordingState == RecordingState.Recording) {
-      _audioNoteBloc.dispatch(StopAudioRecordingRequest());
+      _audioNoteBloc.add(StopAudioRecordingRequest());
     } else {
-      _audioNoteBloc.dispatch(StartAudioRecordingRequest());
+      _audioNoteBloc.add(StartAudioRecordingRequest());
     }
   }
 
   void _playbackAction(AudioNoteState state) {
     if (state is AudioNotePlayback &&
         state.audioPlayback.playbackState == PlaybackState.Playing) {
-      _audioNoteBloc.dispatch(PauseAudioPlaybackRequest());
+      _audioNoteBloc.add(PauseAudioPlaybackRequest());
     } else if (state is AudioNotePlayback &&
         state.audioPlayback.playbackState == PlaybackState.Paused) {
-      _audioNoteBloc.dispatch(ResumeAudioPlaybackRequest());
+      _audioNoteBloc.add(ResumeAudioPlaybackRequest());
     } else {
-      _audioNoteBloc.dispatch(StartAudioPlaybackRequest());
+      _audioNoteBloc.add(StartAudioPlaybackRequest());
     }
   }
 
@@ -202,19 +200,18 @@ class _AudioNotePageState extends State<AudioNotePage> {
       return _toDuration(state.audioRecording.progress); // 00:04
     } else if (state is AudioNotePlayback) {
       // 00:01 / 00:04
-      return "${_toDuration(state.audioPlayback.progress)} / ${_toDuration(state.audioNote.lengthMillis)}";
+      return '${_toDuration(state.audioPlayback.progress)} / ${_toDuration(state.audioNote.lengthMillis)}';
     } else if (state is AudioNoteLoaded) {
       return state.audioNote.filename == null
-          ? "- / -"
-          : "${_toDuration(0)} / ${_toDuration(state.audioNote.lengthMillis)}";
+          ? '- / -'
+          : '${_toDuration(0)} / ${_toDuration(state.audioNote.lengthMillis)}';
     } else {
-      return "";
+      return '';
     }
   }
 
   static String _toDuration(double time) {
-    DateTime date =
-        DateTime.fromMillisecondsSinceEpoch(time.toInt(), isUtc: true);
+    var date = DateTime.fromMillisecondsSinceEpoch(time.toInt(), isUtc: true);
     return DateFormat('mm:ss', 'en_GB').format(date);
   }
 }

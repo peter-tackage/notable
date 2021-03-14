@@ -12,5 +12,5 @@ abstract class TextNote implements BaseNote, Built<TextNote, TextNoteBuilder> {
 
   TextNote._();
 
-  factory TextNote([updates(TextNoteBuilder b)]) = _$TextNote;
+  factory TextNote([Function(TextNoteBuilder b) updates]) = _$TextNote;
 }

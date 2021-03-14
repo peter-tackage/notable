@@ -14,7 +14,7 @@ abstract class AudioRecording
 
   AudioRecording._();
 
-  factory AudioRecording([updates(AudioRecordingBuilder b)]) = _$AudioRecording;
+  factory AudioRecording([Function(AudioRecordingBuilder b) updates]) = _$AudioRecording;
 }
 
 enum RecordingState { Recording, Paused }

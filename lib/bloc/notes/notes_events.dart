@@ -1,45 +1,46 @@
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
 import 'package:notable/model/base_note.dart';
 
-@immutable
 abstract class NotesEvent extends Equatable {
-  NotesEvent([List props = const []]) : super(props);
-}
-
-@immutable
-class LoadNotes extends NotesEvent {
-  LoadNotes() : super();
+  const NotesEvent();
 
   @override
-  String toString() => 'LoadNotes';
+  List<Object> get props => [];
 }
 
-@immutable
+class LoadNotes extends NotesEvent {}
+
 class AddNote extends NotesEvent {
   final BaseNote note;
 
-  AddNote(this.note) : super([note]);
+  const AddNote(this.note);
+
+  @override
+  List<Object> get props => [note];
 
   @override
   String toString() => 'AddNote: $note';
 }
 
-@immutable
 class UpdateNote extends NotesEvent {
   final BaseNote note;
 
-  UpdateNote(this.note) : super([note]);
+  const UpdateNote(this.note);
+
+  @override
+  List<Object> get props => [note];
 
   @override
   String toString() => 'UpdateEvent: $note';
 }
 
-@immutable
 class DeleteNote extends NotesEvent {
   final String id;
 
-  DeleteNote(this.id) : super([id]);
+  const DeleteNote(this.id);
+
+  @override
+  List<Object> get props => [id];
 
   @override
   String toString() => 'DeleteNote: $id';

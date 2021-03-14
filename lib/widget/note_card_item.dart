@@ -14,13 +14,13 @@ class NoteCardItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return NoteCard(
       note: note,
+      onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: note.text.isNotEmpty
             ? Text(note.text, style: TextStyle(fontStyle: FontStyle.italic))
             : SizedBox.shrink(),
       ),
-      onTap: onTap,
     );
   }
 }

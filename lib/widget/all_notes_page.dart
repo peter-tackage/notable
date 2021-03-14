@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notable/bloc/feed/feed_bloc.dart';
 import 'package:notable/bloc/feed/feed_states.dart';
-import 'package:notable/l10n/localization.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:notable/model/audio_note.dart';
 import 'package:notable/model/base_note.dart';
 import 'package:notable/model/checklist.dart';
@@ -31,7 +31,7 @@ class AllNotesPage extends StatelessWidget {
               ? _buildNoNotesWidget(context)
               : _buildNoteList(context, feedState.feed);
         } else {
-          throw Exception("Unsupported FeedState: $feedState");
+          throw Exception('Unsupported FeedState: $feedState');
         }
       },
     );
@@ -60,30 +60,30 @@ class AllNotesPage extends StatelessWidget {
       return AudioNoteCardItem(
           audioNote: note, onTap: () => _openAudioNote(context, note));
     } else {
-      throw Exception("Unsupported Note type: $note");
+      throw Exception('Unsupported Note type: $note');
     }
   }
 
-  static _openTextNote(BuildContext context, TextNote note) => Navigator.push(
+  static Future _openTextNote(BuildContext context, TextNote note) => Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => AddEditTextNoteScreen(id: note.id)),
       );
 
-  static _openChecklist(BuildContext context, Checklist checklist) =>
+  static Future _openChecklist(BuildContext context, Checklist checklist) =>
       Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => AddEditChecklistNoteScreen(id: checklist.id)),
       );
 
-  static _openDrawing(BuildContext context, Drawing drawing) => Navigator.push(
+  static Future _openDrawing(BuildContext context, Drawing drawing) => Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => AddEditDrawingNoteScreen(id: drawing.id)),
       );
 
-  static _openAudioNote(BuildContext context, AudioNote audioNote) =>
+  static Future _openAudioNote(BuildContext context, AudioNote audioNote) =>
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -100,7 +100,7 @@ class AllNotesPage extends StatelessWidget {
               size: 100.0,
               color: Colors.blueGrey[200],
             ),
-            Text(NotableLocalizations.of(context).no_notes_msg,
+            Text(AppLocalizations.of(context).no_notes_msg,
                 style: TextStyle(color: Colors.blueGrey))
           ]));
 }

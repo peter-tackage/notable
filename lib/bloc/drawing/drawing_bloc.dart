@@ -19,67 +19,74 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
 
   StreamSubscription drawingsSubscription;
 
-  DrawingBloc({@required this.notesBloc, @required this.id}) {
-    drawingsSubscription = notesBloc.state.listen((state) {
-      if (state is NotesLoaded) {
-        dispatch(
-            LoadDrawing(state.notes.firstWhere((note) => note.id == this.id,
-                orElse: () => Drawing((b) => b
-                  ..title = ''
-                  ..labels = ListBuilder<Label>()
-                  ..actions = ListBuilder<DrawingAction>()
-                  ..currentIndex = -1)) as Drawing));
+  DrawingBloc({@required this.notesBloc, @required this.id})
+      : super(_initialState(notesBloc, id)) {
+    drawingsSubscription = notesBloc.listen((state) {
+      if (state is NotesLoaded && id != null) {
+        add(LoadDrawing(state.notes.findForId(id)));
       }
     });
   }
 
-  @override
-  DrawingState get initialState => DrawingLoading();
-
-  @override
-  Stream<DrawingState> mapEventToState(DrawingEvent event) async* {
-    if (event is LoadDrawing) {
-      yield* _mapLoadDrawingEventToState(currentState, event);
-    } else if (event is SaveDrawing) {
-      yield* _mapSaveDrawingEventToState(currentState, event);
-    } else if (event is DeleteDrawing) {
-      yield* _mapDeleteDrawingEventToState(currentState, event);
-    } else if (event is ClearDrawing) {
-      yield* _mapClearDrawingEventToState(currentState, event);
-    } else if (event is Undo) {
-      yield* _mapUndoDrawingActionEventToState(currentState, event);
-    } else if (event is Redo) {
-      yield* _mapRedoDrawingActionEventToState(currentState, event);
-    } else if (event is StartDrawing) {
-      yield* _mapStartDrawingActionEventToState(currentState, event);
-    } else if (event is UpdateDrawing) {
-      yield* _mapUpdateDrawingActionEventToState(currentState, event);
-    } else if (event is EndDrawing) {
-      yield* _mapEndDrawingActionEventToState(currentState, event);
-    } else if (event is UpdateDrawingTitle) {
-      yield* _mapUpdateDrawingTitleEventToState(currentState, event);
+  static DrawingState _initialState(
+      NotesBloc<Drawing, DrawingEntity> notesBloc, String id) {
+    if (id == null) {
+      return DrawingLoaded(Drawing((b) => b
+        ..title = ''
+        ..labels = ListBuilder<Label>()
+        ..actions = ListBuilder<DrawingAction>()
+        ..currentIndex = -1));
+    } else if (notesBloc.state is NotesLoaded) {
+      return DrawingLoaded(
+          (notesBloc.state as NotesLoaded).notes.findForId(id));
+    } else {
+      return DrawingLoading();
     }
   }
 
   @override
-  void dispose() {
-    super.dispose();
+  Stream<DrawingState> mapEventToState(DrawingEvent event) async* {
+    if (event is LoadDrawing) {
+      yield* _mapLoadDrawingEventToState(state, event);
+    } else if (event is SaveDrawing) {
+      yield* _mapSaveDrawingEventToState(state, event);
+    } else if (event is DeleteDrawing) {
+      yield* _mapDeleteDrawingEventToState(state, event);
+    } else if (event is ClearDrawing) {
+      yield* _mapClearDrawingEventToState(state, event);
+    } else if (event is Undo) {
+      yield* _mapUndoDrawingActionEventToState(state, event);
+    } else if (event is Redo) {
+      yield* _mapRedoDrawingActionEventToState(state, event);
+    } else if (event is StartDrawing) {
+      yield* _mapStartDrawingActionEventToState(state, event);
+    } else if (event is UpdateDrawing) {
+      yield* _mapUpdateDrawingActionEventToState(state, event);
+    } else if (event is EndDrawing) {
+      yield* _mapEndDrawingActionEventToState(state, event);
+    } else if (event is UpdateDrawingTitle) {
+      yield* _mapUpdateDrawingTitleEventToState(state, event);
+    }
+  }
 
+  @override
+  Future<void> close() {
     drawingsSubscription.cancel();
+    return super.close();
   }
 
   Stream<DrawingState> _mapLoadDrawingEventToState(
       DrawingState currentState, LoadDrawing event) async* {
-    yield DrawingLoaded(drawing: event.drawing);
+    yield DrawingLoaded(event.drawing);
   }
 
   Stream<DrawingState> _mapSaveDrawingEventToState(
       DrawingState currentState, DrawingEvent event) async* {
     if (currentState is DrawingLoaded) {
       if (id == null) {
-        notesBloc.dispatch(AddNote(currentState.drawing));
+        notesBloc.add(AddNote(currentState.drawing));
       } else {
-        notesBloc.dispatch(UpdateNote(currentState.drawing));
+        notesBloc.add(UpdateNote(currentState.drawing));
       }
     }
   }
@@ -89,38 +96,35 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
     assert(id != null);
 
     // Delete the note and return all the notes
-    notesBloc.dispatch(DeleteNote(id));
+    notesBloc.add(DeleteNote(id));
   }
 
   Stream<DrawingState> _mapClearDrawingEventToState(
       DrawingState currentState, ClearDrawing event) async* {
     if (currentState is DrawingLoaded) {
       // Move the index so that it's still undo-able.
-      yield DrawingLoaded(
-          drawing: currentState.drawing.rebuild((b) => b
-            ..actions = ListBuilder()
-            ..currentIndex = -1));
+      yield DrawingLoaded(currentState.drawing.rebuild((b) => b
+        ..actions = ListBuilder()
+        ..currentIndex = -1));
     }
   }
 
   Stream<DrawingState> _mapUndoDrawingActionEventToState(
       DrawingState currentState, Undo event) async* {
     if (currentState is DrawingLoaded) {
-      int movedIndex = currentState.drawing.currentIndex - 1;
+      var movedIndex = currentState.drawing.currentIndex - 1;
       yield DrawingLoaded(
-          drawing: currentState.drawing
-              .rebuild((b) => b..currentIndex = movedIndex));
+          currentState.drawing.rebuild((b) => b..currentIndex = movedIndex));
     }
   }
 
   Stream<DrawingState> _mapRedoDrawingActionEventToState(
       DrawingState currentState, Redo event) async* {
     if (currentState is DrawingLoaded) {
-      int movedIndex = currentState.drawing.currentIndex + 1;
+      var movedIndex = currentState.drawing.currentIndex + 1;
 
       yield DrawingLoaded(
-          drawing: currentState.drawing
-              .rebuild((b) => b..currentIndex = movedIndex));
+          currentState.drawing.rebuild((b) => b..currentIndex = movedIndex));
     }
   }
 
@@ -128,7 +132,7 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
       DrawingState currentState, StartDrawing event) async* {
     if (currentState is DrawingLoaded) {
       // Insert and potentially discard Actions
-      int currentIndex = currentState.drawing.currentIndex;
+      var currentIndex = currentState.drawing.currentIndex;
 
       List<DrawingAction> actions;
       if (currentIndex >= 0 &&
@@ -136,7 +140,7 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
         actions =
             currentState.drawing.actions.sublist(0, currentIndex + 1).toList();
       } else if (currentIndex == -1) {
-        actions = List<DrawingAction>();
+        actions = <DrawingAction>[];
       } else {
         actions = List.of(currentState.drawing.actions);
       }
@@ -159,24 +163,23 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
       actions = [...actions, action]; // ignore: sdk_version_ui_as_code
       currentIndex = actions.length - 1;
 
-      yield DrawingLoaded(
-          drawing: currentState.drawing.rebuild((b) => b
-            ..actions = ListBuilder(actions)
-            ..currentIndex = currentIndex));
+      yield DrawingLoaded(currentState.drawing.rebuild((b) => b
+        ..actions = ListBuilder(actions)
+        ..currentIndex = currentIndex));
     }
   }
 
   Stream<DrawingState> _mapUpdateDrawingActionEventToState(
       DrawingState currentState, UpdateDrawing event) async* {
     if (currentState is DrawingLoaded) {
-      DrawingAction currentAction =
+      var currentAction =
           currentState.drawing.actions[currentState.drawing.currentIndex];
       if (currentAction is BrushAction || currentAction is EraserAction) {
-        Drawing updatedDrawing = _updateDrawingWithStrokeDrawingActionEvent(
+        var updatedDrawing = _updateDrawingWithStrokeDrawingActionEvent(
             currentAction, event, currentState);
-        yield DrawingLoaded(drawing: updatedDrawing);
+        yield DrawingLoaded(updatedDrawing);
       } else {
-        throw Exception("Unsupported action type: $currentAction");
+        throw Exception('Unsupported action type: $currentAction');
       }
     }
   }
@@ -189,11 +192,11 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
       UpdateDrawing event,
       DrawingLoaded currentState) {
     // Add the new event to the current action
-    StrokeDrawingAction updatedAction =
+    var updatedAction =
         currentAction.rebuild((b) => b..points.add(event.offset));
 
     // Update the action in the overall state
-    BuiltList<DrawingAction> updatedActions = currentState.drawing.actions
+    var updatedActions = currentState.drawing.actions
         .rebuild((b) => b..[currentState.drawing.currentIndex] = updatedAction);
 
     // Update the drawing with the new items
@@ -209,9 +212,9 @@ class DrawingBloc extends Bloc<DrawingEvent, DrawingState> {
   Stream<DrawingState> _mapUpdateDrawingTitleEventToState(
       DrawingState currentState, UpdateDrawingTitle event) async* {
     if (currentState is DrawingLoaded) {
-      Drawing updatedDrawing =
+      var updatedDrawing =
           currentState.drawing.rebuild((b) => b..title = event.title);
-      yield DrawingLoaded(drawing: updatedDrawing);
+      yield DrawingLoaded(updatedDrawing);
     }
   }
 }

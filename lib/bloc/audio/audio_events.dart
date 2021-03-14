@@ -1,134 +1,89 @@
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
 import 'package:notable/model/audio_note.dart';
 
-@immutable
 abstract class AudioNoteEvent extends Equatable {
-  AudioNoteEvent([List props = const []]) : super(props);
+  const AudioNoteEvent();
+
+  @override
+  List<Object> get props => [];
 }
 
-@immutable
 class LoadAudioNote extends AudioNoteEvent {
   final AudioNote audioNote;
 
-  LoadAudioNote(this.audioNote) : super([audioNote]);
+  const LoadAudioNote(this.audioNote);
+
+  @override
+  List<Object> get props => [audioNote];
 
   @override
   String toString() => 'LoadAudioNote: {id: ${audioNote.id}';
 }
 
-@immutable
-class SaveAudioNote extends AudioNoteEvent {
-  SaveAudioNote() : super([]);
+class SaveAudioNote extends AudioNoteEvent { }
 
-  @override
-  String toString() => 'SaveAudioNote';
-}
+class DeleteAudioNote extends AudioNoteEvent { }
 
-@immutable
-class DeleteAudioNote extends AudioNoteEvent {
-  DeleteAudioNote() : super([]);
+class ClearAudioNote extends AudioNoteEvent { }
 
-  @override
-  String toString() => 'DeleteAudioNote';
-}
-
-@immutable
-class ClearAudioNote extends AudioNoteEvent {
-  ClearAudioNote() : super([]);
-
-  @override
-  String toString() => 'ClearAudioNote';
-}
-
-@immutable
 class UpdateAudioNoteTitle extends AudioNoteEvent {
   final String title;
 
-  UpdateAudioNoteTitle(this.title) : super([title]);
+  const UpdateAudioNoteTitle(this.title);
+
+  @override
+  List<Object> get props => [title];
 
   @override
   String toString() => 'UpdateAudioNoteTitle: $title';
 }
 
-@immutable
-class StartAudioRecordingRequest extends AudioNoteEvent {
-  StartAudioRecordingRequest() : super([]);
+class StartAudioRecordingRequest extends AudioNoteEvent { }
 
-  @override
-  String toString() => 'StartAudioRecordingRequest';
-}
+class StopAudioRecordingRequest extends AudioNoteEvent { }
 
-@immutable
-class StopAudioRecordingRequest extends AudioNoteEvent {
-  StopAudioRecordingRequest() : super([]);
+class StartAudioPlaybackRequest extends AudioNoteEvent { }
 
-  @override
-  String toString() => 'StopAudioRecordingRequest';
-}
+class PauseAudioPlaybackRequest extends AudioNoteEvent { }
 
-@immutable
-class StartAudioPlaybackRequest extends AudioNoteEvent {
-  StartAudioPlaybackRequest() : super([]);
+class ResumeAudioPlaybackRequest extends AudioNoteEvent { }
 
-  @override
-  String toString() => 'StartAudioPlaybackRequest';
-}
+class StopAudioPlaybackRequest extends AudioNoteEvent { }
 
-@immutable
-class PauseAudioPlaybackRequest extends AudioNoteEvent {
-  PauseAudioPlaybackRequest() : super([]);
-
-  @override
-  String toString() => 'PauseAudioPlaybackRequest';
-}
-
-@immutable
-class ResumeAudioPlaybackRequest extends AudioNoteEvent {
-  ResumeAudioPlaybackRequest() : super([]);
-
-  @override
-  String toString() => 'ResumeAudioPlaybackRequest';
-}
-
-@immutable
-class StopAudioPlaybackRequest extends AudioNoteEvent {
-  StopAudioPlaybackRequest() : super([]);
-
-  @override
-  String toString() => 'StopAudioPlaybackRequest';
-}
-
-@immutable
 class AudioRecordingProgressChanged extends AudioNoteEvent {
   final bool isRecording;
-  final double progress;
+  final int progress;
 
-  AudioRecordingProgressChanged(this.isRecording, this.progress)
-      : super([isRecording, progress]);
+  const AudioRecordingProgressChanged(this.isRecording, this.progress);
+
+  @override
+  List<Object> get props => [isRecording, progress];
 
   @override
   String toString() =>
       'AudioRecordingProgressChanged: { isRecording: $isRecording, progress: $progress}';
 }
 
-@immutable
 class AudioRecordingLevelChanged extends AudioNoteEvent {
   final double level;
 
-  AudioRecordingLevelChanged(this.level) : super([level]);
+  const AudioRecordingLevelChanged(this.level);
+
+  @override
+  List<Object> get props => [level];
 
   @override
   String toString() => 'AudioRecordingLevelChanged: { level: $level }';
 }
 
-@immutable
 class AudioPlaybackProgressChanged extends AudioNoteEvent {
   final bool isPlaying;
-  final double progress;
+  final int progress;
 
-  AudioPlaybackProgressChanged(this.isPlaying, this.progress)
-      : super([isPlaying, progress]);
+  const AudioPlaybackProgressChanged(this.isPlaying, this.progress);
+
+  @override
+  List<Object> get props => [isPlaying, progress];
 
   @override
   String toString() => 'AudioPlaybackProgressChanged';

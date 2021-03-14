@@ -18,7 +18,8 @@ import 'audio_states.dart';
 class AudioNoteBloc extends Bloc<AudioNoteEvent, AudioNoteState> {
   final NotesBloc<AudioNote, AudioNoteEntity> notesBloc;
   final String id;
-  final FlutterSound flutterSound;
+  final FlutterSoundPlayer flutterSoundPlayer;
+  final FlutterSoundRecorder flutterSoundRecorder;
   final SoundStorage soundStorage;
 
   StreamSubscription _audioNotesSubscription;
@@ -29,63 +30,39 @@ class AudioNoteBloc extends Bloc<AudioNoteEvent, AudioNoteState> {
   AudioNoteBloc(
       {@required this.notesBloc,
       @required this.id,
-      @required this.flutterSound,
-      @required this.soundStorage}) {
-    _audioNotesSubscription = notesBloc.state.listen((state) {
-      if (state is NotesLoaded) {
-        dispatch(
-            LoadAudioNote(state.notes.firstWhere((note) => note.id == this.id,
-                orElse: () => AudioNote((b) => b
-                  ..filename = null
-                  ..lengthMillis = 0
-                  ..title = ''
-                  ..labels = ListBuilder<Label>())) as AudioNote));
+      @required this.flutterSoundPlayer,
+      @required this.flutterSoundRecorder,
+      @required this.soundStorage})
+      : super(_initialState(notesBloc, id)) {
+
+    flutterSoundPlayer.openAudioSession();
+    flutterSoundRecorder.openAudioSession();
+
+    _audioNotesSubscription = notesBloc.listen((state) {
+      if (state is NotesLoaded  && id != null) {
+        add(LoadAudioNote(state.notes.findForId(id)));
       }
     });
   }
 
-  @override
-  AudioNoteState get initialState => AudioNoteLoading();
-
-  @override
-  Stream<AudioNoteState> mapEventToState(AudioNoteEvent event) async* {
-    if (event is LoadAudioNote) {
-      yield* _mapLoadAudioNoteEventToState(currentState, event);
-    } else if (event is SaveAudioNote) {
-      yield* _mapSaveAudioNoteEventToState(currentState, event);
-    } else if (event is DeleteAudioNote) {
-      yield* _mapDeleteAudioNoteEventToState(currentState, event);
-    } else if (event is ClearAudioNote) {
-      yield* _mapClearAudioNoteEventToState(currentState, event);
-    } else if (event is UpdateAudioNoteTitle) {
-      yield* _mapUpdateAudioNoteTitleEventToState(currentState, event);
-
-      // TODO Maybe move these to a playback Bloc
-    } else if (event is StartAudioRecordingRequest) {
-      yield* _mapStartAudioRecordingEventToState(currentState, event);
-    } else if (event is StopAudioRecordingRequest) {
-      yield* _mapStopAudioRecordingEventToState(currentState, event);
-    } else if (event is StartAudioPlaybackRequest) {
-      yield* _mapStartAudioPlaybackEventToState(currentState, event);
-    } else if (event is PauseAudioPlaybackRequest) {
-      yield* _mapPauseAudioPlaybackEventToState(currentState, event);
-    } else if (event is ResumeAudioPlaybackRequest) {
-      yield* _mapResumeAudioPlaybackEventToState(currentState, event);
-    } else if (event is StopAudioPlaybackRequest) {
-      yield* _mapStopAudioPlaybackEventToState(currentState, event);
-    } else if (event is AudioPlaybackProgressChanged) {
-      yield* _mapAudioPlaybackProgressChangedEventToState(currentState, event);
-    } else if (event is AudioRecordingProgressChanged) {
-      yield* _mapAudioRecordingProgressChangedEventToState(currentState, event);
-    } else if (event is AudioRecordingLevelChanged) {
-      yield* _mapAudioRecordingLevelChangedEventToState(currentState, event);
+  static AudioNoteState _initialState(
+      NotesBloc<AudioNote, AudioNoteEntity> notesBloc, String id) {
+    if (id == null) {
+      return AudioNoteLoaded(AudioNote((b) => b
+        ..filename = null
+        ..lengthMillis = 0
+        ..title = ''
+        ..labels = ListBuilder<Label>()));
+    } else if (notesBloc.state is NotesLoaded) {
+      return AudioNoteLoaded(
+          (notesBloc.state as NotesLoaded).notes.findForId(id));
+    } else {
+      return AudioNoteLoading();
     }
   }
 
   @override
-  void dispose() {
-    super.dispose();
-
+  Future<void> close() {
     _audioNotesSubscription.cancel();
     _recorderSubscription?.cancel();
     _dbPeakSubscription?.cancel();
@@ -95,11 +72,47 @@ class AudioNoteBloc extends Bloc<AudioNoteEvent, AudioNoteState> {
     _stopAudioEngine();
 
     // Remove orphaned audio file if note unsaved.
-    AudioNoteState noteState = currentState;
+    var noteState = state;
     if (noteState is BaseAudioNoteLoaded &&
         noteState.audioNote.id == null &&
         noteState.audioNote.filename != null) {
       soundStorage.delete(noteState.audioNote.filename);
+    }
+    return super.close();
+  }
+
+  @override
+  Stream<AudioNoteState> mapEventToState(AudioNoteEvent event) async* {
+    if (event is LoadAudioNote) {
+      yield* _mapLoadAudioNoteEventToState(state, event);
+    } else if (event is SaveAudioNote) {
+      yield* _mapSaveAudioNoteEventToState(state, event);
+    } else if (event is DeleteAudioNote) {
+      yield* _mapDeleteAudioNoteEventToState(state, event);
+    } else if (event is ClearAudioNote) {
+      yield* _mapClearAudioNoteEventToState(state, event);
+    } else if (event is UpdateAudioNoteTitle) {
+      yield* _mapUpdateAudioNoteTitleEventToState(state, event);
+
+      // TODO Maybe move these to a playback Bloc
+    } else if (event is StartAudioRecordingRequest) {
+      yield* _mapStartAudioRecordingEventToState(state, event);
+    } else if (event is StopAudioRecordingRequest) {
+      yield* _mapStopAudioRecordingEventToState(state, event);
+    } else if (event is StartAudioPlaybackRequest) {
+      yield* _mapStartAudioPlaybackEventToState(state, event);
+    } else if (event is PauseAudioPlaybackRequest) {
+      yield* _mapPauseAudioPlaybackEventToState(state, event);
+    } else if (event is ResumeAudioPlaybackRequest) {
+      yield* _mapResumeAudioPlaybackEventToState(state, event);
+    } else if (event is StopAudioPlaybackRequest) {
+      yield* _mapStopAudioPlaybackEventToState(state, event);
+    } else if (event is AudioPlaybackProgressChanged) {
+      yield* _mapAudioPlaybackProgressChangedEventToState(state, event);
+    } else if (event is AudioRecordingProgressChanged) {
+      yield* _mapAudioRecordingProgressChangedEventToState(state, event);
+    } else if (event is AudioRecordingLevelChanged) {
+      yield* _mapAudioRecordingLevelChangedEventToState(state, event);
     }
   }
 
@@ -126,9 +139,9 @@ class AudioNoteBloc extends Bloc<AudioNoteEvent, AudioNoteState> {
 
   void _saveAudioNote(AudioNote audioNote) {
     if (id == null) {
-      notesBloc.dispatch(AddNote(audioNote));
+      notesBloc.add(AddNote(audioNote));
     } else {
-      notesBloc.dispatch(UpdateNote(audioNote));
+      notesBloc.add(UpdateNote(audioNote));
     }
   }
 
@@ -145,7 +158,7 @@ class AudioNoteBloc extends Bloc<AudioNoteEvent, AudioNoteState> {
     }
 
     // Delete the note and return all the notes
-    notesBloc.dispatch(DeleteNote(id));
+    notesBloc.add(DeleteNote(id));
   }
 
   Stream<AudioNoteState> _mapClearAudioNoteEventToState(
@@ -157,8 +170,8 @@ class AudioNoteBloc extends Bloc<AudioNoteEvent, AudioNoteState> {
 
   Stream<AudioNoteState> _mapStartAudioRecordingEventToState(
       AudioNoteState currentState, StartAudioRecordingRequest event) async* {
-    assert(flutterSound.audioState != t_AUDIO_STATE.IS_PLAYING);
-    assert(flutterSound.audioState != t_AUDIO_STATE.IS_RECORDING);
+    assert(!flutterSoundPlayer.isPlaying);
+    assert(!flutterSoundRecorder.isRecording);
 
     // IMPORTANT: You're not allowed to record on saved notes, only unsaved notes.
     if (currentState is AudioNoteLoaded && currentState.audioNote.id == null) {
@@ -173,7 +186,7 @@ class AudioNoteBloc extends Bloc<AudioNoteEvent, AudioNoteState> {
       final filePath = await soundStorage.toFilePath(filename);
 
       // Start new recording to a newly generated filename
-      await flutterSound.startRecorder(uri: filePath);
+      await flutterSoundRecorder.startRecorder(toFile: filePath);
 
       // Initial event
       yield AudioNoteRecording(
@@ -184,29 +197,29 @@ class AudioNoteBloc extends Bloc<AudioNoteEvent, AudioNoteState> {
             ..progress = 0));
 
       // Send updates to self
-      _recorderSubscription = flutterSound.onRecorderStateChanged.listen((e) {
-        dispatch(AudioRecordingProgressChanged(
-            flutterSound.isRecording, e?.currentPosition));
+      _recorderSubscription =
+          flutterSoundRecorder.onProgress.listen((progress) {
+        add(AudioRecordingProgressChanged(
+            flutterSoundRecorder.isRecording, progress.duration.inSeconds));
       });
 
-      _dbPeakSubscription =
-          flutterSound.onRecorderDbPeakChanged.listen((value) {
-        dispatch(AudioRecordingLevelChanged(value));
+      _dbPeakSubscription = flutterSoundRecorder.onProgress.listen((value) {
+        add(AudioRecordingLevelChanged(value.decibels));
       });
     }
   }
 
   Stream<AudioNoteState> _mapStopAudioRecordingEventToState(
       AudioNoteState currentState, StopAudioRecordingRequest event) async* {
-    assert(flutterSound.audioState != t_AUDIO_STATE.IS_PLAYING);
-    assert(flutterSound.audioState == t_AUDIO_STATE.IS_RECORDING);
+    assert(!flutterSoundPlayer.isPlaying);
+    assert(flutterSoundRecorder.isRecording);
 
     if (currentState is AudioNoteRecording) {
       await _recorderSubscription?.cancel();
       await _dbPeakSubscription?.cancel();
 
       // Stop recording
-      await flutterSound.stopRecorder();
+      await flutterSoundRecorder.stopRecorder();
 
       yield AudioNoteLoaded(currentState.audioNote.rebuild(
           (b) => b..lengthMillis = currentState.audioRecording.progress));
@@ -245,17 +258,18 @@ class AudioNoteBloc extends Bloc<AudioNoteEvent, AudioNoteState> {
       AudioNoteState currentState, StartAudioPlaybackRequest event) async* {
     if (currentState is AudioNoteLoaded) {
       await _playbackSubscription?.cancel();
-      await flutterSound.startPlayer(
-          await soundStorage.toFilePath(currentState.audioNote.filename));
-      await flutterSound.setVolume(1.0);
+      final fileUrl =
+          await soundStorage.toFilePath(currentState.audioNote.filename);
+      await flutterSoundPlayer.startPlayer(
+          fromURI: fileUrl, codec: Codec.aacMP4);
+      await flutterSoundPlayer.setVolume(1.0);
 
-      _playbackSubscription = flutterSound.onPlayerStateChanged.listen((e) {
+      _playbackSubscription = flutterSoundPlayer.onProgress.listen((e) {
         // null indicates that playback has stopped (EOF).
         e == null
-            ? dispatch(StopAudioPlaybackRequest())
-            : dispatch(AudioPlaybackProgressChanged(
-                flutterSound.audioState == t_AUDIO_STATE.IS_PLAYING,
-                e?.currentPosition));
+            ? add(StopAudioPlaybackRequest())
+            : add(AudioPlaybackProgressChanged(
+                flutterSoundPlayer.isPlaying, e.position.inSeconds));
       });
 
       yield AudioNotePlayback(
@@ -271,8 +285,8 @@ class AudioNoteBloc extends Bloc<AudioNoteEvent, AudioNoteState> {
       AudioNoteState currentState, StopAudioPlaybackRequest event) async* {
     if (currentState is AudioNotePlayback) {
       // When the audio clip reaches EOF, we don't need to tell the player to stop.
-      if (flutterSound.audioState == t_AUDIO_STATE.IS_PLAYING) {
-        await flutterSound.stopPlayer();
+      if (flutterSoundPlayer.isPlaying) {
+        await flutterSoundPlayer.stopPlayer();
       }
 
       await _playbackSubscription?.cancel();
@@ -284,7 +298,7 @@ class AudioNoteBloc extends Bloc<AudioNoteEvent, AudioNoteState> {
   Stream<AudioNoteState> _mapPauseAudioPlaybackEventToState(
       AudioNoteState currentState, PauseAudioPlaybackRequest event) async* {
     if (currentState is AudioNotePlayback) {
-      await flutterSound.pausePlayer();
+      await flutterSoundPlayer.pausePlayer();
 
       yield AudioNotePlayback(
           currentState.audioNote,
@@ -296,7 +310,7 @@ class AudioNoteBloc extends Bloc<AudioNoteEvent, AudioNoteState> {
   Stream<AudioNoteState> _mapResumeAudioPlaybackEventToState(
       AudioNoteState currentState, ResumeAudioPlaybackRequest event) async* {
     if (currentState is AudioNotePlayback) {
-      await flutterSound.resumePlayer();
+      await flutterSoundPlayer.resumePlayer();
 
       yield AudioNotePlayback(
           currentState.audioNote,
@@ -324,7 +338,7 @@ class AudioNoteBloc extends Bloc<AudioNoteEvent, AudioNoteState> {
       // need to do this to access the audioNote field.
       if (currentState is AudioNoteLoaded ||
           currentState is AudioNotePlayback) {
-        AudioNote updatedAudioNote =
+        var updatedAudioNote =
             currentState.audioNote.rebuild((b) => b..title = event.title);
         yield AudioNoteLoaded(updatedAudioNote);
       }
@@ -332,11 +346,14 @@ class AudioNoteBloc extends Bloc<AudioNoteEvent, AudioNoteState> {
   }
 
   void _stopAudioEngine() async {
-    if (flutterSound.audioState == t_AUDIO_STATE.IS_PLAYING) {
-      await flutterSound.stopPlayer();
+    if (flutterSoundPlayer.isPlaying) {
+      await flutterSoundPlayer.stopPlayer();
     }
-    if (flutterSound.audioState == t_AUDIO_STATE.IS_RECORDING) {
-      await flutterSound.stopRecorder();
+    if (flutterSoundRecorder.isRecording) {
+      await flutterSoundRecorder.stopRecorder();
     }
+
+    await flutterSoundPlayer.closeAudioSession();
+    await flutterSoundRecorder.closeAudioSession();
   }
 }

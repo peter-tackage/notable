@@ -8,29 +8,27 @@ import 'drawing_config_events.dart';
 import 'drawing_config_states.dart';
 
 class DrawingConfigBloc extends Bloc<DrawingConfigEvent, DrawingConfigState> {
-  static final int fullyOpaqueAlpha = 255;
-
-  DrawingConfigBloc();
-
-  @override
-  DrawingConfigState get initialState =>
+  static final int _fullyOpaqueAlpha = 255;
+  static final DrawingConfigLoaded _initialState =
       DrawingConfigLoaded(DrawingConfig((b) => b
         ..tool = Tool.Brush
         ..penShape = PenShape.Square
         ..strokeWidth = 5
         ..color = Colors.blue.value
-        ..alpha = fullyOpaqueAlpha));
+        ..alpha = _fullyOpaqueAlpha));
+
+  DrawingConfigBloc() : super(_initialState);
 
   @override
   Stream<DrawingConfigState> mapEventToState(DrawingConfigEvent event) async* {
     if (event is SelectDrawingTool) {
-      yield* _mapSelectDrawingToolEventToState(event, currentState);
+      yield* _mapSelectDrawingToolEventToState(event, state);
     } else if (event is SelectDrawingToolColor) {
-      yield* _mapSelectDrawingToolColorEventToState(event, currentState);
+      yield* _mapSelectDrawingToolColorEventToState(event, state);
     } else if (event is SelectDrawingToolAlpha) {
-      yield* _mapSelectDrawingToolAlphaEventToState(event, currentState);
+      yield* _mapSelectDrawingToolAlphaEventToState(event, state);
     } else if (event is SelectToolStyle) {
-      yield* _mapSelectDrawingToolStyleEventToState(event, currentState);
+      yield* _mapSelectDrawingToolStyleEventToState(event, state);
     }
   }
 

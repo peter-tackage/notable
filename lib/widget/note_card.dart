@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:notable/l10n/localization.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:notable/model/base_note.dart';
 
 class NoteCard extends StatelessWidget {
@@ -12,11 +12,12 @@ class NoteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isUntitled = note.title == null || note.title.isEmpty;
+    var isUntitled = note.title == null || note.title.isEmpty;
     return Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         elevation: 4,
         child: InkWell(
+          onTap: onTap,
           child: Padding(
               padding: EdgeInsets.all(8),
               child: Column(
@@ -24,17 +25,16 @@ class NoteCard extends StatelessWidget {
                   children: <Widget>[
                     Text(
                         isUntitled
-                            ? NotableLocalizations.of(context)
+                            ? AppLocalizations.of(context)
                                 .note_untitled_placeholder
                             : note.title,
-                        style: Theme.of(context).textTheme.title.copyWith(
+                        style: Theme.of(context).textTheme.headline6.copyWith(
                             color: isUntitled ? Colors.grey : Colors.black)),
                     Divider(),
                     ConstrainedBox(
                         constraints: BoxConstraints(maxHeight: 250),
                         child: child)
                   ])),
-          onTap: onTap,
         ));
   }
 }

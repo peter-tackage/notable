@@ -5,7 +5,7 @@ import 'package:notable/data/base_entity.dart';
 import 'package:notable/storage/file_storage.dart';
 
 class Provider<T extends BaseEntity> {
-  final Map<String, T> _store = Map();
+  final Map<String, T> _store = {};
   final EntityStorage<T> storage;
 
   Provider({@required this.storage});
@@ -45,7 +45,7 @@ class Provider<T extends BaseEntity> {
   }
 
   Future _readFromStorage() async {
-    List<T> entities = await storage.readAll();
+    var entities = await storage.readAll();
     _store.addAll(
         Map.fromEntries(entities.map((entity) => MapEntry(entity.id, entity))));
   }

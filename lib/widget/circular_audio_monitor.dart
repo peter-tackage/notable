@@ -33,16 +33,16 @@ class _AudioMonitorPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    Paint paintOn = Paint()
+    var paintOn = Paint()
       ..color = Colors.greenAccent
       ..style = PaintingStyle.fill;
 
-    Paint paintOff = Paint()
+    var paintOff = Paint()
       ..color = Colors.grey[200]
       ..style = PaintingStyle.fill;
 
-    Random random = Random();
-    double radius = 50 * (_level / _peakDb) + random.nextInt(5);
+    var random = Random();
+    var radius = 50 * (_level / _peakDb) + random.nextInt(5);
     if (radius > 50) radius = 50;
 
     canvas.drawCircle(Offset(size.width / 2, size.height / 2), 50, paintOff);
@@ -50,7 +50,5 @@ class _AudioMonitorPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return true;
-  }
+  bool shouldRepaint(CustomPainter oldDelegate) => true;
 }

@@ -12,21 +12,19 @@ class NotesBloc<M extends BaseNote, E extends BaseNoteEntity>
   final Repository<BaseNoteEntity> noteRepository;
   final Mapper<M, E> mapper;
 
-  NotesBloc({@required this.noteRepository, @required this.mapper});
-
-  @override
-  NotesState get initialState => NotesLoading();
+  NotesBloc({@required this.noteRepository, @required this.mapper})
+      : super(NotesLoading());
 
   @override
   Stream<NotesState> mapEventToState(NotesEvent event) async* {
     if (event is LoadNotes) {
-      yield* _mapLoadNotesEventToState(currentState, event);
+      yield* _mapLoadNotesEventToState(state, event);
     } else if (event is DeleteNote) {
-      yield* _mapDeleteNoteEventToState(currentState, event);
+      yield* _mapDeleteNoteEventToState(state, event);
     } else if (event is AddNote) {
-      yield* _mapAddNoteEventToState(currentState, event);
+      yield* _mapAddNoteEventToState(state, event);
     } else if (event is UpdateNote) {
-      yield* _mapUpdateNoteEventToState(currentState, event);
+      yield* _mapUpdateNoteEventToState(state, event);
     }
   }
 
@@ -73,4 +71,10 @@ class NotesBloc<M extends BaseNote, E extends BaseNoteEntity>
 
   List _toModels(List<BaseNoteEntity> notes) =>
       notes.map((e) => mapper.toModel(e)).toList();
+}
+
+extension Lookup<T extends BaseNote> on List<T> {
+  T findForId(String id) {
+    return firstWhere((note) => note.id == id);
+  }
 }

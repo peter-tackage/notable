@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:notable/arch/simple_bloc_delegate.dart';
 import 'package:notable/bloc/notes/notes.dart';
 import 'package:notable/data/provider.dart';
@@ -13,7 +13,6 @@ import 'package:notable/entity/drawing_entity.dart';
 import 'package:notable/entity/drawing_entity_mapper.dart';
 import 'package:notable/entity/entity.dart';
 import 'package:notable/entity/note_entity_mapper.dart';
-import 'package:notable/l10n/localization.dart';
 import 'package:notable/model/audio_note.dart';
 import 'package:notable/model/audio_note_mapper.dart';
 import 'package:notable/model/checklist.dart';
@@ -27,7 +26,7 @@ import 'package:notable/storage/file_storage.dart';
 import 'package:path_provider/path_provider.dart';
 
 void main() {
-  BlocSupervisor.delegate = SimpleBlocDelegate();
+  Bloc.observer = SimpleBlocDelegate();
   runApp(NotableApp());
 }
 
@@ -37,18 +36,18 @@ class NotableApp extends StatelessWidget {
     return MultiBlocProvider(
         providers: [
           BlocProvider<NotesBloc<TextNote, TextNoteEntity>>(
-              builder: _textNoteBlocBuilder),
+              create: _textNoteBlocBuilder),
           BlocProvider<NotesBloc<Checklist, ChecklistEntity>>(
-              builder: _checklistBlocBuilder),
+              create: _checklistBlocBuilder),
           BlocProvider<NotesBloc<Drawing, DrawingEntity>>(
-              builder: _drawingsBlocBuilder),
+              create: _drawingsBlocBuilder),
           BlocProvider<NotesBloc<AudioNote, AudioNoteEntity>>(
-              builder: _audioNotesBlocBuilder)
+              create: _audioNotesBlocBuilder)
         ],
         child: MaterialApp(
           title: 'Notable',
-          localizationsDelegates: _localizationsDelegates(),
-          supportedLocales: _supportedLocales(),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           theme: ThemeData(
             primarySwatch: Colors.green,
           ),
@@ -65,7 +64,7 @@ class NotableApp extends StatelessWidget {
       NotesBloc<TextNote, TextNoteEntity>(
           noteRepository: Repository<TextNoteEntity>(Provider<TextNoteEntity>(
               storage: FileStorage(
-                  tag: "textNotes",
+                  tag: 'textNotes',
                   getDirectory: () => getApplicationDocumentsDirectory(),
                   entityMapper: NoteEntityMapper()))),
           mapper: TextNoteMapper());
@@ -75,7 +74,7 @@ class NotableApp extends StatelessWidget {
       NotesBloc<Checklist, ChecklistEntity>(
           noteRepository: Repository<ChecklistEntity>(Provider<ChecklistEntity>(
               storage: FileStorage(
-                  tag: "checklists",
+                  tag: 'checklists',
                   getDirectory: () => getApplicationDocumentsDirectory(),
                   entityMapper: ChecklistEntityMapper()))),
           mapper: ChecklistMapper());
@@ -85,7 +84,7 @@ class NotableApp extends StatelessWidget {
       NotesBloc<Drawing, DrawingEntity>(
           noteRepository: Repository<DrawingEntity>(Provider<DrawingEntity>(
               storage: FileStorage(
-                  tag: "drawings",
+                  tag: 'drawings',
                   getDirectory: () => getApplicationDocumentsDirectory(),
                   entityMapper: DrawingEntityMapper()))),
           mapper: DrawingMapper());
@@ -95,27 +94,8 @@ class NotableApp extends StatelessWidget {
       NotesBloc<AudioNote, AudioNoteEntity>(
           noteRepository: Repository<AudioNoteEntity>(Provider<AudioNoteEntity>(
               storage: FileStorage(
-                  tag: "audio",
+                  tag: 'audio',
                   getDirectory: () => getApplicationDocumentsDirectory(),
                   entityMapper: AudioNoteEntityMapper()))),
           mapper: AudioNoteMapper());
-
-  //
-  //  Localization
-  //
-
-  static List<Locale> _supportedLocales() {
-    return [
-      const Locale('en'),
-      const Locale('es'),
-    ];
-  }
-
-  static List<LocalizationsDelegate> _localizationsDelegates() {
-    return [
-      const NotableLocalizationsDelegate(),
-      GlobalMaterialLocalizations.delegate,
-      GlobalWidgetsLocalizations.delegate,
-    ];
-  }
 }

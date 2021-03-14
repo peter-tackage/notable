@@ -1,14 +1,23 @@
 PODS:
   - Flutter (1.0.0)
-  - flutter_sound (0.0.1):
+  - "flutter_sound (7.7.0+1)":
     - Flutter
+    - mobile-ffmpeg-full (= 4.4.LTS)
+    - "tau_sound_core (= 7.7.0+1)"
+  - mobile-ffmpeg-full (4.4.LTS)
   - path_provider (0.0.1):
     - Flutter
+  - "tau_sound_core (7.7.0+1)"
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_sound (from `.symlinks/plugins/flutter_sound/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
+
+SPEC REPOS:
+  trunk:
+    - mobile-ffmpeg-full
+    - tau_sound_core
 
 EXTERNAL SOURCES:
   Flutter:
@@ -19,10 +28,12 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/path_provider/ios"
 
 SPEC CHECKSUMS:
-  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
-  flutter_sound: 0e8163ceac1e00eb6d894e2ae4641ba726a2c479
-  path_provider: fb74bd0465e96b594bb3b5088ee4a4e7bb1f2a9d
+  Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
+  flutter_sound: 59e9c51c4c99929802126173ebd2a455e6da4156
+  mobile-ffmpeg-full: f17c82219b4ff9e4018b5e21f88b78c28a3475db
+  path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
+  tau_sound_core: 1e9d022afef6dd319e20dfc9de46d0d2c5ea2b80
 
-PODFILE CHECKSUM: 3dbe063e9c90a5d7c9e4e76e70a821b9e2c1d271
+PODFILE CHECKSUM: e5ee00144d04e7b168ba7ea28a9753540e444f3d
 
-COCOAPODS: 1.8.4
+COCOAPODS: 1.10.1

@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notable/bloc/notes/notes.dart';
 import 'package:notable/bloc/text/text.dart';
 import 'package:notable/entity/entity.dart';
-import 'package:notable/l10n/localization.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:notable/model/text_note.dart';
 
 class AddEditTextNoteScreen extends StatelessWidget {
@@ -14,7 +14,7 @@ class AddEditTextNoteScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<TextNoteBloc>(
-        builder: _textNoteBlocBuilder,
+        create: _textNoteBlocBuilder,
         child: _AddEditTextNoteScreenContent(id: id));
   }
 
@@ -25,7 +25,7 @@ class AddEditTextNoteScreen extends StatelessWidget {
 
 class _AddEditTextNoteScreenContent extends StatelessWidget {
   static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  static final _deleteItem = "delete";
+  static final _deleteItem = 'delete';
 
   final String id;
 
@@ -33,11 +33,11 @@ class _AddEditTextNoteScreenContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextNoteBloc textNoteBloc = BlocProvider.of<TextNoteBloc>(context);
+    var textNoteBloc = BlocProvider.of<TextNoteBloc>(context);
 
     return Scaffold(
         appBar: AppBar(
-            title: Text(NotableLocalizations.of(context).text_note_title),
+            title: Text(AppLocalizations.of(context).text_note_title),
             actions: id == null
                 ? null
                 : <Widget>[
@@ -47,7 +47,7 @@ class _AddEditTextNoteScreenContent extends StatelessWidget {
                         itemBuilder: (context) => [
                               PopupMenuItem(
                                 value: _deleteItem,
-                                child: Text(NotableLocalizations.of(context)
+                                child: Text(AppLocalizations.of(context)
                                     .note_delete_menu_item),
                               )
                             ])
@@ -55,10 +55,10 @@ class _AddEditTextNoteScreenContent extends StatelessWidget {
         body: Padding(
             padding: EdgeInsets.only(top: 8, left: 8, right: 8),
             child: BlocBuilder<TextNoteBloc, TextNoteState>(
-                bloc: textNoteBloc,
+                cubit: textNoteBloc,
                 builder: (BuildContext context, TextNoteState state) {
                   if (state is TextNoteLoaded) {
-                    TextNote note = state.textNote;
+                    var note = state.textNote;
 
                     return Form(
                         key: _formKey,
@@ -67,11 +67,11 @@ class _AddEditTextNoteScreenContent extends StatelessWidget {
                               onSaved: (newTitle) =>
                                   _titleChanged(newTitle, textNoteBloc),
                               initialValue: note.title,
-                              style: Theme.of(context).textTheme.title,
+                              style: Theme.of(context).textTheme.headline6,
                               textCapitalization: TextCapitalization.sentences,
                               decoration: InputDecoration(
                                   border: InputBorder.none,
-                                  hintText: NotableLocalizations.of(context)
+                                  hintText: AppLocalizations.of(context)
                                       .note_title_hint),
                               maxLines: 1),
                           Expanded(
@@ -82,7 +82,7 @@ class _AddEditTextNoteScreenContent extends StatelessWidget {
                                       decoration: InputDecoration(
                                           border: InputBorder.none,
                                           hintText:
-                                              NotableLocalizations.of(context)
+                                              AppLocalizations.of(context)
                                                   .text_note_hint),
                                       maxLines: null,
                                       autofocus: note.text.isEmpty,
@@ -96,7 +96,7 @@ class _AddEditTextNoteScreenContent extends StatelessWidget {
                 })),
         floatingActionButton: FloatingActionButton(
           onPressed: () => _saveNote(context, textNoteBloc),
-          tooltip: NotableLocalizations.of(context).note_save_tooltip,
+          tooltip: AppLocalizations.of(context).note_save_tooltip,
           child: Icon(Icons.check),
         ));
   }
@@ -106,20 +106,20 @@ class _AddEditTextNoteScreenContent extends StatelessWidget {
   //
 
   void _titleChanged(newTitle, textNoteBloc) =>
-      textNoteBloc.dispatch(UpdateTextNoteTitle(newTitle));
+      textNoteBloc.add(UpdateTextNoteTitle(newTitle));
 
   void _textContentChanged(newText, textNoteBloc) =>
-      textNoteBloc.dispatch(UpdateTextNoteText(newText));
+      textNoteBloc.add(UpdateTextNoteText(newText));
 
   //
   // Save
   //
 
-  _saveNote(context, textNoteBloc) {
+  void _saveNote(context, textNoteBloc) {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
     }
-    textNoteBloc.dispatch(SaveTextNote());
+    textNoteBloc.add(SaveTextNote());
     Navigator.pop(context);
   }
 
@@ -135,7 +135,7 @@ class _AddEditTextNoteScreenContent extends StatelessWidget {
 
   void _deleteNote(context, textNoteBloc) {
     if (id != null) {
-      textNoteBloc.dispatch(DeleteNote(id));
+      textNoteBloc.add(DeleteTextNote());
       Navigator.pop(context);
     }
   }

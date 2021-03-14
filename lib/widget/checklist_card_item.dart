@@ -14,11 +14,11 @@ class ChecklistNoteCardItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return NoteCard(
       note: checklist,
+      onTap: onTap,
       child: ListView(
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           children: checklist.items.map(_createItemWidget).toList()),
-      onTap: onTap,
     );
   }
 

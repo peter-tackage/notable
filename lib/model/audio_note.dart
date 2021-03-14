@@ -17,5 +17,5 @@ abstract class AudioNote
 
   AudioNote._();
 
-  factory AudioNote([updates(AudioNoteBuilder b)]) = _$AudioNote;
+  factory AudioNote([Function(AudioNoteBuilder b) updates]) = _$AudioNote;
 }

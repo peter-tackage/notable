@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:notable/l10n/localization.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:notable/model/checklist.dart';
 
 class EditChecklistItem extends StatefulWidget {
@@ -30,7 +30,7 @@ class _EditChecklistItemState extends State<EditChecklistItem> {
 
   @override
   Widget build(BuildContext context) {
-    bool isDone = widget.initialValue.isDone;
+    var isDone = widget.initialValue.isDone;
 
     return Padding(
         padding: EdgeInsets.all(0),
@@ -57,7 +57,7 @@ class _EditChecklistItemState extends State<EditChecklistItem> {
             autofocus: widget.isFocused,
             decoration: InputDecoration(
                 border: InputBorder.none,
-                hintText: NotableLocalizations.of(context).checklist_item_hint),
+                hintText: AppLocalizations.of(context).checklist_item_hint),
           )),
         ]));
   }

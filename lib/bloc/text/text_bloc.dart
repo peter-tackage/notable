@@ -17,41 +17,49 @@ class TextNoteBloc extends Bloc<TextNoteEvent, TextNoteState> {
 
   StreamSubscription _textNotesSubscription;
 
-  TextNoteBloc({@required this.notesBloc, @required this.id}) {
-    _textNotesSubscription = notesBloc.state.listen((state) {
-      if (state is NotesLoaded) {
-        dispatch(
-            LoadTextNote(state.notes.firstWhere((note) => note.id == this.id,
-                orElse: () => TextNote((b) => b
-                  ..title = ''
-                  ..text = ''
-                  ..labels = ListBuilder<Label>())) as TextNote));
+  TextNoteBloc({@required this.notesBloc, @required this.id})
+      : super(_initialState(notesBloc, id)) {
+    _textNotesSubscription = notesBloc.listen((state) {
+      if (state is NotesLoaded && id != null) {
+        add(LoadTextNote(state.notes.findForId(id)));
       }
     });
   }
 
   @override
-  TextNoteState get initialState => TextNoteLoading();
+  Future<void> close() {
+    _textNotesSubscription.cancel();
+    return super.close();
+  }
 
-  @override
-  Stream<TextNoteState> mapEventToState(TextNoteEvent event) async* {
-    if (event is LoadTextNote) {
-      yield* _mapLoadTextNoteEventToState(currentState, event);
-    } else if (event is SaveTextNote) {
-      yield* _mapSaveTextNoteEventToState(currentState, event);
-    } else if (event is DeleteTextNote) {
-      yield* _mapDeleteTextNoteEventToState(currentState, event);
-    } else if (event is UpdateTextNoteTitle) {
-      yield* _mapUpdateTextNoteTitleEventToState(currentState, event);
-    } else if (event is UpdateTextNoteText) {
-      yield* _mapUpdateTextNoteTextEventToState(currentState, event);
+  static TextNoteState _initialState(
+      NotesBloc<TextNote, TextNoteEntity> notesBloc, String id) {
+    if (id == null) {
+      return TextNoteLoaded(TextNote((b) => b
+        ..title = ''
+        ..text = ''
+        ..labels = ListBuilder<Label>()));
+    } else if (notesBloc.state is NotesLoaded) {
+      return TextNoteLoaded(
+          (notesBloc.state as NotesLoaded).notes.findForId(id));
+    } else {
+      return TextNoteLoading();
     }
   }
 
   @override
-  void dispose() {
-    super.dispose();
-    _textNotesSubscription.cancel();
+  Stream<TextNoteState> mapEventToState(TextNoteEvent event) async* {
+    if (event is LoadTextNote) {
+      yield* _mapLoadTextNoteEventToState(state, event);
+    } else if (event is SaveTextNote) {
+      yield* _mapSaveTextNoteEventToState(state, event);
+    } else if (event is DeleteTextNote) {
+      yield* _mapDeleteTextNoteEventToState(state, event);
+    } else if (event is UpdateTextNoteTitle) {
+      yield* _mapUpdateTextNoteTitleEventToState(state, event);
+    } else if (event is UpdateTextNoteText) {
+      yield* _mapUpdateTextNoteTextEventToState(state, event);
+    }
   }
 
   Stream<TextNoteState> _mapLoadTextNoteEventToState(
@@ -68,9 +76,9 @@ class TextNoteBloc extends Bloc<TextNoteEvent, TextNoteState> {
 
   void _saveTextNote(TextNote textNote) {
     if (id == null) {
-      notesBloc.dispatch(AddNote(textNote));
+      notesBloc.add(AddNote(textNote));
     } else {
-      notesBloc.dispatch(UpdateNote(textNote));
+      notesBloc.add(UpdateNote(textNote));
     }
   }
 
@@ -79,13 +87,13 @@ class TextNoteBloc extends Bloc<TextNoteEvent, TextNoteState> {
     assert(id != null);
 
     // Delete the note and return all the notes
-    notesBloc.dispatch(DeleteNote(id));
+    notesBloc.add(DeleteNote(id));
   }
 
   Stream<TextNoteState> _mapUpdateTextNoteTitleEventToState(
       TextNoteState currentState, UpdateTextNoteTitle event) async* {
     if (currentState is TextNoteLoaded) {
-      TextNote updatedTextNote =
+      var updatedTextNote =
           currentState.textNote.rebuild((b) => b..title = event.title);
       yield TextNoteLoaded(updatedTextNote);
     }
@@ -94,7 +102,7 @@ class TextNoteBloc extends Bloc<TextNoteEvent, TextNoteState> {
   Stream<TextNoteState> _mapUpdateTextNoteTextEventToState(
       TextNoteState currentState, UpdateTextNoteText event) async* {
     if (currentState is TextNoteLoaded) {
-      TextNote updatedTextNote =
+      var updatedTextNote =
           currentState.textNote.rebuild((b) => b..text = event.text);
       yield TextNoteLoaded(updatedTextNote);
     }

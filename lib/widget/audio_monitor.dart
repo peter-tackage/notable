@@ -31,25 +31,24 @@ class _AudioMonitorPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    Paint paintOn = Paint()
+    var paintOn = Paint()
       ..color = Colors.greenAccent
       ..style = PaintingStyle.fill;
 
-    Paint paintOff = Paint()
+    var paintOff = Paint()
       ..color = Colors.grey[200]
       ..style = PaintingStyle.fill;
 
-    final double segmentCount = 6;
-    final double segmentWidth = 40;
-    final double gap = 5;
-    double dxLeft = 0;
-    final double dbPerSegment = _peakDb / segmentCount;
+    final segmentCount = 6;
+    final segmentWidth = 40;
+    final gap = 5;
+    final dbPerSegment = _peakDb / segmentCount;
 
-    for (int segment = 0; segment <= segmentCount; segment++) {
-      dxLeft = segment * (segmentWidth + gap);
-      double maxSegmentDb = (segment) * dbPerSegment;
+    for (var segment = 0; segment <= segmentCount; segment++) {
+      final double dxLeft = (segment * (segmentWidth + gap)).floorToDouble(); // ignore: omit_local_variable_types
+      var maxSegmentDb = (segment) * dbPerSegment;
 
-      Rect rect = Rect.fromPoints(
+      var rect = Rect.fromPoints(
           Offset(dxLeft, 0), size.bottomLeft(Offset(dxLeft + segmentWidth, 0)));
       canvas.drawRect(rect, _level > maxSegmentDb ? paintOn : paintOff);
     }

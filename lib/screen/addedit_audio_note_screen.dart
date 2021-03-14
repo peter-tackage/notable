@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:notable/bloc/audio/audio.dart';
 import 'package:notable/bloc/notes/notes.dart';
 import 'package:notable/entity/audio_note_entity.dart';
-import 'package:notable/l10n/localization.dart';
 import 'package:notable/model/audio_note.dart';
 import 'package:notable/storage/sound_storage.dart';
 import 'package:notable/widget/audio_note_page.dart';
@@ -18,7 +18,7 @@ class AddEditAudioNoteScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<AudioNoteBloc>(
-        builder: _audioNoteBlocBuilder,
+        create: _audioNoteBlocBuilder,
         child: _AddEditAudioNoteScreenContent(id: id));
   }
 
@@ -26,9 +26,8 @@ class AddEditAudioNoteScreen extends StatelessWidget {
       notesBloc:
           BlocProvider.of<NotesBloc<AudioNote, AudioNoteEntity>>(context),
       id: id,
-      flutterSound: FlutterSound()
-        ..setDbLevelEnabled(true)
-        ..setDbPeakLevelUpdate(0.1),
+      flutterSoundPlayer: FlutterSoundPlayer(),
+      flutterSoundRecorder: FlutterSoundRecorder(),
       soundStorage: SoundStorage(
           getDirectory: () => getApplicationDocumentsDirectory(),
           filenameGenerator: soundFilenameGenerator));
@@ -43,7 +42,7 @@ class _AddEditAudioNoteScreenContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    AudioNoteBloc audioNoteBloc = BlocProvider.of<AudioNoteBloc>(context);
+    var audioNoteBloc = BlocProvider.of<AudioNoteBloc>(context);
 
     return BlocBuilder<AudioNoteBloc, AudioNoteState>(
         builder: (BuildContext context, AudioNoteState state) {
@@ -54,13 +53,13 @@ class _AddEditAudioNoteScreenContent extends StatelessWidget {
 
       return Scaffold(
           appBar: AppBar(
-              title: Text(NotableLocalizations.of(context).audio_note_title),
+              title: Text(AppLocalizations.of(context).audio_note_title),
               actions: _defineMenuItems(context, audioNoteBloc)),
           body: _buildBody(context, audioNoteBloc, state),
           floatingActionButton: isNoteSaveable
               ? FloatingActionButton(
                   onPressed: () => _saveNote(context, audioNoteBloc),
-                  tooltip: NotableLocalizations.of(context).note_save_tooltip,
+                  tooltip: AppLocalizations.of(context).note_save_tooltip,
                   child: Icon(Icons.check),
                 )
               : null);
@@ -79,12 +78,11 @@ class _AddEditAudioNoteScreenContent extends StatelessWidget {
                     onSaved: (newTitle) =>
                         _onSaveTitle(newTitle, audioNoteBloc),
                     initialValue: state.audioNote.title,
-                    style: Theme.of(context).textTheme.title,
+                    style: Theme.of(context).textTheme.headline6,
                     textCapitalization: TextCapitalization.sentences,
                     decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText:
-                            NotableLocalizations.of(context).note_title_hint),
+                        hintText: AppLocalizations.of(context).note_title_hint),
                     maxLines: 1),
                 AudioNotePage()
               ])));
@@ -102,9 +100,9 @@ class _AddEditAudioNoteScreenContent extends StatelessWidget {
                     _handleMenuItemSelection(value, context, audioNoteBloc),
                 itemBuilder: (context) => [
                       PopupMenuItem(
-                        value: "delete",
-                        child: Text(NotableLocalizations.of(context)
-                            .note_delete_menu_item),
+                        value: 'delete',
+                        child: Text(
+                            AppLocalizations.of(context).note_delete_menu_item),
                       )
                     ]),
           ];
@@ -114,13 +112,13 @@ class _AddEditAudioNoteScreenContent extends StatelessWidget {
   // Save
   //
 
-  _saveNote(context, audioNoteBloc) {
+  void _saveNote(context, audioNoteBloc) {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
     }
 
     // Create or update handled in bloc.
-    audioNoteBloc.dispatch(SaveAudioNote());
+    audioNoteBloc.add(SaveAudioNote());
 
     Navigator.pop(context);
   }
@@ -129,15 +127,15 @@ class _AddEditAudioNoteScreenContent extends StatelessWidget {
   // Delete
   //
 
-  _handleMenuItemSelection(menuItem, context, audioNoteBloc) {
-    if (menuItem == "delete") {
+  void _handleMenuItemSelection(menuItem, context, audioNoteBloc) {
+    if (menuItem == 'delete') {
       _deleteNote(context, audioNoteBloc);
     }
   }
 
-  _deleteNote(context, audioNoteBloc) {
+  void _deleteNote(context, audioNoteBloc) {
     if (id != null) {
-      audioNoteBloc.dispatch(DeleteAudioNote());
+      audioNoteBloc.add(DeleteAudioNote());
       Navigator.pop(context);
     }
   }
@@ -146,7 +144,7 @@ class _AddEditAudioNoteScreenContent extends StatelessWidget {
   // Title save
   //
 
-  _onSaveTitle(newTitle, audioNoteBloc) {
-    audioNoteBloc.dispatch(UpdateAudioNoteTitle(newTitle));
+  void _onSaveTitle(newTitle, audioNoteBloc) {
+    audioNoteBloc.add(UpdateAudioNoteTitle(newTitle));
   }
 }

@@ -27,19 +27,19 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
       {@required this.textNotesBloc,
       @required this.checklistNotesBloc,
       @required this.drawingNotesBloc,
-      @required this.audioNotesBloc}) {
+      @required this.audioNotesBloc})
+      : super(FeedLoading()) {
     // Await all the notes, combined into a single event.
     combinedNotesSubscription = subscribeAllNotes();
   }
 
   StreamSubscription<List<NotesState>> subscribeAllNotes() {
-    return textNotesBloc.state
-      .combineLatestAll([checklistNotesBloc.state, drawingNotesBloc.state, audioNotesBloc.state])
-      .listen((noteStates) => dispatch(NoteStatesChanged(noteStates)));
+    return textNotesBloc.combineLatestAll([
+      checklistNotesBloc,
+      drawingNotesBloc,
+      audioNotesBloc
+    ]).listen((noteStates) => add(NoteStatesChanged(noteStates)));
   }
-
-  @override
-  FeedState get initialState => FeedLoading();
 
   @override
   Stream<FeedState> mapEventToState(FeedEvent event) async* {
@@ -51,16 +51,16 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
   }
 
   void _mapEventLoadFeedToActions() {
-    textNotesBloc.dispatch(LoadNotes());
-    checklistNotesBloc.dispatch(LoadNotes());
-    drawingNotesBloc.dispatch(LoadNotes());
-    audioNotesBloc.dispatch(LoadNotes());
+    textNotesBloc.add(LoadNotes());
+    checklistNotesBloc.add(LoadNotes());
+    drawingNotesBloc.add(LoadNotes());
+    audioNotesBloc.add(LoadNotes());
   }
 
   @override
-  void dispose() {
-    super.dispose();
+  Future<void> close() {
     combinedNotesSubscription.cancel();
+    return super.close();
   }
 
   Stream<FeedState> _mapNotesStateChangedToState(
