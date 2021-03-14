@@ -18,6 +18,7 @@ class DrawingCardItem extends StatelessWidget {
 
     return NoteCard(
       note: drawing,
+      onTap: onTap,
       child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: ConstrainedBox(
@@ -25,7 +26,6 @@ class DrawingCardItem extends StatelessWidget {
               child: CustomPaint(
                 painter: NotePainter(drawing.displayedActions),
               ))),
-      onTap: onTap,
     );
   }
 }

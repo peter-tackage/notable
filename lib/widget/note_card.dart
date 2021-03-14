@@ -17,6 +17,7 @@ class NoteCard extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         elevation: 4,
         child: InkWell(
+          onTap: onTap,
           child: Padding(
               padding: EdgeInsets.all(8),
               child: Column(
@@ -34,7 +35,6 @@ class NoteCard extends StatelessWidget {
                         constraints: BoxConstraints(maxHeight: 250),
                         child: child)
                   ])),
-          onTap: onTap,
         ));
   }
 }

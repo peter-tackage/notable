@@ -266,7 +266,6 @@ class AudioNoteBloc extends Bloc<AudioNoteEvent, AudioNoteState> {
 
       _playbackSubscription = flutterSoundPlayer.onProgress.listen((e) {
         // null indicates that playback has stopped (EOF).
-        print("################# $e");
         e == null
             ? add(StopAudioPlaybackRequest())
             : add(AudioPlaybackProgressChanged(
